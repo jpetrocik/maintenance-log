@@ -1,0 +1,77 @@
+body {
+	font-family: 'proxima-nova', helvetica;
+	color: #5a5a5a;
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	padding: 0;
+	margin: 0;
+	background-color: #f6f6f6;
+}
+
+.error {
+	border-color: #f00;
+}
+
+.warn {
+	border-color: #FBFF00;
+}
+
+.header {
+	height: 50px;
+	color: #FF4A04;
+	font-size: 30;
+	padding: 20px 0 0 5px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+table thead {
+	background-color: #F1F1F1;
+}
+
+table thead th {
+	border-top: 1px solid #e1e1e1;
+	border-bottom: 1px solid #e1e1e1;
+	background-color: #e1e1e1;
+	
+}
+
+table tbody tr {
+	border-bottom: 1px solid #e1e1e1;
+}
+table tbody tr:nth-child(odd) {background: #f6f6f6}
+table tbody tr:nth-child(even) {background: #F1F1F1}
+
+table thead th,
+table td {
+	padding-left: 15px
+}
+
+table .date {
+	text-align:left;
+	width: 200px;
+}
+table .mileage {
+	width: 140px;
+	text-align:right;
+}
+table .service {
+	width: 300px;
+	text-align:left;
+}
+table .cost {
+	width: 110px;
+	text-align:right;
+}
+
+table .notes {
+	width: 100%;
+	text-align:left;
+	padding-right:10px;
+}
+
+.pendingSave {
+	color: #bFbFbF;
+}

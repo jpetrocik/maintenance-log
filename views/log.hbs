@@ -1,0 +1,265 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<body>
+<div class="header">
+Maintenance Log
+</div>
+<form id="maintenance" action="#">
+<table>
+<thead>
+<tr>
+<th class="date">Date</th>
+<th class="mileage">Mileage</th>
+<th class="service">Service</th>
+<th class="cost">Cost</th>
+<th class="notes">Notes</td>
+<tr>
+<td class="date"><input class="date" type="text"/><input name="serviceDate" type="hidden"/></td>
+<td class="mileage"><input name="mileage" class="mileage" type="text"/></td>
+<td class="service"><input name="service" class="service" type="text"/></td>
+<td class="cost"><input name="cost" class="cost" type="text"/></td>
+<td class="notes"><input name="note" class="notes" type="text"/><input type="submit" style="display:none"/></td>
+</tr>
+</thead>
+<tbody>
+{{#each logs}}
+<tr data="{{service}}">
+<td class="date">{{formatDate performed_on "MMMM DD, YYYY"}}</td>
+<td class="mileage">{{mileage}}</td>
+<td class="service">{{service}}</td>
+<td class="cost">{{cost}}</td>
+<td class="notes">{{note}}</td>
+</tr>
+{{/each}}
+</tbody>
+<tfoot>
+<tr class="pendingSave" style="display:none">
+<td class="date"></td>
+<td class="mileage"></td>
+<td class="service"></td>
+<td class="cost"></td>
+<td class="notes"></td>
+</tr>
+</tfoot>
+</table>
+</form>
+
+<script>
+
+$( document ).ready(function() {
+
+	var allServices = $( "table tbody tr" ).map(function() {
+    	return $(this).attr("data");
+  	}).get();
+
+	AUOTCOMPLETE.setup('input.service', FILTERS.FILTER_CONTAINS, allServices);
+	AUOTCOMPLETE.setup('input.date', FILTERS.FILTER_STARTWITH, DATEUTILS.months);
+	TABLEFILTER.setup('input.service', FILTERS.FILTER_CONTAINS);
+	MAINTENANCELOG.setup();
+
+	//add todays date as placeholder
+	$('input.date').attr("placeholder", DATEUTILS.format(new Date()));
+	$("input.mileage").focus();
+
+}); 
+
+var MAINTENANCELOG = {
+	setup: function(){
+		$("#maintenance").submit(function(e) {
+			if (MAINTENANCELOG.validate()){
+				MAINTENANCELOG.addLog();
+			}
+
+			e.preventDefault();
+		});	
+		$("input.mileage").on("blur",function(e){
+			if ($(this).val() < 150000) {
+			 	$(this).addClass("warn");
+			} else {
+			 	$(this).removeClass("warn");
+			}
+		});
+	},
+	validate: function(){
+		var serviceDate = $("input.date").val(),
+			isValidForm = true;
+
+		if (serviceDate.length===0){
+			serviceDate = $("input.date").attr("placeholder");
+			$("input.date").val(serviceDate);
+		} else {
+			if (!DATEUTILS.isValid(serviceDate)) {
+			 	$("input.date").addClass("error");
+			 	isValidForm = false;
+			 }
+		}
+
+
+		var mileage = $("input.mileage").val();
+		if (!$.isNumeric(mileage)) {
+			 	$("input.mileage").addClass("error");
+			 	isValidForm = false;
+		} else {
+	 		$("input.mileage").removeClass("error");
+	 	}
+
+		var service = $("input.service").val();
+		if (service.length===0){
+		 	$("input.service").addClass("error");
+		 	isValidForm = false;
+		} else {
+		 	$("input.service").removeClass("error");
+		}
+
+		return isValidForm;
+	},
+	addLog: function() {
+		var newRow = $("table tfoot tr").clone();
+		newRow.find(".date").html($("input.date").val());
+		newRow.find(".mileage").html($("input.mileage").val());
+		newRow.find(".service").html($("input.service").val());
+		newRow.find(".cost").html($("input.cost").val());
+		newRow.find(".notes").html($("input.notes").val());
+		newRow.attr("data","service");
+		newRow.insertBefore("table tbody tr:nth-child(1)");
+		
+		var sqlDate = DATEUTILS.sql(new Date($("input.date").val()));
+		$("input[name=serviceDate]").val(sqlDate);
+
+		var params = $('#maintenance').serialize();
+		$.ajax({
+		  url: '/api/addLog',
+		  data: params,
+		  success: function(data, status) {
+		  	newRow.removeClass("pendingSave");
+		  }
+		});
+
+		TABLEFILTER.clear();
+		AUOTCOMPLETE.clear($("input.service"));
+		$("input.cost").val("");
+		$("input.service").focus();
+		
+	}
+}
+
+var DATEUTILS = {
+	regex: /^(January|February|March|April|May|June|July|August|September|November|December)\s\d{1,2},\s20\d\d$/i,
+	format: function(d){
+		return this.months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+	},
+	sql: function(d){
+		return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+	},
+	isValid: function(s) {
+		return !(s.match(DATEUTILS.regex) === null);
+	},
+	months: ["January","February","March","April","May","June","July","August","September","November","December"]
+}
+
+var FILTERS = {
+	FILTER_STARTWITH: function(row, criteria){
+		return row.startsWith(criteria);
+	},
+
+ 	FILTER_CONTAINS: function(row, criteria){
+		return row.contains(criteria);
+	}
+};
+
+var TABLEFILTER = {
+	setup: function(selector, filter) {
+	$(selector).on('keypress', function(e){
+		TABLEFILTER.filter($(this).data("inlineauto"), filter);
+	});
+	},
+	filter: function (criteria, filter) {
+		console.log("Filter: " + criteria);
+			$("table tbody tr").each(function( index ) {
+				if (filter($(this).attr("data"), criteria)) //.search(criteria)==-1)
+					$(this).show();
+				else 
+					$(this).hide();
+			});
+	},
+	clear: function(){
+		$("table tbody tr").show();
+	}
+
+};
+
+var AUOTCOMPLETE = {
+	setup: function(selector, filter, allValues) {
+		$(selector).on('keypress', function(e){
+			if (AUOTCOMPLETE.doComplete($(this), e.which, allValues, filter))
+	        	e.preventDefault();
+		});
+		$(selector).on('keydown', function(e){
+			if (e.which === 8){
+				$(this).data("reset","true");
+			}
+		});
+	},
+	doComplete: function (inputField, keyChar, allValues, filter){
+			var key = String.fromCharCode(keyChar),
+	        	criteria;
+
+			if (keyChar === 13){
+				return false;
+			}
+
+	        if (inputField.data("reset")) {
+	        	inputField.removeData("reset");
+	        	inputField.data("inlineauto", inputField.val());
+	        }
+
+			//set value on space
+	        if (keyChar === 32) {
+		        inputField.data("inlineauto",inputField.val() + " ");
+		        return false;
+	        }
+
+	        //append current key to autocomplete
+	        if (inputField.data("inlineauto")){
+		        criteria = inputField.data("inlineauto") + key;
+		    } else {
+		    	criteria = key;
+		    }
+	        //save current autocomplete value
+		    inputField.data("inlineauto",criteria);
+
+	        console.log("Autocomplete: " + criteria);
+
+	        //find matching values
+	        var matched = jQuery.grep(allValues, function( n, i ){
+	        	return filter(n,criteria);
+	        });
+
+	        //if no match set value to current autocomplete
+	        if (matched.length==0) {
+	        	if (inputField.data("reset")){
+	        		inputField.val(inputField.val() + key);
+	        		inputField.removeData("reset");
+	        	} else {
+	        		inputField.val(criteria);
+	        	}
+	    	} else {
+	        	inputField.val(matched[0]);
+	        }
+
+		    return true;
+	},
+	clear: function(inputField){
+		inputField.val("");
+		inputField.removeData("inlineauto");
+	}
+
+};
+
+
+String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
+</script>
+</body>
+</html>
