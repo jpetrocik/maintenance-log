@@ -8,7 +8,7 @@ Automotive maintenance log to keep track of maintenance and repairs performed on
 * Prodictive Maintenance Alerts
 
 
-# To Install
+## To Install
 * Follow OS instruction to install NodeJS and npm
 * In source directory run npm install
 * node index.js
