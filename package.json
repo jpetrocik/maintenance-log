@@ -12,7 +12,8 @@
     "handlebars-dateformat": "^1.0.1",
     "handlebars-intl": "^1.1.2",
     "moment": "^2.11.2",
-    "node-mysql": "^0.4.2"
+    "node-mysql": "^0.4.2",
+    "mysql": "^2.10"
   },
   "author": "John Petrocik",
   "license": "ISC"
