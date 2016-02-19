@@ -11,7 +11,28 @@ var pool      =    mysql.createPool({
 });
 
 module.exports = {
-  loadMaintenanceLogs: function(req,callback) {
+  loadCar: function(carId, callback){
+    pool.getConnection(function(err,connection){
+      if (err) {
+        connection.release();
+        callback(err);
+        return;
+      }   
+
+      connection.on('error', function(err) {      
+        callback(err);
+        return;     
+      });
+
+      connection.query("select * from car where id = " + carId + " order by name desc",function(err,rows){
+        connection.release();
+        callback(err, rows);
+      });
+
+    });
+
+  },
+  loadCars: function(callback) {
     
     pool.getConnection(function(err,connection){
       if (err) {
@@ -25,14 +46,35 @@ module.exports = {
         return;     
       });
 
-      connection.query("select * from maintenance_log order by mileage desc",function(err,rows){
+      connection.query("select * from car order by name desc",function(err,rows){
         connection.release();
         callback(err, rows);
       });
 
     });
   },
-  addMaintenanceLog: function(serviceDate, mileage, service, cost, note, callback) {
+  loadMaintenanceLogs: function(carId, callback) {
+    
+    pool.getConnection(function(err,connection){
+      if (err) {
+        connection.release();
+        callback(err);
+        return;
+      }   
+
+      connection.on('error', function(err) {      
+        callback(err);
+        return;     
+      });
+
+      connection.query("select * from maintenance_log where car_id='" + carId + "' order by mileage desc",function(err,rows){
+        connection.release();
+        callback(err, rows);
+      });
+
+    });
+  },
+  addMaintenanceLog: function(carId, serviceDate, mileage, service, cost, note, callback) {
     
     pool.getConnection(function(err,connection){
         if (err) {
@@ -41,12 +83,12 @@ module.exports = {
           return;
         }   
 
-        connection.on('error', function(err) {      
-              callback;
-              return;     
+        connection.on('error', function(err) {  
+          callback;
+          return;     
         });
 
-        var post  = {car_id: 1, performed_on: serviceDate.trim(), mileage: mileage.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() };
+        var post  = {car_id: carId, performed_on: serviceDate.trim(), mileage: mileage.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() };
         connection.query('INSERT INTO maintenance_log SET ?', post, function(err, result) {
           connection.release();
           callback(err, result);

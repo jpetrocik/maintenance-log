@@ -2,11 +2,15 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-<body>
+	<title>Service Logs</title>
+</head>
+<body id="serviceLogs">
 <div class="header">
-Maintenance Log
+<div class="back"><a href="/"><img src="/images/arrow-back.png"/></a></div>
+<div class="title">{{car.name}} Service Log</div>
 </div>
 <form id="maintenance" action="#">
+	<input name="carId" type="hidden" value="{{carId}}"/>
 <table>
 <thead>
 <tr>

@@ -1,0 +1,22 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<title>Service Logs</title>
+</head>
+<body id="carList">
+
+<div class="header">
+<div class="back"><a href="/"><img src="/images/arrow-back.png"/></a></div>
+<div class="title">Service Logs</div>
+</div>
+
+<div>
+{{#each logs}}
+<div class="car" id="carId{{id}}">
+	<a href="logs?carId={{id}}">{{name}}</a>
+</div>
+{{/each}}
+</div>
+</body>
+</html>

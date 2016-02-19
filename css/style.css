@@ -16,11 +16,23 @@ body {
 	border-color: #FBFF00;
 }
 
+
 .header {
-	height: 50px;
-	color: #FF4A04;
-	font-size: 30;
-	padding: 20px 0 0 5px;
+	font-size: 27px;
+}
+
+.header .back {
+	display:inline;
+	background-color:#aaa;
+	margin-right:5px;
+}
+
+.header .back img {
+	width:15px;
+}
+
+.header .title {
+	display:inline;
 }
 
 table {
@@ -74,4 +86,26 @@ table .notes {
 
 .pendingSave {
 	color: #bFbFbF;
+}
+
+.car {
+	margin:0 0 5px 0;
+	padding:10px;
+	background-color:#F1F1F1;
+	width:250px;
+	text-align:center;
+	border: 1px solid #e1e1e1;
+}
+
+.car a {
+	text-decoration:none;
+	color:#5a5a5a;
+}
+
+#carList .back img {
+	visibility: hidden;
+}
+
+#carId4 {
+	display:none;
 }

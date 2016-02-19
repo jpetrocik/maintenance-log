@@ -24,20 +24,30 @@ app.set('views', './views');
 
 
 app.use('/css', express.static('css'));
+app.use('/images', express.static('images'));
+
 app.get('/', function (req, res) {
-	mysql.loadMaintenanceLogs(req, function(err, rows){
-	  res.render('log', {logs: rows});
+	mysql.loadCars(function(err, rows){
+	  res.render('cars', {logs: rows});
+	});
+});
+
+app.get('/logs', function (req, res) {
+	mysql.loadCar(req.query.carId, function(err, car) {
+		mysql.loadMaintenanceLogs(req.query.carId, function(err, logs){
+		  res.render('logs', {car: car[0], logs: logs});
+		});
 	});
 });
 
 app.get('/api/logs', function (req, res) {
-	mysql.loadMaintenanceLogs(req,function(err, rows){
+	mysql.loadMaintenanceLogs(req.query.carId, function(err, rows){
 		res.json(rows);
 	});
 });
 
 app.get('/api/addLog', function (req, res) {
-	mysql.addMaintenanceLog(req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note,
+	mysql.addMaintenanceLog(req.query.carId, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note,
 		function(err, result){
 			console.log(err);
 			console.log(result);
