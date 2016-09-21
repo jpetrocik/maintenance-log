@@ -27,15 +27,21 @@ app.use('/css', express.static('css'));
 app.use('/images', express.static('images'));
 
 app.get('/', function (req, res) {
-	mysql.loadCars(function(err, rows){
-	  res.render('cars', {logs: rows});
+	mysql.loadCars(function(err, cars) {
+		mysql.loadCar(1, function(err, car) {
+			mysql.loadMaintenanceLogs(1, function(err, logs){
+			  res.render('logs', {car: car[0], logs: logs, cars: cars});
+			});
+		});
 	});
 });
 
 app.get('/logs', function (req, res) {
-	mysql.loadCar(req.query.carId, function(err, car) {
-		mysql.loadMaintenanceLogs(req.query.carId, function(err, logs){
-		  res.render('logs', {car: car[0], logs: logs});
+	mysql.loadCars(function(err, cars) {
+		mysql.loadCar(req.query.carId, function(err, car) {
+			mysql.loadMaintenanceLogs(req.query.carId, function(err, logs){
+			  res.render('logs', {car: car[0], logs: logs, cars: cars});
+			});
 		});
 	});
 });

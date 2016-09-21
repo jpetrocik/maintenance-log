@@ -5,9 +5,19 @@
 	<title>Service Logs</title>
 </head>
 <body id="serviceLogs">
-<div class="header">
-<div class="back"><a href="/"><img src="/images/arrow-back.png"/></a></div>
-<div class="title">{{car.name}} Service Log</div>
+
+<div id="leftMenu" style="display:none">
+{{#each cars}}
+<div class="car" id="carId{{id}}">
+	<a href="logs?carId={{id}}">{{name}}</a>
+</div>
+{{/each}}
+</div>
+
+<div id="mainBody">
+<div class="header" style="float:left">
+<div class="back"><img src="/images/arrow-back.png"/ id="leftMenuButton"></div>
+<div class="title">{{car.name}}</div>
 </div>
 <form id="maintenance" action="#">
 	<input name="carId" type="hidden" value="{{carId}}"/>
@@ -49,7 +59,7 @@
 </tfoot>
 </table>
 </form>
-
+</div>
 <script>
 
 $( document ).ready(function() {
@@ -62,6 +72,11 @@ $( document ).ready(function() {
 	AUOTCOMPLETE.setup('input.date', FILTERS.FILTER_STARTWITH, DATEUTILS.months);
 	TABLEFILTER.setup('input.service', FILTERS.FILTER_CONTAINS);
 	MAINTENANCELOG.setup();
+
+	$('#leftMenuButton').on('click', function(e){
+		console.log("Toggle");
+		$('#leftMenu').toggle();
+	});
 
 	//add todays date as placeholder
 	$('input.date').attr("placeholder", DATEUTILS.format(new Date()));

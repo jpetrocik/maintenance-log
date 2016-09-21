@@ -5,7 +5,19 @@ body {
 	-webkit-font-smoothing: antialiased;
 	padding: 0;
 	margin: 0;
-	background-color: #f6f6f6;
+	background-color: #606060;
+}
+
+#leftMenu {
+	float:left;
+	padding: 3px 3px 0px;
+	background-color: #2770a4;
+}
+
+#mainBody {
+	float:left;
+	padding: 0 15px 15px 0;
+    background-color: #303030;
 }
 
 .error {
@@ -13,17 +25,19 @@ body {
 }
 
 .warn {
-	border-color: #FBFF00;
+	border-color: #e4201d;
 }
 
 
 .header {
 	font-size: 27px;
+	background-color: #303030;
+    width: 100%;
 }
 
 .header .back {
 	display:inline;
-	background-color:#aaa;
+	background-color:#2770a4;
 	margin-right:5px;
 }
 
@@ -40,21 +54,21 @@ table {
 	border-collapse: collapse;
 }
 table thead {
-	background-color: #F1F1F1;
+	background-color: #303030;
 }
 
 table thead th {
-	border-top: 1px solid #e1e1e1;
-	border-bottom: 1px solid #e1e1e1;
-	background-color: #e1e1e1;
+	border-top: 1px solid #2770a4;
+	border-bottom: 1px solid #2770a4;
+	background-color: #2770a4;
 	
 }
 
 table tbody tr {
-	border-bottom: 1px solid #e1e1e1;
+	border-bottom: 1px solid #909090;
 }
-table tbody tr:nth-child(odd) {background: #f6f6f6}
-table tbody tr:nth-child(even) {background: #F1F1F1}
+table tbody tr:nth-child(odd) {background: #101010}
+table tbody tr:nth-child(even) {background: #303030}
 
 table thead th,
 table td {
@@ -79,7 +93,7 @@ table .cost {
 }
 
 table .notes {
-	width: 100%;
+	width: 300px;
 	text-align:left;
 	padding-right:10px;
 }
@@ -91,10 +105,10 @@ table .notes {
 .car {
 	margin:0 0 5px 0;
 	padding:10px;
-	background-color:#F1F1F1;
+	background-color:#303030;
 	width:250px;
 	text-align:center;
-	border: 1px solid #e1e1e1;
+	border: 1px solid #909090;
 }
 
 .car a {
@@ -108,4 +122,10 @@ table .notes {
 
 #carId4 {
 	display:none;
+}
+
+input {
+	background-color:#303030;
+	border-color:#303030;
+	
 }

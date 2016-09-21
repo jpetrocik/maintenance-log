@@ -68,8 +68,8 @@ module.exports = {
       });
 
       connection.query("select * from maintenance_log where car_id='" + carId + "' order by mileage desc",function(err,rows){
-        connection.release();
-        callback(err, rows);
+          connection.release();
+          callback(err, rows);
       });
 
     });
