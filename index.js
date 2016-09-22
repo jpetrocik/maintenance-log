@@ -55,11 +55,23 @@ app.get('/api/logs', function (req, res) {
 app.get('/api/addLog', function (req, res) {
 	mysql.addMaintenanceLog(req.query.carId, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note,
 		function(err, result){
-			console.log(err);
-			console.log(result);
 			res.status(200).json({ "id": result.insertId }).end()
 	});
 });
+
+app.get('/api/editLog', function (req, res) {
+	mysql.getMaintenanceLog(req.query.maintenanceId, function(err, rows){
+		res.json(rows);
+	});
+});
+
+app.get('/api/updateLog', function (req, res) {
+	mysql.updateMaintenanceLog(req.query.id, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note,
+		function(err, result){
+			res.status(200).json().end()
+	});
+});
+
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');

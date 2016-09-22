@@ -1,7 +1,11 @@
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<title>Service Logs</title>
 </head>
 <body id="serviceLogs">
@@ -29,12 +33,14 @@
 <th class="service">Service</th>
 <th class="cost">Cost</th>
 <th class="notes">Notes</td>
+<th></th>
 <tr>
-<td class="date"><input class="date" type="text"/><input name="serviceDate" type="hidden"/></td>
-<td class="mileage"><input name="mileage" class="mileage" type="text"/></td>
-<td class="service"><input name="service" class="service" type="text"/></td>
-<td class="cost"><input name="cost" class="cost" type="text"/></td>
-<td class="notes"><input name="note" class="notes" type="text"/><input type="submit" style="display:none"/></td>
+<td class="date"><input id="gridFriendlyDate" class="date" type="text"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
+<td class="mileage"><input id="gridMileage" name="mileage" class="mileage" type="text"/></td>
+<td class="service"><input id="gridService" name="service" class="service" type="text"/></td>
+<td class="cost"><input id="gridCost" name="cost" class="cost" type="text"/></td>
+<td class="notes"><input id="gridNote" name="note" class="notes" type="text"/><input type="submit" style="display:none"/></td>
+<td></td>
 </tr>
 </thead>
 <tbody>
@@ -45,6 +51,7 @@
 <td class="service">{{service}}</td>
 <td class="cost">{{cost}}</td>
 <td class="notes">{{note}}</td>
+<td class="actions"><a href="#maintenanceId={{id}}">E</a></td>
 </tr>
 {{/each}}
 </tbody>
@@ -55,37 +62,49 @@
 <td class="service"></td>
 <td class="cost"></td>
 <td class="notes"></td>
+<td></td>
 </tr>
 </tfoot>
 </table>
 </form>
 </div>
+
+<div id="editLogDialog">
+	<form id="editMaintenance" action="#">
+		<input id="editId" name="id" type="hidden"/>
+		<label>Date:</label><input id="editDate" name="date" class="date" type="text"/><br/>
+		<label>Mileage:</label><input id="editMileage" name="mileage" class="mileage" type="text"/><br/>
+		<label>Service:</label><input id="editService" name="service" class="service" type="text"/><br/>
+		<label>Cost:</label><input id="editCost" name="cost" class="cost" type="text"/><br/>
+		<label>Note:</label><input id="editNote" name="note" class="note" type="text"/>
+	</form>
+</div>
+
 <script>
 
 $( document ).ready(function() {
 
+	//extracts all service from the log
 	var allServices = $( "table tbody tr" ).map(function() {
     	return $(this).attr("data");
   	}).get();
 
-	AUOTCOMPLETE.setup('input.service', FILTERS.FILTER_CONTAINS, allServices);
-	AUOTCOMPLETE.setup('input.date', FILTERS.FILTER_STARTWITH, DATEUTILS.months);
-	TABLEFILTER.setup('input.service', FILTERS.FILTER_CONTAINS);
+	AUOTCOMPLETE.setup('#gridService', FILTERS.FILTER_CONTAINS, allServices);
+	AUOTCOMPLETE.setup('#gridFriendlyDate', FILTERS.FILTER_STARTWITH, DATEUTILS.months);
+	TABLEFILTER.setup('#gridService', FILTERS.FILTER_CONTAINS);
 	MAINTENANCELOG.setup();
 
 	$('#leftMenuButton').on('click', function(e){
-		console.log("Toggle");
 		$('#leftMenu').toggle();
 	});
 
-	//add todays date as placeholder
-	$('input.date').attr("placeholder", DATEUTILS.format(new Date()));
-	$("input.mileage").focus();
+	$("#gridMileage").focus();
 
 }); 
 
 var MAINTENANCELOG = {
 	setup: function(){
+
 		$("#maintenance").submit(function(e) {
 			if (MAINTENANCELOG.validate()){
 				MAINTENANCELOG.addLog();
@@ -93,59 +112,95 @@ var MAINTENANCELOG = {
 
 			e.preventDefault();
 		});	
-		$("input.mileage").on("blur",function(e){
-			if ($(this).val() < 150000) {
-			 	$(this).addClass("warn");
-			} else {
-			 	$(this).removeClass("warn");
-			}
+
+		//initialize editDialog
+		$( "#editLogDialog" ).dialog({
+            autoOpen: false, title: "Edit", modal: true,
+            buttons: {
+                OK: function() {
+                	$(this).dialog("close");
+        			var params = $('#editMaintenance').serialize();
+					$.ajax({
+					  url: '/api/updateLog',
+					  data: params,
+					  success: function(data, status) {
+					  	console.log("Updated maintenance log");
+					  }
+					});
+
+                }
+            }
+
+        });
+
+        //support for editing record
+		$("table tbody .actions A").on("click", function(e) {
+            $( "#editLogDialog" ).dialog( "open" );
+
+			var hashParam = UTILS.hashParam(e.currentTarget['href']);
+			$.ajax({
+			  url: '/api/editLog',
+			  data: { maintenanceId: hashParam['maintenanceId'] },
+			  success: function(data, status) {
+				$("#editId").val(data[0].id);
+				$("#editMileage").val(data[0].mileage);
+				$("#editService").val(data[0].service);
+				$("#editNote").val(data[0].note);
+				$("#editCost").val(data[0].cost);
+			  }
+			});
 		});
+
+		//add todays date as placeholder
+		$('#gridFriendlyDate').attr("placeholder", DATEUTILS.format(new Date()));
+
 	},
 	validate: function(){
-		var serviceDate = $("input.date").val(),
+		var serviceDate = $("#gridFriendlyDate").val(),
 			isValidForm = true;
 
 		if (serviceDate.length===0){
-			serviceDate = $("input.date").attr("placeholder");
-			$("input.date").val(serviceDate);
+			serviceDate = $("#gridFriendlyDate").attr("placeholder");
+			$("#gridFriendlyDate").val(serviceDate);
 		} else {
 			if (!DATEUTILS.isValid(serviceDate)) {
-			 	$("input.date").addClass("error");
+			 	$("#gridFriendlyDate").addClass("error");
 			 	isValidForm = false;
 			 }
 		}
 
 
-		var mileage = $("input.mileage").val();
+		var mileage = $("#gridMileage").val();
 		if (!$.isNumeric(mileage)) {
-			 	$("input.mileage").addClass("error");
+			 	$("#gridMileage").addClass("error");
 			 	isValidForm = false;
 		} else {
-	 		$("input.mileage").removeClass("error");
+	 		$("#gridMileage").removeClass("error");
 	 	}
 
-		var service = $("input.service").val();
+		var service = $("#gridService").val();
 		if (service.length===0){
-		 	$("input.service").addClass("error");
+		 	$("#gridService").addClass("error");
 		 	isValidForm = false;
 		} else {
-		 	$("input.service").removeClass("error");
+		 	$("#gridService").removeClass("error");
 		}
 
 		return isValidForm;
 	},
 	addLog: function() {
 		var newRow = $("table tfoot tr").clone();
-		newRow.find(".date").html($("input.date").val());
-		newRow.find(".mileage").html($("input.mileage").val());
-		newRow.find(".service").html($("input.service").val());
-		newRow.find(".cost").html($("input.cost").val());
-		newRow.find(".notes").html($("input.notes").val());
+		newRow.find(".date").html($("#gridFriendlyDate").val());
+		newRow.find(".mileage").html($("#gridMileage").val());
+		newRow.find(".service").html($("#gridService").val());
+		newRow.find(".cost").html($("#gridCost").val());
+		newRow.find(".notes").html($("#gridNote").val());
 		newRow.attr("data","service");
 		newRow.insertBefore("table tbody tr:nth-child(1)");
 		
-		var sqlDate = DATEUTILS.sql(new Date($("input.date").val()));
-		$("input[name=serviceDate]").val(sqlDate);
+		//convert date
+		var sqlDate = DATEUTILS.sql(new Date($("#gridFriendlyDate").val()));
+		$("#gridServiceDate").val(sqlDate);
 
 		var params = $('#maintenance').serialize();
 		$.ajax({
@@ -157,9 +212,10 @@ var MAINTENANCELOG = {
 		});
 
 		TABLEFILTER.clear();
-		AUOTCOMPLETE.clear($("input.service"));
-		$("input.cost").val("");
-		$("input.service").focus();
+		AUOTCOMPLETE.clear($("#gridService"));
+		$("#gridCost").val("");
+		$("#gridService").val("");
+		$("#gridService").focus();
 		
 	}
 }
@@ -276,6 +332,20 @@ var AUOTCOMPLETE = {
 	}
 
 };
+
+var UTILS = {
+	hashParam: function(link){
+		var hash = link.substring(link.indexOf('#')+1);
+    	var params = hash.split('&');
+    	var result = {};
+    	for(var i = 0; i < params.length; i++){
+       		var propval = params[i].split('=');
+       		result[propval[0]] = propval[1];
+       	}
+
+       	return result;
+	}
+}
 
 
 String.prototype.contains = function(it) { return this.indexOf(it) != -1; };

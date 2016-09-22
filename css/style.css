@@ -120,7 +120,7 @@ table .notes {
 	visibility: hidden;
 }
 
-#carId4 {
+#carId {
 	display:none;
 }
 
@@ -130,3 +130,41 @@ input {
 	color:#fff;
 	font-size: 13px;
 }
+
+#editLogDialog {
+	font-size:13px;
+	color:#fff;
+}
+
+#editLogDialog label {
+	width:65px;
+	display: inline-block;
+	text-align:right;
+}
+
+
+.ui-dialog .ui-dialog-titlebar {
+	padding: 0;
+	background: #444;
+	border: 1px solid #444;
+	color: #fff;
+	font-size: 13px;
+}
+
+.ui-widget-content {
+	background-color:#666;
+	border: 1px solid #444;
+}
+
+.ui-widget.ui-widget-content {
+	border: 1px solid #444;
+	padding: 0;
+}
+
+.ui-dialog .ui-dialog-buttonpane button {
+	background: #444;
+	margin: 0 0 0 0;
+	font-size: 13px;
+	color: #fff;
+	border: 1px solid #666;
+}	
