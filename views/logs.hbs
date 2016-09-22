@@ -246,9 +246,9 @@ var FILTERS = {
 
 var TABLEFILTER = {
 	setup: function(selector, filter) {
-	$(selector).on('keypress', function(e){
-		TABLEFILTER.filter($(this).data("inlineauto"), filter);
-	});
+		$(selector).on('keypress', function(e){
+			TABLEFILTER.filter($(this).data("inlineauto"), filter);
+		});
 	},
 	filter: function (criteria, filter) {
 		console.log("Filter: " + criteria);
@@ -267,13 +267,22 @@ var TABLEFILTER = {
 
 var AUOTCOMPLETE = {
 	setup: function(selector, filter, allValues) {
+		$(selector).on('focus', function(e){
+		    $(this).data("inlineauto",$(this).val())
+		});
 		$(selector).on('keypress', function(e){
 			if (AUOTCOMPLETE.doComplete($(this), e.which, allValues, filter))
 	        	e.preventDefault();
 		});
 		$(selector).on('keydown', function(e){
 			if (e.which === 8){
-				$(this).data("reset","true");
+		        if ($(this).data("inlineauto")){
+		        	var curVal = $(this).data("inlineauto");
+		        	var newVal = curVal.substring(0,curVal.length-1);
+			        $(this).val(newVal);
+				    $(this).data("inlineauto",newVal);
+				    e.preventDefault();
+				}
 			}
 		});
 	},
@@ -285,23 +294,13 @@ var AUOTCOMPLETE = {
 				return false;
 			}
 
-	        if (inputField.data("reset")) {
-	        	inputField.removeData("reset");
-	        	inputField.data("inlineauto", inputField.val());
-	        }
-
-			//set value on space
-	        if (keyChar === 32) {
-		        inputField.data("inlineauto",inputField.val() + " ");
-		        return false;
-	        }
-
 	        //append current key to autocomplete
 	        if (inputField.data("inlineauto")){
 		        criteria = inputField.data("inlineauto") + key;
 		    } else {
 		    	criteria = key;
 		    }
+
 	        //save current autocomplete value
 		    inputField.data("inlineauto",criteria);
 
@@ -314,13 +313,9 @@ var AUOTCOMPLETE = {
 
 	        //if no match set value to current autocomplete
 	        if (matched.length==0) {
-	        	if (inputField.data("reset")){
-	        		inputField.val(inputField.val() + key);
-	        		inputField.removeData("reset");
-	        	} else {
-	        		inputField.val(criteria);
-	        	}
+	        	inputField.val(criteria);
 	    	} else {
+	    		//display the match but keep cursor position
 	        	inputField.val(matched[0]);
 	        }
 
