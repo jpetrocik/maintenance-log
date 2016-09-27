@@ -129,6 +129,7 @@ input {
 	border-color:#303030;
 	color:#fff;
 	font-size: 13px;
+	width: 100%;
 }
 
 #editLogDialog {
@@ -137,9 +138,8 @@ input {
 }
 
 #editLogDialog label {
-	width:65px;
-	display: inline-block;
-	text-align:right;
+	width: 100%;
+	display: block;
 }
 
 

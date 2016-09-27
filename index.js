@@ -25,6 +25,7 @@ app.set('views', './views');
 
 app.use('/css', express.static('css'));
 app.use('/images', express.static('images'));
+app.use('/scripts', express.static('scripts'));
 
 app.get('/', function (req, res) {
 	mysql.loadCars(function(err, cars) {
@@ -68,7 +69,7 @@ app.get('/api/editLog', function (req, res) {
 app.get('/api/updateLog', function (req, res) {
 	mysql.updateMaintenanceLog(req.query.id, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note,
 		function(err, result){
-			res.status(200).json().end()
+			res.status(200).json({ "id": req.query.id }).end()
 	});
 });
 

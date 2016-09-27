@@ -87,7 +87,7 @@ module.exports = {
         return;     
       });
 
-      connection.query("select * from maintenance_log where car_id='" + carId + "' order by mileage desc, performed_on desc",function(err,rows){
+      connection.query("select * from maintenance_log where car_id='" + carId + "' order by mileage asc, serviceDate asc",function(err,rows){
           connection.release();
           callback(err, rows);
       });
@@ -108,7 +108,7 @@ module.exports = {
           return;     
         });
 
-        var post  = {car_id: carId, performed_on: serviceDate.trim(), mileage: mileage.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() };
+        var post  = {car_id: carId, serviceDate: serviceDate.trim(), mileage: mileage.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() };
         connection.query('INSERT INTO maintenance_log SET ?', post, function(err, result) {
           connection.release();
           callback(err, result);

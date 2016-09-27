@@ -35,34 +35,24 @@
 <th class="notes">Notes</td>
 <th></th>
 <tr>
-<td class="date"><input id="gridFriendlyDate" class="date" type="text"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
-<td class="mileage"><input id="gridMileage" name="mileage" class="mileage" type="text"/></td>
-<td class="service"><input id="gridService" name="service" class="service" type="text"/></td>
-<td class="cost"><input id="gridCost" name="cost" class="cost" type="text"/></td>
-<td class="notes"><input id="gridNote" name="note" class="notes" type="text"/><input type="submit" style="display:none"/></td>
+<td class="date"><input id="gridFriendlyDate" type="text"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
+<td class="mileage"><input id="gridMileage" name="mileage" type="text"/></td>
+<td class="service"><input id="gridService" name="service" type="text"/></td>
+<td class="cost"><input id="gridCost" name="cost" type="text"/></td>
+<td class="notes"><input id="gridNote" name="note" type="text"/><input type="submit" style="display:none"/></td>
 <td></td>
 </tr>
 </thead>
-<tbody>
-{{#each logs}}
-<tr data="{{service}}">
-<td class="date">{{formatDate performed_on "MMMM DD, YYYY"}}</td>
-<td class="mileage">{{mileage}}</td>
-<td class="service">{{service}}</td>
-<td class="cost">{{cost}}</td>
-<td class="notes">{{note}}</td>
-<td class="actions"><a href="#maintenanceId={{id}}">E</a></td>
-</tr>
-{{/each}}
+<tbody id="logGrid" class="logAddEvent">
 </tbody>
 <tfoot>
-<tr class="pendingSave" style="display:none">
+<tr class="logUpdateEvent" style="display:none">
 <td class="date"></td>
 <td class="mileage"></td>
 <td class="service"></td>
 <td class="cost"></td>
 <td class="notes"></td>
-<td></td>
+<td class="actions"><a href="#maintenanceId={{id}}">E</a></td>
 </tr>
 </tfoot>
 </table>
@@ -72,11 +62,11 @@
 <div id="editLogDialog">
 	<form id="editMaintenance" action="#">
 		<input id="editId" name="id" type="hidden"/>
-		<label>Date:</label><input id="editDate" name="date" class="date" type="text"/><br/>
-		<label>Mileage:</label><input id="editMileage" name="mileage" class="mileage" type="text"/><br/>
-		<label>Service:</label><input id="editService" name="service" class="service" type="text"/><br/>
-		<label>Cost:</label><input id="editCost" name="cost" class="cost" type="text"/><br/>
-		<label>Note:</label><input id="editNote" name="note" class="note" type="text"/>
+		<label>Date:</label><input id="editFriendlyDate" type="text"/><input id="editServiceDate" name="serviceDate" type="hidden"/><br/>
+		<label>Mileage:</label><input id="editMileage" name="mileage" type="text"/><br/>
+		<label>Service:</label><input id="editService" name="service" type="text"/><br/>
+		<label>Cost:</label><input id="editCost" name="cost" type="text"/><br/>
+		<label>Note:</label><input id="editNote" name="note" type="text"/>
 	</form>
 </div>
 
@@ -84,21 +74,28 @@
 
 $( document ).ready(function() {
 
-	//extracts all service from the log
-	var allServices = $( "table tbody tr" ).map(function() {
-    	return $(this).attr("data");
-  	}).get();
-
-	AUOTCOMPLETE.setup('#gridService', FILTERS.FILTER_CONTAINS, allServices);
-	AUOTCOMPLETE.setup('#gridFriendlyDate', FILTERS.FILTER_STARTWITH, DATEUTILS.months);
-	TABLEFILTER.setup('#gridService', FILTERS.FILTER_CONTAINS);
 	MAINTENANCELOG.setup();
+
 
 	$('#leftMenuButton').on('click', function(e){
 		$('#leftMenu').toggle();
 	});
 
 	$("#gridMileage").focus();
+
+	m = new maintanenceLog();
+	m.load({{car.id}}, function(logs) {
+		//extracts all service from the log
+		var allServices = [];
+		for(var i = 0; i < logs.length; i++){
+			allServices[i] = logs[i].service;
+		}
+
+		AUOTCOMPLETE.setup('#gridService', FILTERS.FILTER_CONTAINS, allServices);
+		AUOTCOMPLETE.setup('#gridFriendlyDate', FILTERS.FILTER_STARTWITH, DATEUTILS.months);
+		TABLEFILTER.setup('#gridService', FILTERS.FILTER_CONTAINS);
+	});
+
 
 }); 
 
@@ -107,11 +104,27 @@ var MAINTENANCELOG = {
 
 		$("#maintenance").submit(function(e) {
 			if (MAINTENANCELOG.validate()){
-				MAINTENANCELOG.addLog();
+				//convert date
+				var sqlDate = DATEUTILS.sql(new Date($("#gridFriendlyDate").val()));
+				$("#gridServiceDate").val(sqlDate);
+				var params = $('#maintenance').serializeArray();
+				m.add(params);
+
+				TABLEFILTER.clear();
+				AUOTCOMPLETE.clear($("#gridService"));
+				$("#gridCost").val("");
+				$("#gridService").val("");
+				$("#gridService").focus();
+
 			}
 
 			e.preventDefault();
 		});	
+
+		//Adding row to grid when a log is added or page is loading
+		$('#logGrid').on("logAdded", function(e) {
+			MAINTENANCELOG.addLogRow(e.log);
+		});
 
 		//initialize editDialog
 		$( "#editLogDialog" ).dialog({
@@ -119,41 +132,57 @@ var MAINTENANCELOG = {
             buttons: {
                 OK: function() {
                 	$(this).dialog("close");
-        			var params = $('#editMaintenance').serialize();
-					$.ajax({
-					  url: '/api/updateLog',
-					  data: params,
-					  success: function(data, status) {
-					  	console.log("Updated maintenance log");
-					  }
-					});
-
+					var sqlDate = DATEUTILS.sql(new Date($("#editFriendlyDate").val()));
+					$("#editServiceDate").val(sqlDate);
+        			var params = $('#editMaintenance').serializeArray();
+                	m.update(params);
                 }
             }
 
         });
 
-        //support for editing record
-		$("table tbody .actions A").on("click", function(e) {
-            $( "#editLogDialog" ).dialog( "open" );
-
-			var hashParam = UTILS.hashParam(e.currentTarget['href']);
-			$.ajax({
-			  url: '/api/editLog',
-			  data: { maintenanceId: hashParam['maintenanceId'] },
-			  success: function(data, status) {
-				$("#editId").val(data[0].id);
-				$("#editMileage").val(data[0].mileage);
-				$("#editService").val(data[0].service);
-				$("#editNote").val(data[0].note);
-				$("#editCost").val(data[0].cost);
-			  }
-			});
-		});
-
 		//add todays date as placeholder
 		$('#gridFriendlyDate').attr("placeholder", DATEUTILS.format(new Date()));
 
+	},
+	addLogRow: function(log) {
+		var newRow = $("table tfoot tr").clone();
+		newRow.find(".date").html(DATEUTILS.format(new Date(log.serviceDate)));
+		newRow.find(".mileage").html(log.mileage);
+		newRow.find(".service").html(log.service);
+		newRow.find(".cost").html(log.cost);
+		newRow.find(".notes").html(log.notes);
+		newRow.find(".actions A").attr("href", "#maintenanceId=" + log.id);
+    	newRow.find(".actions A").on("click", function(e) {
+    		var hashParam = UTILS.hashParam(e.currentTarget['href']);
+			var logToEdit = m.get(hashParam['maintenanceId']);
+			MAINTENANCELOG.openEditDialog(logToEdit);
+    	});
+		newRow.on("logUpdated", function(e) {
+			MAINTENANCELOG.updateLogRow(newRow, e.log);
+		});
+		newRow.attr("data",log.service);
+		newRow.addClass("log" + log.id);
+
+		$("table tbody").prepend(newRow);
+		newRow.show();
+	},
+	updateLogRow: function(row, log) {
+		row.find(".date").html(DATEUTILS.format(new Date(log.serviceDate)));
+		row.find(".mileage").html(log.mileage);
+		row.find(".service").html(log.service);
+		row.find(".cost").html(log.cost);
+		row.find(".notes").html(log.notes);
+		row.attr("data","service");
+	},
+	openEditDialog: function(log) {
+	    $( "#editLogDialog" ).dialog( "open" );
+	    $('#editFriendlyDate').val(DATEUTILS.format(new Date(log.serviceDate)));
+		$("#editId").val(log.id);
+		$("#editMileage").val(log.mileage);
+		$("#editService").val(log.service);
+		$("#editNote").val(log.note);
+		$("#editCost").val(log.cost);
 	},
 	validate: function(){
 		var serviceDate = $("#gridFriendlyDate").val(),
@@ -187,36 +216,6 @@ var MAINTENANCELOG = {
 		}
 
 		return isValidForm;
-	},
-	addLog: function() {
-		var newRow = $("table tfoot tr").clone();
-		newRow.find(".date").html($("#gridFriendlyDate").val());
-		newRow.find(".mileage").html($("#gridMileage").val());
-		newRow.find(".service").html($("#gridService").val());
-		newRow.find(".cost").html($("#gridCost").val());
-		newRow.find(".notes").html($("#gridNote").val());
-		newRow.attr("data","service");
-		newRow.insertBefore("table tbody tr:nth-child(1)");
-		
-		//convert date
-		var sqlDate = DATEUTILS.sql(new Date($("#gridFriendlyDate").val()));
-		$("#gridServiceDate").val(sqlDate);
-
-		var params = $('#maintenance').serialize();
-		$.ajax({
-		  url: '/api/addLog',
-		  data: params,
-		  success: function(data, status) {
-		  	newRow.removeClass("pendingSave");
-		  }
-		});
-
-		TABLEFILTER.clear();
-		AUOTCOMPLETE.clear($("#gridService"));
-		$("#gridCost").val("");
-		$("#gridService").val("");
-		$("#gridService").focus();
-		
 	}
 }
 
@@ -253,7 +252,7 @@ var TABLEFILTER = {
 	filter: function (criteria, filter) {
 		console.log("Filter: " + criteria);
 			$("table tbody tr").each(function( index ) {
-				if (filter($(this).attr("data"), criteria)) //.search(criteria)==-1)
+				if (filter($(this).attr("data"), criteria)) 
 					$(this).show();
 				else 
 					$(this).hide();
@@ -344,6 +343,10 @@ var UTILS = {
 
 
 String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
+</script>
+	<script src="scripts/maintenanceLog.js"></script>
+<script type="text/javascript">
+
 </script>
 </body>
 </html>
