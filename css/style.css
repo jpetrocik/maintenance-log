@@ -139,9 +139,13 @@ input {
 
 #editLogDialog label {
 	width: 100%;
-	display: block;
 }
 
+#editLogDialog #editRegularService {
+	width:10px;
+	display: inline;
+	margin: 15px 5px 5px 0;
+}
 
 .ui-dialog .ui-dialog-titlebar {
 	padding: 0;

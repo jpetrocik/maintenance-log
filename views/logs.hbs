@@ -61,12 +61,18 @@
 
 <div id="editLogDialog">
 	<form id="editMaintenance" action="#">
+		<input id="editCarId" name="carId" type="hidden" value="{{car.id}}"/>
 		<input id="editId" name="id" type="hidden"/>
 		<label>Date:</label><input id="editFriendlyDate" type="text"/><input id="editServiceDate" name="serviceDate" type="hidden"/><br/>
 		<label>Mileage:</label><input id="editMileage" name="mileage" type="text"/><br/>
 		<label>Service:</label><input id="editService" name="service" type="text"/><br/>
 		<label>Cost:</label><input id="editCost" name="cost" type="text"/><br/>
 		<label>Note:</label><input id="editNote" name="note" type="text"/>
+		<input id="editRegularService" name="regularService" type="checkbox"/><label id="editRegularServiceLabel" >Regular Service:</label>
+		<div id="editServiceForm" style="display:none">
+			<label>Mileage Interval:</label><input id="editMileageInterval" name="mileageInterval" type="text"/>
+			<label>Months Interval:</label><input id="editMonthsInterval" name="monthsInterval" type="text"/>
+		</div>
 	</form>
 </div>
 
@@ -121,6 +127,10 @@ var MAINTENANCELOG = {
 			e.preventDefault();
 		});	
 
+		$('#editRegularService').on("click", function(e) {
+			$('#editServiceForm').toggle();
+		});
+
 		//Adding row to grid when a log is added or page is loading
 		$('#logGrid').on("logAdded", function(e) {
 			MAINTENANCELOG.addLogRow(e.log);
@@ -136,6 +146,13 @@ var MAINTENANCELOG = {
 					$("#editServiceDate").val(sqlDate);
         			var params = $('#editMaintenance').serializeArray();
                 	m.update(params);
+
+                	$('#editMileageInterval').val("");
+                	$('#editMonthsInterval').val("");
+                	$('#editRegularService').prop( "checked", false );
+                	$('#editServiceForm').hide();
+
+
                 }
             }
 
@@ -230,7 +247,7 @@ var DATEUTILS = {
 	isValid: function(s) {
 		return !(s.match(DATEUTILS.regex) === null);
 	},
-	months: ["January","February","March","April","May","June","July","August","September","November","December"]
+	months: ["January","February","March","April","May","June","July","August","September","October", "November","December"]
 }
 
 var FILTERS = {

@@ -67,7 +67,7 @@ app.get('/api/editLog', function (req, res) {
 });
 
 app.get('/api/updateLog', function (req, res) {
-	mysql.updateMaintenanceLog(req.query.id, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note,
+	mysql.updateMaintenanceLog(req.query.carId, req.query.id, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note, req.query.regularService, req.query.monthsInterval, req.query.mileageInterval,
 		function(err, result){
 			res.status(200).json({ "id": req.query.id }).end()
 	});

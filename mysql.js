@@ -117,7 +117,7 @@ module.exports = {
 
     });
   },
-  updateMaintenanceLog: function(id, serviceDate, mileage, service, cost, note, callback) {
+  updateMaintenanceLog: function(carId, id, serviceDate, mileage, service, cost, note, regularService, monthsInterval, mileageInterval, callback) {
     
     pool.getConnection(function(err,connection){
         if (err) {
@@ -131,11 +131,20 @@ module.exports = {
           return;     
         });
 
-        var post  = [{mileage: mileage.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() }, id];
+        var post  = [{mileage: mileage.trim(), serviceDate: serviceDate.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() }, id];
         connection.query('UPDATE maintenance_log SET ? WHERE id = ?', post, function(err, result) {
-          connection.release();
-          callback(err, result);
-          return;
+
+          if (regularService) {
+            var serviceLog  = {car_id: carId, millage: mileageInterval.trim(), months: monthsInterval.trim(), service: service.trim()};
+            connection.query('INSERT INTO service_log SET ?', serviceLog, function(err, result) {
+              connection.release();
+              callback(err, result);
+              return;
+            });
+          } else {
+              connection.release();
+              callback(err, result);
+          }
         });
 
     });
