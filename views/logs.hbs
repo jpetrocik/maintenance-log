@@ -1,9 +1,11 @@
 <html>
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+	<script src="scripts/underscore-min.js"></script>
+	<script src="scripts/backbone-min.js"></script>
 
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<title>Service Logs</title>
@@ -44,8 +46,6 @@
 </tr>
 </thead>
 <tbody id="logGrid" class="logAddEvent">
-</tbody>
-<tfoot>
 <tr class="logUpdateEvent" style="display:none">
 <td class="date"></td>
 <td class="mileage"></td>
@@ -54,7 +54,8 @@
 <td class="notes"></td>
 <td class="actions"><a href="#maintenanceId={{id}}">E</a></td>
 </tr>
-</tfoot>
+
+</tbody>
 </table>
 </form>
 </div>
@@ -80,290 +81,56 @@
 
 $( document ).ready(function() {
 
-	MAINTENANCELOG.setup();
+	//initialize editDialog
+	$( "#editLogDialog" ).dialog({
+        autoOpen: false, title: "Edit", modal: true,
+        buttons: {
+            OK: function() {}
+        }
 
+    });
 
+	//click action to hide/show car list
 	$('#leftMenuButton').on('click', function(e){
 		$('#leftMenu').toggle();
 	});
 
-	$("#gridMileage").focus();
-
-	m = new maintanenceLog();
-	m.load({{car.id}}, function(logs) {
-		//extracts all service from the log
-		var allServices = [];
-		for(var i = 0; i < logs.length; i++){
-			allServices[i] = logs[i].service;
-		}
-
-		AUOTCOMPLETE.setup('#gridService', FILTERS.FILTER_CONTAINS, allServices);
-		AUOTCOMPLETE.setup('#gridFriendlyDate', FILTERS.FILTER_STARTWITH, DATEUTILS.months);
-		TABLEFILTER.setup('#gridService', FILTERS.FILTER_CONTAINS);
+	//toggle action to show regular service form
+	$('#editRegularService').on("click", function(e) {
+		$('#editServiceForm').toggle();
 	});
 
-
-}); 
-
-var MAINTENANCELOG = {
-	setup: function(){
-
-		$("#maintenance").submit(function(e) {
-			if (MAINTENANCELOG.validate()){
-				//convert date
-				var sqlDate = DATEUTILS.sql(new Date($("#gridFriendlyDate").val()));
-				$("#gridServiceDate").val(sqlDate);
-				var params = $('#maintenance').serializeArray();
-				m.add(params);
-
-				TABLEFILTER.clear();
-				AUOTCOMPLETE.clear($("#gridService"));
-				$("#gridCost").val("");
-				$("#gridService").val("");
-				$("#gridService").focus();
-
-			}
-
-			e.preventDefault();
-		});	
-
-		$('#editRegularService').on("click", function(e) {
-			$('#editServiceForm').toggle();
-		});
-
-		//Adding row to grid when a log is added or page is loading
-		$('#logGrid').on("logAdded", function(e) {
-			MAINTENANCELOG.addLogRow(e.log);
-		});
-
-		//initialize editDialog
-		$( "#editLogDialog" ).dialog({
-            autoOpen: false, title: "Edit", modal: true,
-            buttons: {
-                OK: function() {
-                	$(this).dialog("close");
-					var sqlDate = DATEUTILS.sql(new Date($("#editFriendlyDate").val()));
-					$("#editServiceDate").val(sqlDate);
-        			var params = $('#editMaintenance').serializeArray();
-                	m.update(params);
-
-                	$('#editMileageInterval').val("");
-                	$('#editMonthsInterval').val("");
-                	$('#editRegularService').prop( "checked", false );
-                	$('#editServiceForm').hide();
+	//add todays date as placeholder
+	$('#gridFriendlyDate').attr("placeholder", DATEUTILS.format(new Date()));
 
 
-                }
-            }
-
-        });
-
-		//add todays date as placeholder
-		$('#gridFriendlyDate').attr("placeholder", DATEUTILS.format(new Date()));
-
-	},
-	addLogRow: function(log) {
-		var newRow = $("table tfoot tr").clone();
-		newRow.find(".date").html(DATEUTILS.format(new Date(log.serviceDate)));
-		newRow.find(".mileage").html(log.mileage);
-		newRow.find(".service").html(log.service);
-		newRow.find(".cost").html(log.cost);
-		newRow.find(".notes").html(log.notes);
-		newRow.find(".actions A").attr("href", "#maintenanceId=" + log.id);
-    	newRow.find(".actions A").on("click", function(e) {
-    		var hashParam = UTILS.hashParam(e.currentTarget['href']);
-			var logToEdit = m.get(hashParam['maintenanceId']);
-			MAINTENANCELOG.openEditDialog(logToEdit);
-    	});
-		newRow.on("logUpdated", function(e) {
-			MAINTENANCELOG.updateLogRow(newRow, e.log);
-		});
-		newRow.attr("data",log.service);
-		newRow.addClass("log" + log.id);
-
-		$("table tbody").prepend(newRow);
-		newRow.show();
-	},
-	updateLogRow: function(row, log) {
-		row.find(".date").html(DATEUTILS.format(new Date(log.serviceDate)));
-		row.find(".mileage").html(log.mileage);
-		row.find(".service").html(log.service);
-		row.find(".cost").html(log.cost);
-		row.find(".notes").html(log.notes);
-		row.attr("data","service");
-	},
-	openEditDialog: function(log) {
-	    $( "#editLogDialog" ).dialog( "open" );
-	    $('#editFriendlyDate').val(DATEUTILS.format(new Date(log.serviceDate)));
-		$("#editId").val(log.id);
-		$("#editMileage").val(log.mileage);
-		$("#editService").val(log.service);
-		$("#editNote").val(log.note);
-		$("#editCost").val(log.cost);
-	},
-	validate: function(){
-		var serviceDate = $("#gridFriendlyDate").val(),
-			isValidForm = true;
-
-		if (serviceDate.length===0){
-			serviceDate = $("#gridFriendlyDate").attr("placeholder");
-			$("#gridFriendlyDate").val(serviceDate);
-		} else {
-			if (!DATEUTILS.isValid(serviceDate)) {
-			 	$("#gridFriendlyDate").addClass("error");
-			 	isValidForm = false;
-			 }
-		}
+	//place cursur in edit field
+	$("#gridMileage").focus();
 
 
-		var mileage = $("#gridMileage").val();
-		if (!$.isNumeric(mileage)) {
-			 	$("#gridMileage").addClass("error");
-			 	isValidForm = false;
-		} else {
-	 		$("#gridMileage").removeClass("error");
-	 	}
+	var log = new maintenanceApp.MaintenanceLog();
+	log.carId = "{{car.id}}";
 
-		var service = $("#gridService").val();
-		if (service.length===0){
-		 	$("#gridService").addClass("error");
-		 	isValidForm = false;
-		} else {
-		 	$("#gridService").removeClass("error");
-		}
+	//initailize UI elements
+	var logView = new maintenanceApp.MaintenanceLogView({
+		collection: log,
+		id: "logGrid"
+	});
 
-		return isValidForm;
-	}
-}
+	var addLogView = new maintenanceApp.AddLogView({
+		collection: log
+	});
 
-var DATEUTILS = {
-	regex: /^(January|February|March|April|May|June|July|August|September|November|December)\s\d{1,2},\s20\d\d$/i,
-	format: function(d){
-		return this.months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
-	},
-	sql: function(d){
-		return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
-	},
-	isValid: function(s) {
-		return !(s.match(DATEUTILS.regex) === null);
-	},
-	months: ["January","February","March","April","May","June","July","August","September","October", "November","December"]
-}
+	log.fetch({reset: true});
 
-var FILTERS = {
-	FILTER_STARTWITH: function(row, criteria){
-		return row.startsWith(criteria);
-	},
-
- 	FILTER_CONTAINS: function(row, criteria){
-		return row.contains(criteria);
-	}
-};
-
-var TABLEFILTER = {
-	setup: function(selector, filter) {
-		$(selector).on('keypress', function(e){
-			TABLEFILTER.filter($(this).data("inlineauto"), filter);
-		});
-	},
-	filter: function (criteria, filter) {
-		console.log("Filter: " + criteria);
-			$("table tbody tr").each(function( index ) {
-				if (filter($(this).attr("data"), criteria)) 
-					$(this).show();
-				else 
-					$(this).hide();
-			});
-	},
-	clear: function(){
-		$("table tbody tr").show();
-	}
-
-};
-
-var AUOTCOMPLETE = {
-	setup: function(selector, filter, allValues) {
-		$(selector).on('focus', function(e){
-		    $(this).data("inlineauto",$(this).val())
-		});
-		$(selector).on('keypress', function(e){
-			if (AUOTCOMPLETE.doComplete($(this), e.which, allValues, filter))
-	        	e.preventDefault();
-		});
-		$(selector).on('keydown', function(e){
-			if (e.which === 8){
-		        if ($(this).data("inlineauto")){
-		        	var curVal = $(this).data("inlineauto");
-		        	var newVal = curVal.substring(0,curVal.length-1);
-			        $(this).val(newVal);
-				    $(this).data("inlineauto",newVal);
-				    e.preventDefault();
-				}
-			}
-		});
-	},
-	doComplete: function (inputField, keyChar, allValues, filter){
-			var key = String.fromCharCode(keyChar),
-	        	criteria;
-
-			if (keyChar === 13){
-				return false;
-			}
-
-	        //append current key to autocomplete
-	        if (inputField.data("inlineauto")){
-		        criteria = inputField.data("inlineauto") + key;
-		    } else {
-		    	criteria = key;
-		    }
-
-	        //save current autocomplete value
-		    inputField.data("inlineauto",criteria);
-
-	        console.log("Autocomplete: " + criteria);
-
-	        //find matching values
-	        var matched = jQuery.grep(allValues, function( n, i ){
-	        	return filter(n,criteria);
-	        });
-
-	        //if no match set value to current autocomplete
-	        if (matched.length==0) {
-	        	inputField.val(criteria);
-	    	} else {
-	    		//display the match but keep cursor position
-	        	inputField.val(matched[0]);
-	        }
-
-		    return true;
-	},
-	clear: function(inputField){
-		inputField.val("");
-		inputField.removeData("inlineauto");
-	}
-
-};
-
-var UTILS = {
-	hashParam: function(link){
-		var hash = link.substring(link.indexOf('#')+1);
-    	var params = hash.split('&');
-    	var result = {};
-    	for(var i = 0; i < params.length; i++){
-       		var propval = params[i].split('=');
-       		result[propval[0]] = propval[1];
-       	}
-
-       	return result;
-	}
-}
+	AutoComplete.create('#gridService', SERVICE_AUTOCOMPLETE_PLUGIN, log);
+	AutoComplete.create('#gridFriendlyDate', DATE_AUTOCOMPELTE_PLUGIN, DATEUTILS.months);
+	TableFilter.create('#gridService','table tbody tr');
 
 
-String.prototype.contains = function(it) { return this.indexOf(it) != -1; };
-</script>
-	<script src="scripts/maintenanceLog.js"></script>
-<script type="text/javascript">
+});
 
 </script>
+<script src="scripts/maintenanceLog.js"></script>
 </body>
 </html>

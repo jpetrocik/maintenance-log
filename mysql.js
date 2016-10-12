@@ -87,7 +87,7 @@ module.exports = {
         return;     
       });
 
-      connection.query("select * from maintenance_log where car_id='" + carId + "' order by mileage asc, serviceDate asc",function(err,rows){
+      connection.query("select * from maintenance_log where carId='" + carId + "' order by mileage asc, serviceDate asc",function(err,rows){
           connection.release();
           callback(err, rows);
       });
@@ -108,7 +108,7 @@ module.exports = {
           return;     
         });
 
-        var post  = {car_id: carId, serviceDate: serviceDate.trim(), mileage: mileage.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() };
+        var post  = {carId: carId, serviceDate: serviceDate, mileage: mileage, service: service.trim(), cost: cost, note:note.trim() };
         connection.query('INSERT INTO maintenance_log SET ?', post, function(err, result) {
           connection.release();
           callback(err, result);
@@ -131,11 +131,11 @@ module.exports = {
           return;     
         });
 
-        var post  = [{mileage: mileage.trim(), serviceDate: serviceDate.trim(), service: service.trim(), cost: cost.trim(), note:note.trim() }, id];
+        var post  = [{mileage: mileage, serviceDate: serviceDate, service: service.trim(), cost: cost, note:note }, id];
         connection.query('UPDATE maintenance_log SET ? WHERE id = ?', post, function(err, result) {
 
           if (regularService) {
-            var serviceLog  = {car_id: carId, millage: mileageInterval.trim(), months: monthsInterval.trim(), service: service.trim()};
+            var serviceLog  = {carId: carId, millage: mileageInterval, months: monthsInterval, service: service};
             connection.query('INSERT INTO service_log SET ?', serviceLog, function(err, result) {
               connection.release();
               callback(err, result);

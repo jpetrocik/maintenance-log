@@ -1,6 +1,7 @@
 var express = require('express'),
 	mysql = require('./mysql.js'),
-	moment = require('moment');
+	moment = require('moment'),
+	bodyParser = require('body-parser');
 
 var app = express();
  
@@ -18,10 +19,12 @@ app.engine('.hbs', exphbs({extname: '.hbs',
     }
 }));
 
+
 app.set('view engine', '.hbs');
 app.set('views', './views');
 
-
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use('/css', express.static('css'));
 app.use('/images', express.static('images'));
@@ -47,27 +50,28 @@ app.get('/logs', function (req, res) {
 	});
 });
 
-app.get('/api/logs', function (req, res) {
-	mysql.loadMaintenanceLogs(req.query.carId, function(err, rows){
+app.get('/api/car/:carId/logs', function (req, res) {
+	mysql.loadMaintenanceLogs(req.params.carId, function(err, rows){
 		res.json(rows);
 	});
 });
 
-app.get('/api/addLog', function (req, res) {
-	mysql.addMaintenanceLog(req.query.carId, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note,
-		function(err, result){
-			res.status(200).json({ "id": result.insertId }).end()
-	});
-});
-
-app.get('/api/editLog', function (req, res) {
+app.get('/api/car/:carId/logs/:id', function (req, res) {
 	mysql.getMaintenanceLog(req.query.maintenanceId, function(err, rows){
 		res.json(rows);
 	});
 });
 
-app.get('/api/updateLog', function (req, res) {
-	mysql.updateMaintenanceLog(req.query.carId, req.query.id, req.query.serviceDate, req.query.mileage, req.query.service, req.query.cost, req.query.note, req.query.regularService, req.query.monthsInterval, req.query.mileageInterval,
+app.post('/api/car/:carId/logs/', function (req, res) {
+	mysql.addMaintenanceLog(req.body.carId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note,
+		function(err, result){
+			res.status(200).json({ "id": result.insertId }).end()
+	});
+});
+
+app.put('/api/car/:carId/logs/:id', function (req, res) {
+	console.log(req.body);
+	mysql.updateMaintenanceLog(req.query.carId, req.body.id, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note, req.query.regularService, req.query.monthsInterval, req.query.mileageInterval,
 		function(err, result){
 			res.status(200).json({ "id": req.query.id }).end()
 	});
@@ -75,5 +79,5 @@ app.get('/api/updateLog', function (req, res) {
 
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+  console.log('MaintenanceLog listening on port 3000!');
 });
