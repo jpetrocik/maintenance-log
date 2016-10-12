@@ -9,12 +9,27 @@ body {
 }
 
 #leftMenu {
-	float:left;
+	position: absolute;
 	padding: 3px 3px 0px;
 	background-color: #2770a4;
+	float:left;
+	height: 100%;
 }
 
+#leftMenu .back {
+	float:left;
+}
+
+#leftMenu .back img {
+	width:8px;
+	height:30px;
+}
+
+#carsList {
+	float:left;
+}
 #mainBody {
+	margin-left: 15px;
 	float:left;
 	padding: 0 15px 15px 0;
 	/* background-color: #303030; */
@@ -39,10 +54,6 @@ body {
 	display:inline;
 	background-color:#2770a4;
 	margin-right:5px;
-}
-
-.header .back img {
-	width:15px;
 }
 
 .header .title {

@@ -12,17 +12,19 @@
 </head>
 <body id="serviceLogs">
 
-<div id="leftMenu" style="display:none">
-{{#each cars}}
-<div class="car" id="carId{{id}}">
-	<a href="logs?carId={{id}}">{{name}}</a>
-</div>
-{{/each}}
+<div id="leftMenu">
+	<div id="carsList" style="display:none">
+		{{#each cars}}
+		<div class="car" id="carId{{id}}">
+			<a href="logs?carId={{id}}">{{name}}</a>
+		</div>
+		{{/each}}
+	</div>
+	<div class="back"><img src="/images/arrow-back.png"/ id="leftMenuButton"></div>
 </div>
 
 <div id="mainBody">
 <div class="header" style="float:left">
-<div class="back"><img src="/images/arrow-back.png"/ id="leftMenuButton"></div>
 <div class="title">{{car.name}}</div>
 </div>
 <form id="maintenance" action="#">
@@ -41,8 +43,7 @@
 <td class="mileage"><input id="gridMileage" name="mileage" type="text"/></td>
 <td class="service"><input id="gridService" name="service" type="text"/></td>
 <td class="cost"><input id="gridCost" name="cost" type="text"/></td>
-<td class="notes"><input id="gridNote" name="note" type="text"/><input type="submit" style="display:none"/></td>
-<td></td>
+<td class="notes" colspan="2"><input id="gridNote" name="note" type="text"/><input type="submit" style="display:none"/></td>
 </tr>
 </thead>
 <tbody id="logGrid" class="logAddEvent">
@@ -92,7 +93,7 @@ $( document ).ready(function() {
 
 	//click action to hide/show car list
 	$('#leftMenuButton').on('click', function(e){
-		$('#leftMenu').toggle();
+		$('#carsList').toggle();
 	});
 
 	//toggle action to show regular service form
