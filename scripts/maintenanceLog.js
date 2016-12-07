@@ -103,7 +103,7 @@ var maintenanceApp = {};
 		render: function() {
 			$("table tbody").empty();
 			_.each(this.collection.models, function(d) {
-				$("table tbody").prepend(new maintenanceApp.LogItemView({model: d}));
+				new maintenanceApp.LogItemView({model: d});
 			}, this);
 		}
 
@@ -134,8 +134,8 @@ var maintenanceApp = {};
 				that.collection.add(log);
 				log.save();
 
-				TABLEFILTER.clear();
-				AUOTCOMPLETE.clear($("#gridService"));
+				TableFilter.clear();
+				AutoComplete.clear($("#gridService"));
 				$("#gridCost").val("");
 				$("#gridService").val("");
 				$("#gridService").focus();
