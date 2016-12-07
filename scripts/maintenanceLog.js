@@ -118,6 +118,8 @@ var maintenanceApp = {};
 		render: function() {
 			var that = this;
 			$("#maintenance").submit(function(e) {
+				e.preventDefault();
+				
 				var gridFriendlyDate = $("#gridFriendlyDate").val();
 				if (gridFriendlyDate.length===0)
 					gridFriendlyDate = $("#gridFriendlyDate").attr('placeholder');
@@ -139,8 +141,6 @@ var maintenanceApp = {};
 				$("#gridCost").val("");
 				$("#gridService").val("");
 				$("#gridService").focus();
-
-				e.preventDefault();
 			});
 		}	
 	});
@@ -219,11 +219,11 @@ var AutoComplete = {
 		$(selector).on('keydown', function(e){
 			if (e.which === 8){
 		        if ($(this).data("inlineauto")){
+				    e.preventDefault();
 		        	var curVal = $(this).data("inlineauto");
 		        	var newVal = curVal.substring(0,curVal.length-1);
 			        $(this).val(newVal);
 				    $(this).data("inlineauto",newVal);
-				    e.preventDefault();
 				}
 			}
 		});
