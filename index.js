@@ -70,7 +70,6 @@ app.post('/api/car/:carId/logs/', function (req, res) {
 });
 
 app.put('/api/car/:carId/logs/:id', function (req, res) {
-	console.log(req.body);
 	mysql.updateMaintenanceLog(req.query.carId, req.body.id, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note, req.query.regularService, req.query.monthsInterval, req.query.mileageInterval,
 		function(err, result){
 			res.status(200).json({ "id": req.query.id }).end()
