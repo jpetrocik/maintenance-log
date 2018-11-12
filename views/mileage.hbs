@@ -5,13 +5,13 @@
 	<title>Mileage Logs</title>
 	<style>
 	.car {
-    background-color: #2770a4;
-    margin: 5px;
-    border-radius: 5px;
-    color: #fff;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    text-align: center;
+	    background-color: #6096bd;
+	    margin: 5px;
+	    border-radius: 5px;
+	    color: #fff;
+	    padding-top: 5px;
+	    padding-bottom: 5px;
+	    text-align: center;
 	}
 
 	.car a {
@@ -23,6 +23,21 @@
 		font-size: 15px;
 		margin-top:15px;
 	}
+
+	input[type=submit] {
+	    background-color: #0663a5;
+	    margin: 5px;
+	    border-radius: 5px;
+	    color: #fff;
+	    padding-top: 5px;
+	    padding-bottom: 5px;
+	    text-align: center;
+	}
+
+	.selected { 
+	    background-color: #0663a5;
+	}
+
 
 	#mileageForm {
 		margin-top:25px;
@@ -51,7 +66,11 @@
 $( document ).ready(function() {
 	var carId = null;
 	$("#carList .car").on("click", function(e,f) {
-		carId = $(e.currentTarget).attr("carId");
+		$("#carList .car").removeClass("selected");
+		var selectedCar = $(e.currentTarget);
+		selectedCar.addClass("selected");
+		carId = selectedCar.attr("carId");
+
 	});
 
 	$("#mileageForm form").on("submit", function(e) {
