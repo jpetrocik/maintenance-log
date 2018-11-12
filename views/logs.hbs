@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
 
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 	<title>Service Logs</title>
 </head>
 <body id="serviceLogs">
@@ -24,13 +25,15 @@
 </div>
 
 <div id="mainBody">
-<div class="header" style="float:left">
+<div class="header">
 <div class="title">{{car.name}}</div>
+<div id="logTabs"><span>Service Log</span><span>Mileage Log</span></div>
 </div>
 <form id="maintenance" action="#">
 	<input name="carId" type="hidden" value="{{car.id}}"/>
 <table>
 <thead>
+	<!--
 <tr>
 <th class="date">Date</th>
 <th class="mileage">Mileage</th>
@@ -39,11 +42,13 @@
 <th class="notes">Notes</td>
 <th></th>
 <tr>
+-->
 <td class="date"><input id="gridFriendlyDate" type="text"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
-<td class="mileage"><input id="gridMileage" name="mileage" type="text"/></td>
-<td class="service"><input id="gridService" name="service" type="text"/></td>
-<td class="cost"><input id="gridCost" name="cost" type="text"/></td>
-<td class="notes" colspan="2"><input id="gridNote" name="note" type="text"/><input type="submit" style="display:none"/></td>
+<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="mileage"/></td>
+<td class="service"><input id="gridService" name="service" type="text" placeholder="service"/></td>
+<td class="cost"><input id="gridCost" name="cost" type="text" placeholder="cost"/></td>
+<td class="notes"><input id="gridNote" name="note" type="text" placeholder="notes"/><input type="submit" style="display:none"/></td>
+<td></td>
 </tr>
 </thead>
 <tbody id="logGrid" class="logAddEvent">
@@ -53,7 +58,7 @@
 <td class="service"></td>
 <td class="cost"></td>
 <td class="notes"></td>
-<td class="actions"><a href="#maintenanceId={{id}}">E</a></td>
+<td class="actions"><a class="edit" href="#maintenanceId={{id}}"><i class="far fa-edit"></i></a><a class="delete" href="#maintenanceId={{id}}"><i class="far fa-trash-alt"></i></a></td>
 </tr>
 
 </tbody>
@@ -69,13 +74,21 @@
 		<label>Mileage:</label><input id="editMileage" name="mileage" type="text"/><br/>
 		<label>Service:</label><input id="editService" name="service" type="text"/><br/>
 		<label>Cost:</label><input id="editCost" name="cost" type="text"/><br/>
-		<label>Note:</label><input id="editNote" name="note" type="text"/>
-		<input id="editRegularService" name="regularService" type="checkbox"/><label id="editRegularServiceLabel" >Regular Service:</label>
+		<label>Note:</label><textarea id="editNote" name="note"></textarea>
+		<input id="editRegularService" name="regularService" type="checkbox" value="yes"/><label id="editRegularServiceLabel" >Regular Service:</label>
 		<div id="editServiceForm" style="display:none">
 			<label>Mileage Interval:</label><input id="editMileageInterval" name="mileageInterval" type="text"/>
 			<label>Months Interval:</label><input id="editMonthsInterval" name="monthsInterval" type="text"/>
 		</div>
 	</form>
+</div>
+
+<div id="deleteLogDialog">
+	<span>Are you sure you want to delete the following service log?</span>
+	<div id="deleteLogConfirmation">
+		    <div>Service: <span id="deleteService"></span></div>
+		    <div>Mileage: <span id="deleteMileage"></span></div>
+	</div>
 </div>
 
 <script>
@@ -90,6 +103,17 @@ $( document ).ready(function() {
         }
 
     });
+
+	//initialize editDialog
+	$( "#deleteLogDialog" ).dialog({
+        autoOpen: false, title: "Edit", modal: true,
+        buttons: {
+            Cancel: function() {},
+            OK: function() {}
+        }
+
+    });
+
 
 	//click action to hide/show car list
 	$('#leftMenuButton').on('click', function(e){

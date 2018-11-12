@@ -8,7 +8,7 @@ var maintenanceApp = {};
 		carId: null,
 		model: maintenanceApp.LogItem,
 		url: function() {
-			return "/api/car/" + this.carId + "/logs/";
+			return "/api/car/" + this.carId + "/service/";
 		}
 	});
 
@@ -32,7 +32,10 @@ var maintenanceApp = {};
 							mileage: $("#editMileage").val(),
 							service: $("#editService").val(),
 							note: $("#editNote").val(),
-							cost: $("#editCost").val()
+							cost: $("#editCost").val(),
+							regularService: $("#editRegularService").val(),
+							mileageInterval: $("#editMileageInterval").val(),
+							monthsInterval: $("#editMonthsInterval").val(),
 						});
 						that.model.save();
 
@@ -59,6 +62,37 @@ var maintenanceApp = {};
 		}
 	});
 
+	maintenanceApp.DeleteDialog = Backbone.View.extend({
+		initialize: function() {
+			_.bindAll(this, 'render');
+			this.render();
+		},
+
+		render: function() {
+			var that = this;
+			$( "#deleteLogDialog" ).dialog( "option", "buttons", 
+				{
+					Cancel: function () {
+						$(this).dialog("close");
+					},
+
+					OK: function () {
+						$(this).dialog("close");
+						that.model.destroy();
+
+					}
+				}
+			);
+  
+  			var log = this.model.toJSON();
+			$("#deleteMileage").html(log.mileage);
+			$("#deleteService").html(log.service);
+
+		    $( "#deleteLogDialog" ).dialog( "open" );
+
+		}
+	});
+
 	maintenanceApp.LogItemView = Backbone.View.extend({
 		template: $("#logGrid").children().clone(),
 		parent: $("table tbody"),
@@ -71,6 +105,7 @@ var maintenanceApp = {};
 			this.parent.prepend(this.$el);
 
 			this.listenTo(this.model, "change", this.render);
+			this.listenTo(this.model, "destroy", this.destroy);
 			this.render();
 		},
 
@@ -78,16 +113,25 @@ var maintenanceApp = {};
 			var that = this;
 			var log = this.model.toJSON();
 			this.$el.find(".date").html(DATEUTILS.format(new Date(log.serviceDate)));
-			this.$el.find(".mileage").html(log.mileage);
+			this.$el.find(".mileage").html(parseInt(log.mileage).toLocaleString());
 			this.$el.find(".service").html(log.service);
-			this.$el.find(".cost").html(log.cost);
+			this.$el.find(".cost").html("$" + parseFloat(log.cost).toFixed(2).toLocaleString());
 			this.$el.find(".notes").html(log.note);
-			this.$el.find(".actions A").attr("href", "#maintenanceId=" + log.id);
-			this.$el.find(".actions A").on("click", function(e) {
+			this.$el.find(".actions .edit").attr("href", "#maintenanceId=" + log.id);
+			this.$el.find(".actions .edit").on("click", function(e) {
 				new maintenanceApp.EditDialog({model: that.model});
 			});
+			this.$el.find(".actions .delete").attr("href", "#maintenanceId=" + log.id);
+			this.$el.find(".actions .delete").on("click", function(e) {
+				new maintenanceApp.DeleteDialog({model: that.model});
+			});
 			this.$el.attr("data",log.service);
+		},
+
+		destroy: function() {
+			this.$el.hide();
 		}
+
 	});
 
 	maintenanceApp.MaintenanceLogView = Backbone.View.extend({
@@ -127,7 +171,7 @@ var maintenanceApp = {};
 				var log = new maintenanceApp.LogItem({
 					carId: that.collection.carId,
 					serviceDate: DATEUTILS.sql(new Date(gridFriendlyDate)),
-					mileage: $("#gridMileage").val(),
+					mileage: $("#gridMileage").val().replace(/,/g, ''),
 					service: $("#gridService").val(),
 					cost: $("#gridCost").val(),
 					note:  $("#gridNote").val()

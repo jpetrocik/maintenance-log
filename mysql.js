@@ -10,29 +10,14 @@ var pool      =    mysql.createPool({
     insecureAuth: true
 });
 
+var SERVICE_LOG_TABLE = "maintenance_log";
+var SCHEDULE_LOG_TABLE = "service_log";
+var MILEAGE_LOG_TABLE = "mileage_log";
+var CAR_TABLE = "car";
+
+
 module.exports = {
-  loadCar: function(carId, callback){
-    pool.getConnection(function(err,connection){
-      if (err) {
-        connection.release();
-        callback(err);
-        return;
-      }   
-
-      connection.on('error', function(err) {      
-        callback(err);
-        return;     
-      });
-
-      connection.query("select * from car where id = " + carId + " order by name desc",function(err,rows){
-        connection.release();
-        callback(err, rows);
-      });
-
-    });
-
-  },
-  loadCars: function(callback) {
+  allCars: function(callback) {
     
     pool.getConnection(function(err,connection){
       if (err) {
@@ -46,34 +31,56 @@ module.exports = {
         return;     
       });
 
-      connection.query("select * from car order by name desc",function(err,rows){
+      connection.query("select * from " + CAR_TABLE + " order by name desc",function(err,rows){
         connection.release();
         callback(err, rows);
       });
 
     });
   },
-  getMaintenanceLog:  function(id, callback) {
+
+  car: function(carId, callback) {
+    
     pool.getConnection(function(err,connection){
-      if (err) {
-        connection.release();
-        callback(err);
-        return;
-      }   
+		if (err) {
+			connection.release();
+			callback(err);
+		}   
 
-      connection.on('error', function(err) {      
-        callback(err);
-        return;     
-      });
+		connection.on('error', function(err) {      
+			callback(err);
+		});
 
-      connection.query("select * from maintenance_log where id=" + id,function(err,rows){
-          connection.release();
-          callback(err, rows);
-      });
+		var sqlParams = [carId];
+		connection.query("select * from " + CAR_TABLE + " where id=?", sqlParams, function(err,rows){
+			connection.release();
+			callback(err, rows);
+		});
 
     });
   },
-  loadMaintenanceLogs: function(carId, callback) {
+
+  serviceLog:  function(carId, callback) {
+    pool.getConnection(function(err,connection){
+		if (err) {
+			connection.release();
+			callback(err);
+		}   
+
+		connection.on('error', function(err) {      
+			callback(err);
+		});
+
+		var sqlParams = [carId];
+		connection.query("select * from " + SERVICE_LOG_TABLE + " where id=?", sqlParams, function(err,rows){
+			connection.release();
+			callback(err, rows);
+		});
+
+    });
+  },
+
+  allServiceLogs: function(carId, callback) {
     
     pool.getConnection(function(err,connection){
       if (err) {
@@ -87,14 +94,16 @@ module.exports = {
         return;     
       });
 
-      connection.query("select * from maintenance_log where carId='" + carId + "' order by mileage asc, serviceDate asc",function(err,rows){
+		var sqlParams = [carId];
+      connection.query("select * from " + SERVICE_LOG_TABLE + " where carId=? order by mileage asc, serviceDate asc", sqlParams, function(err,rows){
           connection.release();
           callback(err, rows);
       });
 
     });
   },
-  addMaintenanceLog: function(carId, serviceDate, mileage, service, cost, note, callback) {
+
+  addServiceLog: function(carId, serviceDate, mileage, service, cost, note, callback) {
     
     pool.getConnection(function(err,connection){
         if (err) {
@@ -108,8 +117,8 @@ module.exports = {
           return;     
         });
 
-        var post  = {carId: carId, serviceDate: serviceDate, mileage: mileage, service: service.trim(), cost: cost, note:note.trim() };
-        connection.query('INSERT INTO maintenance_log SET ?', post, function(err, result) {
+        var sqlParams  = {carId: carId, serviceDate: serviceDate, mileage: mileage, service: service.trim(), cost: cost, note:note.trim() };
+        connection.query("INSERT INTO " + SERVICE_LOG_TABLE + " SET ?", sqlParams, function(err, result) {
           connection.release();
           callback(err, result);
           return;
@@ -117,37 +126,96 @@ module.exports = {
 
     });
   },
-  updateMaintenanceLog: function(carId, id, serviceDate, mileage, service, cost, note, regularService, monthsInterval, mileageInterval, callback) {
+
+  updateServiceLog: function(carId, serviceId, serviceDate, mileage, service, cost, note, regularService, monthsInterval, mileageInterval, callback) {
     
     pool.getConnection(function(err,connection){
         if (err) {
           connection.release();
           callback(err);
-          return;
         }   
 
         connection.on('error', function(err) {  
           callback;
-          return;     
         });
 
-        var post  = [{mileage: mileage, serviceDate: serviceDate, service: service.trim(), cost: cost, note:note }, id];
-        connection.query('UPDATE maintenance_log SET ? WHERE id = ?', post, function(err, result) {
+        var sqlParams  = [{mileage: mileage, serviceDate: serviceDate, service: service.trim(), cost: cost, note:note }, serviceId];
+        connection.query("UPDATE " + SERVICE_LOG_TABLE + " SET ? WHERE id = ?", sqlParams, function(err, result) {
+            connection.release();
 
-          if (regularService) {
-            var serviceLog  = {carId: carId, millage: mileageInterval, months: monthsInterval, service: service};
-            connection.query('INSERT INTO service_log SET ?', serviceLog, function(err, result) {
-              connection.release();
-              callback(err, result);
-              return;
-            });
-          } else {
-              connection.release();
-              callback(err, result);
-          }
+            //add a scheduled service
+	       	if (regularService === "yes") {
+    	   		module.exports.addScheduledService(carId, mileageInterval, monthsInterval, service, callback);
+    	   	} else {
+           		callback(err, result);
+           	}
+
         });
 
     });
-  }  
+  } ,
+
+  deleteServiceLog: function(carId, serviceId, callback) {
+    
+    pool.getConnection(function(err,connection){
+        if (err) {
+          connection.release();
+          callback(err);
+        }   
+
+        connection.on('error', function(err) {  
+          callback;
+        });
+
+        var sqlParams = [serviceId];
+        connection.query("DELETE FROM " + SERVICE_LOG_TABLE + " WHERE id = ?", sqlParams, function(err, result) {
+            connection.release();
+       		callback(err, result);
+        });
+
+    });
+  } ,
+
+  addScheduledService: function(carId, mileageInterval, monthsInterval, service, callback) {
+    pool.getConnection(function(err,connection){
+        if (err) {
+          connection.release();
+          callback(err);
+        }   
+
+        connection.on('error', function(err) {  
+          callback;
+        });
+
+	    var scheduleLog  = {carId: carId, mileage: mileageInterval, months: monthsInterval, service: service};
+	    connection.query("INSERT INTO " + SCHEDULE_LOG_TABLE + " SET ?", scheduleLog, function(err, result) {
+	    	connection.release();
+	      	callback(err, result);
+	    });
+	});
+  },
+
+  addMileage: function(carId, mileage, callback) {
+    
+    pool.getConnection(function(err,connection){
+      if (err) {
+        connection.release();
+        callback(err);
+      }   
+
+      connection.on('error', function(err) {      
+        callback(err);
+      });
+
+      var mileageLog = {carId: carId, mileage: mileage};
+
+      connection.query("INSERT INTO mileage_log SET ?", mileageLog, function(err,rows){
+        connection.release();
+        callback(err, rows);
+      });
+
+    });
+  },
+
 
 }

@@ -7,14 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "express": "4.x",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "express-handlebars": "^3.0.0",
     "handlebars-dateformat": "^1.0.1",
     "handlebars-intl": "^1.1.2",
-    "moment": "^2.11.2",
-    "mysql": "^2.10",
-    "node-mysql": "^0.4.2"
+    "moment": "^2.22.2",
+    "mysql": "^2.16.0"
   },
   "author": "John Petrocik",
   "license": "ISC"
