@@ -8,7 +8,7 @@ var maintenanceApp = {};
 		carId: null,
 		model: maintenanceApp.LogItem,
 		url: function() {
-			return "/api/car/" + this.carId + "/service/";
+			return "api/car/" + this.carId + "/service/";
 		}
 	});
 

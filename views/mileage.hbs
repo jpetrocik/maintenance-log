@@ -95,7 +95,7 @@ $( document ).ready(function() {
 		var mileage = $("#mileage").val();
 		console.log(carId + " " + mileage);
 		$.ajax({
-			url: "/api/car/" + carId + "/mileage/" + mileage,
+			url: "api/car/" + carId + "/mileage/" + mileage,
 			type: "PUT",
 			success: function(result) {
 				alert("Successful");
