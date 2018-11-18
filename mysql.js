@@ -31,7 +31,7 @@ module.exports = {
         return;     
       });
 
-      connection.query("select * from " + CAR_TABLE + " order by name desc",function(err,rows){
+      connection.query("select * from " + CAR_TABLE + " where status='ACTIVE' order by year, make, model, id, desc",function(err,rows){
         connection.release();
         callback(err, rows);
       });
