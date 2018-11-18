@@ -75,14 +75,21 @@
 	<a anchor="mileage"></a>
 	<form method="POST" url="/api/car/:carId/mileage/:mileage">
 	<input id="carId" type="hidden"/>
-	<input id="mileage" type="number" placeholder="Select Car" />
+	<input id="mileage" type="number"/>
 	<input class="carButton" type="submit" value="Submit"/>
 	</form>
 </div>
 <script>
 
-$( document ).ready(function() {
+function resetPage() {
+	$("#carList .car").removeClass("selected");
 	$("#mileage").prop("disabled",true);
+	$("#mileage").val("");
+	$("#mileage").prop("placeholder","Select Car");
+}
+
+$( document ).ready(function() {
+	resetPage();
 
 	var carId = null;
 	$("#carList .car").on("click", function(e,f) {
@@ -103,6 +110,7 @@ $( document ).ready(function() {
 			url: "api/car/" + carId + "/mileage/" + mileage,
 			type: "PUT",
 			success: function(result) {
+				resetPage();
 				alert("Successful");
 			}
 		});
