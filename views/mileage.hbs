@@ -24,7 +24,7 @@
 	<style>
 
 	.carButton {
-	    background-color: #6096bd;
+	    background-color: #afafaf;
 	    margin: 5px;
 	    border-radius: 5px;
 	    color: #fff;
@@ -75,19 +75,23 @@
 	<a anchor="mileage"></a>
 	<form method="POST" url="/api/car/:carId/mileage/:mileage">
 	<input id="carId" type="hidden"/>
-	<input id="mileage" type="number" placeholder="mileage"/>
+	<input id="mileage" type="number" placeholder="Select Car" />
 	<input class="carButton" type="submit" value="Submit"/>
 	</form>
 </div>
 <script>
 
 $( document ).ready(function() {
+	$("#mileage").prop("disabled",true);
+
 	var carId = null;
 	$("#carList .car").on("click", function(e,f) {
 		$("#carList .car").removeClass("selected");
 		var selectedCar = $(e.currentTarget);
 		selectedCar.addClass("selected");
 		carId = selectedCar.attr("carId");
+		$("#mileage").prop("disabled",false);
+		$("#mileage").prop("placeholder","Enter Mileage");
 
 	});
 
