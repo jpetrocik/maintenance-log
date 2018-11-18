@@ -22,7 +22,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<title>Mileage Logs</title>
 	<style>
-	.car {
+
+	.carButton {
 	    background-color: #6096bd;
 	    margin: 5px;
 	    border-radius: 5px;
@@ -30,6 +31,10 @@
 	    padding-top: 5px;
 	    padding-bottom: 5px;
 	    text-align: center;
+	    font-size:16px;
+	}
+
+	.car {
 	}
 
 	.car a {
@@ -38,18 +43,13 @@
 
 	input {
 		width: 100%;
-		font-size: 15px;
-		margin-top:15px;
+		font-size: 16px;
+		margin: 5px;
+		border-radius: 5px;
 	}
 
 	input[type=submit] {
 	    background-color: #0663a5;
-	    margin: 5px;
-	    border-radius: 5px;
-	    color: #fff;
-	    padding-top: 5px;
-	    padding-bottom: 5px;
-	    text-align: center;
 	}
 
 	.selected { 
@@ -67,7 +67,7 @@
 
 <div id="carList">
 	{{#each cars}}
-	<div class="car" carId="{{id}}"><a href="#mileage">{{name}}</a></div>
+	<div class="car carButton" carId="{{id}}"><a href="#mileage">{{name}}</a></div>
 	{{/each}}
 </div>
 
@@ -76,7 +76,7 @@
 	<form method="POST" url="/api/car/:carId/mileage/:mileage">
 	<input id="carId" type="hidden"/>
 	<input id="mileage" type="number" placeholder="mileage"/>
-	<input type="submit" value="Submit"/>
+	<input class="carButton" type="submit" value="Submit"/>
 	</form>
 </div>
 <script>
