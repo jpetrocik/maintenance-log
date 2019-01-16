@@ -31,46 +31,53 @@
 </head>
 <body id="serviceLogs">
 
-<div id="leftMenu">
-	<div id="carsList" style="display:none">
+<div id="leftMenu" style="display:none">
+	<div id="carsList">
 		{{#each cars}}
 		<div class="car" id="carId{{id}}">
 			<a href="logs?carId={{id}}">{{name}}</a>
 		</div>
 		{{/each}}
 	</div>
-	<div class="back"><img src="images/arrow-back.png"/ id="leftMenuButton"></div>
 </div>
 
 <div id="mainBody">
 <div class="header">
-<div class="title">{{car.name}}</div>
-<div id="logTabs"><span>Service Log</span><span>Mileage Log</span></div>
+<div id="carsListsBack"><img src="images/arrow-back.png"/ id="leftMenuButton"></div>
+<div id="service_due_alert" style="display:none"><i class="fas fa-exclamation-triangle"></i>Service Due!</div>
+<div id="carDetails">
+<div class="title">{{car.name}}</div>  
+<div id="current_mileage">Current mileage: {{car.mileage}} <span id="mileage_reported_on">({{car.mileage_reported_days}} days ago)</span></div>
+</div>
 </div>
 <form id="maintenance" action="#">
-	<input name="carId" type="hidden" value="{{car.id}}"/>
-<table>
+<input name="carId" type="hidden" value="{{car.id}}"/>
+<table id="maintenanceGrid">
 <thead>
-	<!--
-<tr>
-<th class="date">Date</th>
-<th class="mileage">Mileage</th>
-<th class="service">Service</th>
-<th class="cost">Cost</th>
-<th class="notes">Notes</td>
-<th></th>
-<tr>
--->
 <td class="date"><input id="gridFriendlyDate" type="text"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
-<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="mileage"/></td>
+<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="{{car.mileage}}"/></td>
 <td class="service"><input id="gridService" name="service" type="text" placeholder="service"/></td>
 <td class="cost"><input id="gridCost" name="cost" type="text" placeholder="cost"/></td>
 <td class="notes"><input id="gridNote" name="note" type="text" placeholder="notes"/><input type="submit" style="display:none"/></td>
 <td></td>
 </tr>
 </thead>
-<tbody id="logGrid" class="logAddEvent">
-<tr class="logUpdateEvent" style="display:none">
+<tbody id="scheduledMaintenanceGrid">
+<tr style="display:none">
+<td class="date"></td>
+<td class="mileage"></td>
+<td class="service"></td>
+<td class="cost"><input type="text" placeholder="cost"/></td>
+<td class="notes"><input type="text" placeholder="notes"/></td>
+<td class="actions">
+	<a class="completed" href="#scheduleId={{id}}"><i class="fas fa-clipboard-check"></i></a>
+	<!--a class="deleteScheduledService" href="#scheduleId={{id}}"><i class="far fa-trash-alt"></i></a-->
+</td>
+</tr>
+
+</tbody>
+<tbody id="serviceGrid">
+<tr style="display:none">
 <td class="date"></td>
 <td class="mileage"></td>
 <td class="service"></td>
@@ -134,8 +141,8 @@ $( document ).ready(function() {
 
 
 	//click action to hide/show car list
-	$('#leftMenuButton').on('click', function(e){
-		$('#carsList').toggle();
+	$('#carsListsBack').on('click', function(e){
+		$('#leftMenu').toggle();
 	});
 
 	//toggle action to show regular service form
@@ -151,24 +158,42 @@ $( document ).ready(function() {
 	$("#gridMileage").focus();
 
 
-	var log = new maintenanceApp.MaintenanceLog();
-	log.carId = "{{car.id}}";
+	//initailizes the maintenance log collection model
+	var serviceLog = new maintenanceApp.ServiceLog();
+	serviceLog.carId = "{{car.id}}";
 
-	//initailize UI elements
-	var logView = new maintenanceApp.MaintenanceLogView({
-		collection: log,
-		id: "logGrid"
+	//initailizes maintenance log table view
+	var logView = new maintenanceApp.ServiceLogTableView({
+		collection: serviceLog,
+		el: "#serviceGrid"
 	});
 
-	var addLogView = new maintenanceApp.AddLogView({
-		collection: log
+	//initailizes the add maintenance log form
+	var addLogView = new maintenanceApp.ServiceRecordAddView({
+		collection: serviceLog
 	});
 
-	log.fetch({reset: true});
+	//fetches the maintenance log from the server
+	serviceLog.fetch({reset: true});
 
-	AutoComplete.create('#gridService', SERVICE_AUTOCOMPLETE_PLUGIN, log);
+
+	//initailizes the maintenance log collection model
+	var scheduledMaintenance = new maintenanceApp.ScheduledMaintenanceCollection();
+	scheduledMaintenance.carId = "{{car.id}}";
+
+	//initailizes maintenance log table view
+	var scheduledMaintenanceGridView = new maintenanceApp.ScheduledMaintenanceTableView({
+		collection: scheduledMaintenance,
+		el: "#scheduledMaintenanceGrid"
+	});
+	scheduledMaintenanceGridView.setServiceLog(serviceLog);
+
+	//fetches the maintenance log from the server
+	scheduledMaintenance.fetch({reset: true});
+
+	AutoComplete.create('#gridService', SERVICE_AUTOCOMPLETE_PLUGIN, serviceLog);
 	AutoComplete.create('#gridFriendlyDate', DATE_AUTOCOMPELTE_PLUGIN, DATEUTILS.months);
-	TableFilter.create('#gridService','table tbody tr');
+	TableFilter.create('#gridService','#serviceGrid tr');
 
 
 });

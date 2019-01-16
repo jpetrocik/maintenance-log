@@ -5,35 +5,33 @@ body {
 	-webkit-font-smoothing: antialiased;
 	padding: 0;
 	margin: 0;
-	background-color: #666666;
+	background-color: #687177;
 }
 
 #leftMenu {
 	position: absolute;
 	padding: 3px 3px 0px;
-	background-color: #2770a4;
 	float:left;
 	height: 100%;
+	background-color: #2770a4;
 }
 
-#leftMenu .back {
+#carsListsBack {
 	float:left;
+	padding-left: 4px;
 }
 
-#leftMenu .back img {
+#carsListsBack img {
 	width:8px;
-	height:30px;
+	height: 50px;
 }
 
 #carsList {
 	float:left;
 }
-#mainBody {
+
+#carDetails {
 	margin-left: 14px;
-	/* float:left; */
-	/* padding: 0 15px 15px 0; */
-	/* background-color: #303030; */
-	border-left: 1px solid #fff;
 }
 
 .error {
@@ -47,100 +45,114 @@ body {
 
 .header {
 	font-size: 27px;
-	background-color: #2770a4;
 	width: 100%;
-	/* padding: 10px; */
 	border-bottom: 1px solid #fff;
-}
-
-.header .back {
-	display:inline;
-	background-color:#2770a4;
-	margin-right:5px;
+	background-color: #2770a4;
 }
 
 .header .title {
-	/* margin-top: 25px; */
-	/* display:inline; */
-	padding: 25px 0 0 5px;
+	padding: 5px 0 0 5px;
 }
 
-#logTabs {
-    margin-top: 13px;
-}
-
-#logTabs span:first-child {
-	border-left: none;
-}
-
-#logTabs span {
+#current_mileage {
 	font-size: 14px;
-	margin-right: 15px;
-	border: 1px solid #fff;
 	padding: 0 7px 0 5px;
 }
 
+#mileage_reported_on {
+	font-size: 10px;
+}
 
-table {
+#service_due_alert{
+	color: #b32121;
+	font-size: 35px;
+	float: right;
+	font-weight: bold;
+	width: 65%;
+	padding-top: 5px;
+}
+
+#maintenanceGrid {
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 13px;
 }
-table thead {
+
+#maintenanceGrid thead {
 	background-color: #303030;
 }
 
-table thead th {
-	border-top: 1px solid ##2770a4;
-	border-bottom: 1px solid ##2770a4;
-	background-color: #2770a4;
-}
-
-table tbody tr {
-	border-bottom: 1px solid #909090;
-	height: 25px;
-}
-table tbody tr:nth-child(odd) {background: #444444}
-table tbody tr:nth-child(even) {background: #333333}
-
-table thead th,
-table td {
+#maintenanceGrid td {
 	padding-left: 5px;
 	padding-right: 5px;
 }
 
-table .date {
+#maintenanceGrid .date {
 	text-align:left;
 	width: 200px;
+	padding-left: 15px;
 }
-table .mileage {
+
+#maintenanceGrid .mileage input,
+#maintenanceGrid .mileage {
 	width: 80px;
 	text-align:right;
 }
-table .service {
+#maintenanceGrid .service {
 	width: 300px;
 	text-align:left;
 }
-table .cost {
+
+#maintenanceGrid .cost input,
+#maintenanceGrid .cost {
 	width: 80px;
 	text-align:right;
 }
 
-table .notes {
+#maintenanceGrid .notes {
 	width: 300px;
 	text-align:left;
 	padding-right:10px;
 	overflow: hidden;
 }
 
-table .actions {
+#maintenanceGrid .actions {
 	width: 35px;
+	/* padding-right: 15px; */
 }
 
-table .actions a {
+#maintenanceGrid .actions a {
 	color: #ffff;
 	padding-right: 7px;
 }
+
+#maintenanceGrid tr {
+	border-bottom: 1px solid #909090;
+	height: 25px;
+}
+
+#scheduledMaintenanceGrid tr {
+	background: #a96c6c;
+	color: #1f1d1d;
+}
+
+#scheduledMaintenanceGrid .actions a {
+	color: #ffff;
+}
+
+#scheduledMaintenanceGrid input {
+	background-color: #a96c6c;
+	border: 1px solid #863b3b;
+}
+
+#serviceGrid tr:nth-child(odd) {
+	background: #444444;
+}
+
+#serviceGrid tr:nth-child(even) {
+	background: #333333;
+}
+
 
 .pendingSave {
 	color: #bFbFbF;
@@ -157,7 +169,7 @@ table .actions a {
 
 .car a {
 	text-decoration:none;
-	color:#5a5a5a;
+	color:#fff;
 }
 
 #carList .back img {

@@ -20,7 +20,7 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<title>Gas Log</title>
+	<title>Service Log</title>
 	<style>
 
 	.carButton {
@@ -67,19 +67,22 @@
 
 <div id="carList">
 	{{#each cars}}
-	<div class="car carButton" carId="{{id}}"><a href="#mileage">{{name}}</a></div>
+	<div class="car carButton" carId="{{id}}"><a href="#service">{{name}}</a></div>
 	{{/each}}
 </div>
 
-<div id="mileageForm">
-	<a anchor="mileage"></a>
-	<form method="POST" url="/api/car/:carId/mileage/:mileage">
+<div id="serviceForm">
+	<a anchor="service"></a>
+	<form method="POST" id="serviceForm">
 	<input id="carId" type="hidden"/>
-	<input id="mileage" type="number"/>
+	<input id="friendlyServiceDate" type="text"/><input id="serviceDate" name="serviceDate" type="hidden"/>
+	<input id="mileage" name="mileage" type="text" placeholder="mileage"/>
+	<input id="service" name="service" type="text" placeholder="service"/>
+	<input id="cost" name="cost" type="text" placeholder="cost"/>
+	<input id="note" name="note" type="text" placeholder="notes"/>
 	<input class="carButton" type="submit" value="Submit"/>
 	</form>
 </div>
-
 <script>
 
 function resetPage() {
@@ -110,16 +113,9 @@ $( document ).ready(function() {
 		$.ajax({
 			url: "api/car/" + carId + "/mileage/" + mileage,
 			type: "PUT",
-			success: function(results) {
+			success: function(result) {
 				resetPage();
-				if (results.length > 0) {
-					let serviceAlertMsg = "Service Due\n";
-					results.forEach(function(r) {
-						serviceAlertMsg += ("\n" + r.service);
-					});
-					alert(serviceAlertMsg);
-				} else 
-					alert("Thanks You");
+				alert("Successful");
 			}
 		});
 		e.preventDefault();
