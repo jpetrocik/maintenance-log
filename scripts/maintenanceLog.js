@@ -1,5 +1,15 @@
 var maintenanceApp = {};
 
+function formatCost(cost) {
+	let prettyCost = parseFloat(cost);
+
+	if (Number.isNaN(prettyCost)) {
+		return '-';
+	}
+
+	return "$" + prettyCost.toFixed(2).toLocaleString();
+}
+
 (function($){
 
 	maintenanceApp.ServiceRecord = Backbone.Model.extend();
@@ -51,7 +61,7 @@ var maintenanceApp = {};
 			this.$el.find(".date").html(DATEUTILS.format(new Date(serviceRecord.serviceDate)));
 			this.$el.find(".mileage").html(parseInt(serviceRecord.mileage).toLocaleString());
 			this.$el.find(".service").html(serviceRecord.service);
-			this.$el.find(".cost").html("$" + parseFloat(serviceRecord.cost).toFixed(2).toLocaleString());
+			this.$el.find(".cost").html(formatCost(serviceRecord.cost));
 			this.$el.find(".notes").html(serviceRecord.note);
 			this.$el.find(".actions .edit").attr("href", "#maintenanceId=" + serviceRecord.id);
 			this.$el.find(".actions .edit").on("click", function(e) {
@@ -61,7 +71,9 @@ var maintenanceApp = {};
 			this.$el.find(".actions .delete").on("click", function(e) {
 				new maintenanceApp.ServiceRecordDeleteDialog({model: that.model});
 			});
-			//this.$el.attr("data",serviceRecord.service);
+
+			//add service attribute to each row for filtering
+			this.$el.attr("service",serviceRecord.service);
 		},
 
 		destroy: function() {
@@ -281,7 +293,6 @@ var maintenanceApp = {};
 				newServiceRecord.save();
 				that.collection.remove(that.model);
 			});
-			//this.$el.attr("data",log.service);
 
 		},
 
@@ -344,7 +355,7 @@ var TableFilter = {
 	filter: function (criteria, tableEl) {
 		console.log("Filter: " + criteria);
 		$(tableEl).each(function( index ) {
-			if ($(this).attr("data").contains(criteria))
+			if ($(this).attr("service").contains(criteria))
 				$(this).show();
 			else 
 				$(this).hide();

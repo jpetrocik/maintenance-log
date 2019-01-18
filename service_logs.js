@@ -1,39 +1,62 @@
 var mysql     =    require('mysql');
 
-var pool      =    mysql.createPool({
-    connectionLimit : 10, //important
-    host     : '',
-    user     : '',
-    password : '',
-    database : '',
-    debug    :  false,
-    insecureAuth: true
-});
+var config = require("./config.json");
+
+var pool = mysql.createPool(config.database);
 
 var SERVICE_LOG_TABLE = "service_history";
 var SCHEDULE_LOG_TABLE = "scheduled_maintenance";
 var MILEAGE_LOG_TABLE = "mileage_log";
 var CAR_DETAILS_TABLE = "car";
+var CAR_INVITATIONS = "CAR_INVITATIONS";
 
 var executeQuery = function(sqlStatement, sqlParams, callback) {
-	//console.log(sqlStatement);
+    console.log(sqlStatement);
     pool.query(sqlStatement, sqlParams, (error, results, fields) => {
+    	if (error)
+    		console.log(error);
 		callback(error, results);
     });
 };
 
+//cut & pasted, make statically available
+var tokenGenerator = function(tokenSize) {
+	let token = "";
+	for (i=0; i < tokenSize ; i++) {
+		let base = Math.floor(Math.random() * 62)
+	if (base > 51 )
+		token += (base - 52)
+	else if (base > 25 )
+		token += String.fromCharCode(39  + base);
+	else
+		token +=  String.fromCharCode(97 + base);
+	}
+	return token;
+}
+
 var serviceLog = {
-  myGarage: function(callback) {
-    executeQuery("select id, name from " + CAR_DETAILS_TABLE + " where status='ACTIVE' order by year desc, make asc, model asc, id desc", callback);
+  myGarage: function(utoken, callback) {
+    executeQuery("select INVITATION_TOKEN as token, name from " + CAR_DETAILS_TABLE + " c left join " + CAR_INVITATIONS + " i ON c.token=i.object_token \
+    	where c.status='ACTIVE' and i.user_token=? \
+     	order by c.year desc, c.make asc, c.model asc, c.id desc", [utoken], callback);
   },
 
-  carDetails: function(carId, callback) {
-	executeQuery("select c.*, max(mileage) as mileage, DATEDIFF(now(), max(created_date)) as mileage_reported_days from " + CAR_DETAILS_TABLE + " c JOIN " + MILEAGE_LOG_TABLE + " m ON c.id=m.carId where c.id=?",
-		[carId], (err, results) => {callback(err, results[0])});
+  addCar: function(make, model, trim, year, inserviceDate, callback) {
+  	let token = tokenGenerator(25);
+  	let name = "'" + year.substring(2) + " " + make + " " + model;
+  	let car  = {token: token, name: name, make: make, model: model, trim: trim, year: year, inserviceDate: inserviceDate, status: "ACTIVE"};
+    executeQuery("insert into " + CAR_DETAILS_TABLE + " set ?" , car, (err, results) => { callback(err, token) });
   },
 
-  completeServiceLog:  function(carId, callback) {
-	executeQuery("select * from " + SERVICE_LOG_TABLE + " where carId=? order by mileage asc, serviceDate asc", [carId], callback);
+  carDetails: function(oToken, callback) {
+	executeQuery("select c.*, max(mileage) as mileage, DATEDIFF(now(), max(created_date)) as mileage_reported_days \
+		from " + CAR_DETAILS_TABLE + " c  LEFT JOIN " + MILEAGE_LOG_TABLE + " m ON c.id=m.carId \
+		where c.token=? group by c.id",
+		[oToken], (err, results) => {callback(err, results[0])});
+  },
+
+  completeServiceLog:  function(oToken, callback) {
+	executeQuery("select * from " + CAR_DETAILS_TABLE + " c join " + SERVICE_LOG_TABLE + " s on c.id=s.carId where c.token=? order by mileage asc, serviceDate asc", [oToken], callback);
   },
 
   serviceLog:  function(id, callback) {
@@ -54,12 +77,19 @@ var serviceLog = {
   },
 
   addServiceLog: function(carId, serviceDate, mileage, service, cost, note, callback) {
-    var sqlParams  = {carId: carId, serviceDate: serviceDate, mileage: mileage, service: service.trim(), cost: cost, note:note.trim() };
+  	var serviceLog = {carId: carId, serviceDate: serviceDate, mileage: mileage, service: service.trim(), note:note.trim() }
+  	if (cost != '') {
+  		serviceLog.cost = cost;
+  	}
+
+  	console.log(serviceLog);
+    var sqlParams  = serviceLog;
     executeQuery("INSERT INTO " + SERVICE_LOG_TABLE + " SET ?", sqlParams, callback);
   },
 
   updateServiceLog: function(carId, serviceId, serviceDate, mileage, service, cost, note, regularService, monthsInterval, mileageInterval, callback) {
-    var sqlParams  = [{mileage: mileage, serviceDate: serviceDate, service: service.trim(), cost: cost, note:note }, serviceId];
+  	var serviceLog = {mileage: mileage, serviceDate: serviceDate, service: service.trim(), cost: cost, note:note }
+    var sqlParams  = [serviceLog, serviceId];
     executeQuery("UPDATE " + SERVICE_LOG_TABLE + " SET ? WHERE id = ?", sqlParams, (err, result) => {
             
         //add a scheduled service

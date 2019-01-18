@@ -48,6 +48,7 @@ body {
 	width: 100%;
 	border-bottom: 1px solid #fff;
 	background-color: #2770a4;
+	padding-bottom: 5px;
 }
 
 .header .title {
@@ -76,10 +77,11 @@ body {
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 13px;
+	color: #494949;
 }
 
 #maintenanceGrid thead {
-	background-color: #303030;
+	background-color: #fafafa;
 }
 
 #maintenanceGrid td {
@@ -89,45 +91,52 @@ body {
 
 #maintenanceGrid .date {
 	text-align:left;
-	width: 200px;
+	width: 15%;
 	padding-left: 15px;
 }
 
 #maintenanceGrid .mileage input,
-#maintenanceGrid .mileage {
-	width: 80px;
 	text-align:right;
 }
+
+#maintenanceGrid .mileage {
+	width: 10%;
+	text-align:right;
+}
+
 #maintenanceGrid .service {
-	width: 300px;
+	width: 30%;
 	text-align:left;
 }
 
 #maintenanceGrid .cost input,
+	text-align:right;
+}
+
 #maintenanceGrid .cost {
-	width: 80px;
+	width: 10%;
 	text-align:right;
 }
 
 #maintenanceGrid .notes {
-	width: 300px;
+	width: 30%;
 	text-align:left;
 	padding-right:10px;
 	overflow: hidden;
 }
 
 #maintenanceGrid .actions {
-	width: 35px;
+	width: 5%;
 	/* padding-right: 15px; */
 }
 
 #maintenanceGrid .actions a {
-	color: #ffff;
+	color: #1f1d1d;
 	padding-right: 7px;
 }
 
 #maintenanceGrid tr {
-	border-bottom: 1px solid #909090;
+	border-bottom: 1px solid #b5b5b5;
 	height: 25px;
 }
 
@@ -142,17 +151,41 @@ body {
 
 #scheduledMaintenanceGrid input {
 	background-color: #a96c6c;
-	border: 1px solid #863b3b;
+	border: 0px;
+	color: #1f1d1d;
+}
+
+#scheduledMaintenanceGrid input:focus {
+	border: 0px;
+	outline: none;
+}
+
+#serviceGrid tr:hover td {
+	background: #dcdcdc;
 }
 
 #serviceGrid tr:nth-child(odd) {
-	background: #444444;
+	background: #fff;
 }
 
 #serviceGrid tr:nth-child(even) {
-	background: #333333;
+	background: #fafafa;
 }
 
+#serviceAdd td {
+	border: 1px solid #b5b5b5;
+}
+
+#serviceAdd input {
+	background-color: #fafafa;
+	border: 0px;
+	color: #1f1d1d;
+}
+
+#serviceAdd input:focus {
+	border: 0px;
+	outline: none;
+}
 
 .pendingSave {
 	color: #bFbFbF;
@@ -181,7 +214,7 @@ body {
 }
 
 input, textarea {
-	background-color:#444444;
+	background-color: #fafafa;
 	border-color:#303030;
 	color:#fff;
 	font-size: 13px;
@@ -211,6 +244,12 @@ input, textarea {
 	border: 1px solid #444;
 	color: #fff;
 	font-size: 13px;
+}
+
+
+.ui-dialog textarea, 
+.ui-dialog input {
+	background-color:#b5b5b5;
 }
 
 .ui-widget-content {

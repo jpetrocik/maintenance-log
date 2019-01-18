@@ -53,14 +53,15 @@
 <form id="maintenance" action="#">
 <input name="carId" type="hidden" value="{{car.id}}"/>
 <table id="maintenanceGrid">
-<thead>
-<td class="date"><input id="gridFriendlyDate" type="text"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
-<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="{{car.mileage}}"/></td>
-<td class="service"><input id="gridService" name="service" type="text" placeholder="service"/></td>
-<td class="cost"><input id="gridCost" name="cost" type="text" placeholder="cost"/></td>
-<td class="notes"><input id="gridNote" name="note" type="text" placeholder="notes"/><input type="submit" style="display:none"/></td>
-<td></td>
-</tr>
+<thead id="serviceAdd">
+	<tr>
+		<td class="date"><input id="gridFriendlyDate" type="text" autocomplete="off"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
+		<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="{{car.mileage}}" autocomplete="off"/></td>
+		<td class="service"><input id="gridService" name="service" type="text" placeholder="service" autocomplete="off"/></td>
+		<td class="cost"><input id="gridCost" name="cost" type="text" placeholder="cost" autocomplete="off"></td>
+		<td class="notes"><input id="gridNote" name="note" type="text" placeholder="notes" autocomplete="off"/><input type="submit" style="display:none"/></td>
+		<td><button>Add</button></td>
+	</tr>
 </thead>
 <tbody id="scheduledMaintenanceGrid">
 <tr style="display:none">
@@ -70,8 +71,7 @@
 <td class="cost"><input type="text" placeholder="cost"/></td>
 <td class="notes"><input type="text" placeholder="notes"/></td>
 <td class="actions">
-	<a class="completed" href="#scheduleId={{id}}"><i class="fas fa-clipboard-check"></i></a>
-	<!--a class="deleteScheduledService" href="#scheduleId={{id}}"><i class="far fa-trash-alt"></i></a-->
+	<button  class="completed">Done</button>
 </td>
 </tr>
 

@@ -1,11 +1,13 @@
 var express = require('express'),
 	moment = require('moment'),
 	bodyParser = require('body-parser'),
+	cookieParser = require('cookie-parser')
 	serviceLogs = require('./service_logs.js');
+	invitations = require('./invitations.js');
 
 
 var app = express();
- 
+
 var exphbs = require('express-handlebars');
 
 process.on('uncaughtException', function (err) {
@@ -26,6 +28,7 @@ app.set('views', './views');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use('/css', express.static('css'));
 app.use('/images', express.static('images'));
@@ -58,31 +61,81 @@ app.get('/mileage', function (req, res) {
 });
 
 
+/**
+ * Registers user with a new car
+ */
+app.post('/api/register/', function (req, res) {
+	invitations.register(req.query.email, function(err, aToken){
+		if (err) {
+			res.sendStatus(500);
+			return;
+		}
+
+		res.cookie('_aToken',aToken, { maxAge: 900000, httpOnly: true });
+		res.sendStatus('200');
+	});
+});
+
+app.post('/api/car', function(req, res) {
+	invitations.validateUser(req, (err, uToken) => {
+		if (!uToken) {
+			res.sendStatus(401);
+			return;
+		}
+
+		serviceLogs.addCar(req.body.make, req.body.model, req.body.trim, req.body.year, new Date(), (err, oToken) => {
+			invitations.createInvitation( uToken, oToken, (err, iToken) => {
+				res.json(iToken);			
+			});
+		});
+	});
+
+});
 
 /**
  * Returns list of all car
  */
 app.get('/api/car/', function (req, res) {
-	serviceLogs.myGarage(function(err, rows){
-		res.json(rows);
+	invitations.validateUser(req, (err, uToken) => {
+		if (!uToken) {
+			res.sendStatus(401);
+			return;
+		}
+
+		serviceLogs.myGarage(uToken, function(err, rows){
+			res.json(rows);
+		});
 	});
 });
 
 /**
  * Returns the car details
  */
-app.get('/api/car/:carId', function (req, res) {
-	serviceLogs.carDetails(req.params.carId, function(err, rows){
-		res.json(rows);
+app.get('/api/car/:iToken', function (req, res) {
+	invitations.resolveInvitation(req.params.iToken, (err, oToken) => {
+		if (!oToken) {
+			res.sendStatus(401);
+			return;
+		}
+		serviceLogs.carDetails(oToken, function(err, rows){
+			res.json(rows);
+		});
 	});
 });
 
 /**
  * Returns the service history for a car
  */
-app.get('/api/car/:carId/service', function (req, res) {
-	serviceLogs.completeServiceLog(req.params.carId, function(err, rows){
-		res.json(rows);
+app.get('/api/car/:iToken/service', function (req, res) {
+	invitations.resolveInvitation(req.params.iToken, (err, oToken) => {
+		if (!oToken) {
+			res.sendStatus(401);
+			return;
+		}
+
+		serviceLogs.completeServiceLog(oToken, function(err, rows){
+			res.json(rows);
+		});
 	});
 });
 

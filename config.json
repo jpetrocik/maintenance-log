@@ -1,0 +1,11 @@
+{
+  "database": {
+    "connectionLimit": 10,
+    "host": "petrocik.net",
+    "user": "john",
+    "password": "oropez",
+    "database": "test",
+    "debug": false,
+    "insecureAuth": true
+  }
+}
