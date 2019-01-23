@@ -2,17 +2,18 @@ var express = require('express'),
 	moment = require('moment'),
 	bodyParser = require('body-parser'),
 	cookieParser = require('cookie-parser')
-	serviceLogs = require('./service_logs.js');
-	invitations = require('./invitations.js');
+	serviceLogs = require('./service_logs.js'),
+	invitations = require('./invitations.js'),
+	apiRoutes = require('./api.js');
 
 
 var app = express();
 
 var exphbs = require('express-handlebars');
 
-process.on('uncaughtException', function (err) {
-  console.log('Caught exception: ' + err);
-});
+// process.on('uncaughtException', function (err) {
+//   console.log('Caught exception: ' + err);
+// });
 
 app.engine('.hbs', exphbs({extname: '.hbs', 
 	helpers: {
@@ -34,21 +35,47 @@ app.use('/css', express.static('css'));
 app.use('/images', express.static('images'));
 app.use('/scripts', express.static('scripts'));
 
+//Import api routes under /api
+app.use('/api', apiRoutes);
+
 app.get('/', function (req, res) {
-	serviceLogs.myGarage(function(err, cars) {
-		serviceLogs.carDetails(1, function(err, car) {
-			serviceLogs.completeServiceLog(1, function(err, logs){
-			  res.render('logs', {car: car, logs: logs, cars: cars});
+	invitations.validateUser(req, res, (err, uToken) => {
+		if (!uToken) {
+			res.render('registerCar');
+			return;
+		}
+
+		serviceLogs.myGarage(uToken, function(err, cars) {
+			invitations.resolveInvitation(cars[0].token, (err, carId) => {
+				if (!carId) {
+					res.sendStatus(401);
+					return;
+				}
+				serviceLogs.carDetails(carId, function(err, car) {
+					car.token = cars[0].token;
+					res.render('logs', {car: car, cars: cars});
+				});
 			});
 		});
 	});
 });
 
 app.get('/logs', function (req, res) {
-	serviceLogs.myGarage(function(err, cars) {
-		serviceLogs.carDetails(req.query.carId, function(err, car) {
-			serviceLogs.completeServiceLog(req.query.carId, function(err, logs){
-			  res.render('logs', {car: car, logs: logs, cars: cars});
+	invitations.resolveInvitation(req.query.oToken, (err, carId) => {
+		if (!carId) {
+			res.sendStatus(401);
+			return;
+		}
+
+		invitations.validateUser(req, res, (err, uToken) => {
+			if (!uToken) {
+				res.sendStatus(401);
+				return;
+			}
+			serviceLogs.myGarage(uToken, function(err, cars) {
+				serviceLogs.carDetails(carId, function(err, car) {
+					res.render('logs', {car: car, cars: cars});
+				});
 			});
 		});
 	});
@@ -60,161 +87,6 @@ app.get('/mileage', function (req, res) {
 	});
 });
 
-
-/**
- * Registers user with a new car
- */
-app.post('/api/register/', function (req, res) {
-	invitations.register(req.query.email, function(err, aToken){
-		if (err) {
-			res.sendStatus(500);
-			return;
-		}
-
-		res.cookie('_aToken',aToken, { maxAge: 900000, httpOnly: true });
-		res.sendStatus('200');
-	});
-});
-
-app.post('/api/car', function(req, res) {
-	invitations.validateUser(req, (err, uToken) => {
-		if (!uToken) {
-			res.sendStatus(401);
-			return;
-		}
-
-		serviceLogs.addCar(req.body.make, req.body.model, req.body.trim, req.body.year, new Date(), (err, oToken) => {
-			invitations.createInvitation( uToken, oToken, (err, iToken) => {
-				res.json(iToken);			
-			});
-		});
-	});
-
-});
-
-/**
- * Returns list of all car
- */
-app.get('/api/car/', function (req, res) {
-	invitations.validateUser(req, (err, uToken) => {
-		if (!uToken) {
-			res.sendStatus(401);
-			return;
-		}
-
-		serviceLogs.myGarage(uToken, function(err, rows){
-			res.json(rows);
-		});
-	});
-});
-
-/**
- * Returns the car details
- */
-app.get('/api/car/:iToken', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, oToken) => {
-		if (!oToken) {
-			res.sendStatus(401);
-			return;
-		}
-		serviceLogs.carDetails(oToken, function(err, rows){
-			res.json(rows);
-		});
-	});
-});
-
-/**
- * Returns the service history for a car
- */
-app.get('/api/car/:iToken/service', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, oToken) => {
-		if (!oToken) {
-			res.sendStatus(401);
-			return;
-		}
-
-		serviceLogs.completeServiceLog(oToken, function(err, rows){
-			res.json(rows);
-		});
-	});
-});
-
-/**
- * Returns a particular service log
- */
-app.get('/api/car/:carId/service/:serviceId', function (req, res) {
-	serviceLogs.serviceLog(req.params.serviceId, function(err, rows){
-		res.json(rows);
-	});
-});
-
-/**
- * Add service log entry
- */
-app.post('/api/car/:carId/service/', function (req, res) {
-	serviceLogs.addServiceLog(req.params.carId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note,
-		function(err, result){
-			if (err) {
-				res.status(500).json(err).end()
-			} else {
-				res.status(200).json({ "id": result.insertId }).end()
-			}
-	});
-});
-
-/**
- * Updates service log entry
- */
-app.put('/api/car/:carId/service/:serviceId', function (req, res) {
-	serviceLogs.updateServiceLog(req.params.carId, req.params.serviceId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note, req.body.regularService, req.body.monthsInterval, req.body.mileageInterval,
-		function(err, result){
-			if (err) {
-				res.status(500).json(err).end()
-			} else {
-				res.status(200).json({ "id": req.params.serviceId }).end()
-			}
-	});
-});
-
-/**
- * Deletes service log entry
- */
-app.delete('/api/car/:carId/service/:serviceId', function (req, res) {
-	serviceLogs.deleteServiceLog(req.params.carId, req.params.serviceId,
-		function(err, result){
-			if (err) {
-				res.status(500).json(err).end()
-			} else {
-				res.status(200).json({ "id": req.params.serviceId }).end()
-			}
-	});
-});
-
-
-/**
- * Adds a mileage log
- */
-app.put('/api/car/:carId/mileage/:mileage', function (req, res) {
-	serviceLogs.addMileage(req.params.carId, req.params.mileage, 
-		function(err, result){
-			if (err) {
-				res.status(500).json(err).end()
-			} else {
-				serviceLogs.serviceDue(req.params.carId, req.params.mileage, (err, result) => {
-					res.json(result);
-				});
-			}
-	});
-});
-
-/**
- * Get upcoming/needed service
- */
-app.get('/api/car/:carId/schedule/', function (req, res) {
-	serviceLogs.serviceDue(req.params.carId, (err, result) => {
-		res.json(result);
-	});
-});
 
 app.listen(3000, function () {
   console.log('Service Log listening on port 3000!');

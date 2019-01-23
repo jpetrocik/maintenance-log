@@ -14,6 +14,16 @@ body {
 	float:left;
 	height: 100%;
 	background-color: #2770a4;
+	border: 1px solid #3f4143;
+	box-shadow: 3px 3px #3f41439c;
+	/* margin-top: 3px; */
+}
+
+#leftMenu .close {
+	text-align: right;
+	cursor: pointer;
+	display: inline;
+	float: right;
 }
 
 #carsListsBack {
@@ -26,8 +36,36 @@ body {
 	height: 50px;
 }
 
+#carListHeader {
+	padding:3px 0 3px 0;
+}
+
+#carList .back img {
+	visibility: hidden;
+}
+
 #carsList {
-	float:left;
+	/* float:left; */
+	margin-right:  3px;
+}
+
+#addCar {
+	cursor: pointer;
+	font-size: smaller;
+}
+
+.car {
+	margin:0 0 5px 0;
+	padding:10px;
+	background-color:#303030;
+	width:250px;
+	text-align:center;
+	border: 1px solid #909090;
+}
+
+.car a {
+	text-decoration:none;
+	color:#fff;
 }
 
 #carDetails {
@@ -191,31 +229,14 @@ body {
 	color: #bFbFbF;
 }
 
-.car {
-	margin:0 0 5px 0;
-	padding:10px;
-	background-color:#303030;
-	width:250px;
-	text-align:center;
-	border: 1px solid #909090;
-}
-
-.car a {
-	text-decoration:none;
-	color:#fff;
-}
-
-#carList .back img {
-	visibility: hidden;
-}
-
 #carId {
 	display:none;
 }
 
-input, textarea {
+
+input, textarea, select {
 	background-color: #fafafa;
-	border-color:#303030;
+	/* border-color:#303030; */
 	color:#fff;
 	font-size: 13px;
 	width: 100%;
@@ -236,6 +257,38 @@ input, textarea {
 	width:10px;
 	display: inline;
 	margin: 15px 5px 5px 0;
+}
+
+#registerCarForm {
+	border: 1px solid #fff;
+}
+
+#registerCarForm label {
+	font-size: smaller;
+}
+
+#registerCarForm  .formField {
+	margin: 5px;
+}
+
+#registerCarForm .formField input, 
+#registerCarForm .formField select, 
+#registerCarForm .formSubmit input  {
+	color: #3b3a3a;
+}
+
+#registerCarForm .formSubmit {
+	margin: 15px 5px;
+}
+
+.warning {
+	color: #6f0202;
+	padding-left: 10px;
+	font-size: small;
+}
+
+.warning .msg {
+	padding-left: 5px;
 }
 
 .ui-dialog .ui-dialog-titlebar {

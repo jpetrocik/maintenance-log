@@ -1,0 +1,64 @@
+
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+#mainPage {
+	padding: 15px;
+}
+
+.subPage {
+	background-color: #2770a4;
+	width: 47%;
+	height: 400px;
+	border-radius: 15px;
+	padding: 15px;
+	margin: 0 auto;
+}
+#registerCar {
+	float: left;
+}
+
+#requestLink {
+	float: right;
+}
+
+.subPage H1 {
+	text-align: center;
+	margin: 0;
+}
+
+.subPage form {
+	width: 50%;
+	margin: 0 auto;
+}
+
+.subPage form  .formField {
+	margin: 5px;
+	
+}
+
+.subPage form  .formSubmit {
+	margin: 15px 5px;
+}
+
+.subPage form label {
+	display:block;
+}
+
+.subPage form input,
+.subPage form select {
+	width: 200px;
+	background-color: #dadada;
+}
+
+.warning {
+	color: #6f0202;
+	padding-left: 10px;
+	font-size: small;
+}
+
+.warning .msg {
+	padding-left: 5px;
+}

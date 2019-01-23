@@ -32,21 +32,21 @@ var tokenGenerator = function(tokenSize) {
 
 var invitations = {
   userInvitations: function(uToken, callback) {
-    executeQuery("select OBJECT_TOKEN from " + INVITATIONS_TABLE + " where USER_TOKEN=?", [uToken], (err, results) => {
-    	let tokens = results.map(x => x.OBJECT_TOKEN);
+    executeQuery("select oToken from " + INVITATIONS_TABLE + " where USER_TOKEN=?", [uToken], (err, results) => {
+    	let tokens = results.map(x => x.oToken);
     	callback(err, tokens);
     });
   },
 
   resolveInvitation: function(iToken, callback) {
-    executeQuery("select OBJECT_TOKEN from " + INVITATIONS_TABLE + " where INVITATION_TOKEN=?", [iToken],  (err, results) => {
-    	callback(err, results[0].OBJECT_TOKEN);
+    executeQuery("select oToken, carId from " + INVITATIONS_TABLE + " where iToken=?", [iToken],  (err, results) => {
+    	callback(err, results[0].carId);
     });
   },
 
-  createInvitation:  function(uToken, oToken, callback) {
+  createInvitation:  function(uToken, car, callback) {
   	let iToken = tokenGenerator(25);
-	executeQuery("insert into " + INVITATIONS_TABLE + " (USER_TOKEN, OBJECT_TOKEN, INVITATION_TOKEN) values (?, ?, ?)", [uToken, oToken, iToken], (err, results) => {
+	executeQuery("insert into " + INVITATIONS_TABLE + " (iToken, uToken, oToken, carId) values (?, ?, ?, ?)", [iToken, uToken, car.token, car.id], (err, results) => {
 		callback(err, iToken);
 	});
   },
@@ -59,13 +59,39 @@ var invitations = {
 	});
   },
 
-  validateUser:  function(req, callback) {
-	let aToken = req.cookies._aToken;
-	if (aToken == undefined || aToken == null) {
-		return;
+  sendAuth:  function(email, callback) {
+
+	executeQuery("select aToken from " + ACCOUNTS_TABLE + " where email=?", [email], (err, results) => {
+		if (err) {
+			callback(err);
+		}
+		if (results.length === 0) {
+			callback();
+		}
+
+		console.log("?aToken=" + results[0].aToken);
+		callback();
+	});
+
+  },
+
+  validateUser:  function(req, res, callback) {
+	let aToken = req.query.aToken;
+	if (aToken === undefined) {
+		aToken = req.cookies._aToken;
+		if (aToken === undefined) {
+			callback();
+			return;
+		}
 	}
 
 	executeQuery("select uToken from " + ACCOUNTS_TABLE + " where aToken=?", [aToken], (err, results) => {
+		if (results.length === 0) {
+			callback();
+			return;
+		}
+
+		res.cookie('_aToken',aToken, { maxAge: (90 * 24 * 60 * 60) });
 		callback(err, results[0].uToken);
 	});
   },

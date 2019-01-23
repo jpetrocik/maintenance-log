@@ -96,6 +96,7 @@ function formatCost(cost) {
 
 						$(this).dialog("close");
 						var sqlDate = DATEUTILS.sql(new Date($("#editFriendlyDate").val()));
+						var regService = $('#editRegularService').prop( "checked");
 						that.model.set({
 							serviceDate: sqlDate,
 							id: $("#editId").val(),
@@ -103,7 +104,7 @@ function formatCost(cost) {
 							service: $("#editService").val(),
 							note: $("#editNote").val(),
 							cost: $("#editCost").val(),
-							regularService: $("#editRegularService").val(),
+							regularService: regService,
 							mileageInterval: $("#editMileageInterval").val(),
 							monthsInterval: $("#editMonthsInterval").val(),
 						});

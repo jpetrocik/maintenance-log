@@ -1,0 +1,155 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/registerCar.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<title>Service Logs</title>
+</head>
+<body>
+	<div id="mainPage">
+	<div class="subPage" id="registerCar">
+		<h1>New User</h1>
+		<p>Signing up is quick and easy! Just fill out the form below to tell use a little about your car. It's that easy! No password or username, just an email.</p>
+		<form id="registerCarForm">
+			<span class="warning errMsg" style="display:none"><i class="fas fa-exclamation-triangle"></i><span class="msg"></span></span>
+			
+			<div class="formField required">
+				<label>Email:<span class="warning emailMsg" style="display:none"><i class="fas fa-exclamation-triangle"></i><span class="msg"></span></span></label>
+				<input type="text" name="email"/>
+			</div>
+			<div class="formField required">
+				<label>Year:<span class="warning" style="display:none"><i class="fas fa-exclamation-triangle"></i><span class="msg"></span></span></label> 
+				<select name="year"><option></option><select>
+			</div>
+			<div class="formField required">
+				<label>Make:<span class="warning" style="display:none"><i class="fas fa-exclamation-triangle"></i><span class="msg"></span></span></label>
+				<input type="text" name="make"/>
+			</div>
+			<div class="formField required">
+				<label>Model:<span class="warning" style="display:none"><i class="fas fa-exclamation-triangle"></i><span class="msg"></span></span></label>
+				<input type="text" name="model"/>
+			</div>
+			<div class="formField">
+				<label>Trim:</label>
+				<input type="text" name="trim"/>
+			</div>
+			<div class="formField">
+				<label>Current Mileage:</label>
+				<input type="text"/>
+			</div>
+			<div class="formSubmit"><input type="submit" value="Add"/></div>
+		</form>
+	</div>
+
+	<div class="subPage" id="requestLink">
+		<h1>Already A User</h1>
+		<p>Welcome back! Enter the email address you used when signing up.  We'll email you a link to return to your car.
+		<form id="requestLinkForm">
+			<span class="warning errMsg"></span>
+			<div class="formField required">
+				<label>Email:<span class="warning emailMsg" style="display:none"><i class="fas fa-exclamation-triangle"></i><span class="msg"></span></span></label>
+				<input type="text" name="email"/>
+			</div>
+			<div class="formSubmit"><input type="submit" value="Send Email"/></div>
+		</form>
+		<div id="authEmailSent" style="display:none">
+			Please check your inbox for an email with a link to access your car.  If you do not find an email check your span folder.
+		</div>
+	</div>
+	</div>
+
+	<script>
+		$( document ).ready(function() {
+
+		let startYear = new Date().getFullYear()+1;
+		for (let year=startYear;year>1930;year--) {
+				$("#registerCarForm select[name=year]").append('<option value="' + year + '">' + year + '</option>');
+			}
+
+			$("#registerCarForm").submit(function(e) {
+				e.preventDefault();
+
+				//validate form
+				let isFormValid = true;
+				$("#registerCarForm .warning").hide();
+				$("#registerCarForm .required").each(function(index, el){
+    				if ($.trim($(el).find("input, select").val()).length == 0){
+        				$(el).find(".warning .msg").html("Required");
+        				$(el).find(".warning").show();
+				        isFormValid = false;
+        			}
+    			});
+
+    			if (!isFormValid) {
+    				return;
+    			}
+ 
+ 				//register and add car
+				$.ajax( {
+					method: "POST",
+					url: "/api/register",
+					data: {email: $("#registerCarForm input[name=email]").val()}
+				})
+				.done(function() {
+					$.ajax( {
+							method: "POST",
+							url: "/api/car",
+							data: $("#registerCarForm").serialize()
+						})
+						.done(function(data) {
+							$(location).attr('href',"/logs?oToken=" + data);
+					  	})
+					 	.fail(function(jqXHR, status, error) {
+				 			$("#registerCarForm .errMsg .msg").html(status);
+				 			$("#registerCarForm .errMsg").show();
+					 	});
+			  	})
+			 	.fail(function(jqXHR, status, error) {
+			 		if (jqXHR.status == 400) {
+			 			$("#registerCarForm .emailMsg .msg").html("Email already registered")
+			 			$("#registerCarForm .emailMsg").show();
+			 		} else {
+			 			$("#registerCarForm .errMsg .msg").html(status);
+			 			$("#registerCarForm .errMsg").show();
+			 		}
+			 	});
+			});
+
+
+			$("#requestLinkForm").submit(function(e) {
+				e.preventDefault();
+
+				//validate form
+				let isFormValid = true;
+				$("#requestLinkForm .warning").hide();
+				$("#requestLinkForm .required").each(function(index, el){
+    				if ($.trim($(el).find("input, select").val()).length == 0){
+        				$(el).find(".warning .msg").html("Required");
+        				$(el).find(".warning").show();
+				        isFormValid = false;
+        			}
+    			});
+
+    			if (!isFormValid) {
+    				return;
+    			}
+ 
+ 				//register and add car
+				$.ajax( {
+					method: "POST",
+					url: "/api/sendAuth",
+					data: $("#requestLinkForm").serialize()
+				})
+				.done(function() {
+					$('#authEmailSent').show();
+			  	})
+			 	.fail(function(jqXHR, status, error) {
+		 			$("#requestLinkForm .errMsg .msg").html(status);
+		 			$("#requestLinkForm .errMsg").show();
+			 	});
+			});
+		});
+
+	</script>
+</body>
+</html>
