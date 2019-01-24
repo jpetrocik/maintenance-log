@@ -45,19 +45,14 @@ app.get('/', function (req, res) {
 			return;
 		}
 
-		serviceLogs.myGarage(uToken, function(err, cars) {
-			invitations.resolveInvitation(cars[0].token, (err, carId) => {
-				if (!carId) {
-					res.sendStatus(401);
-					return;
-				}
-				serviceLogs.carDetails(carId, function(err, car) {
-					car.token = cars[0].token;
-					res.render('logs', {car: car, cars: cars});
-				});
-			});
-		});
+
+		res.render('logs');
 	});
+});
+
+
+app.get('/mobile', function (req, res) {
+	res.render('mobile');
 });
 
 app.get('/logs', function (req, res) {
@@ -82,8 +77,15 @@ app.get('/logs', function (req, res) {
 });
 
 app.get('/mileage', function (req, res) {
-	serviceLogs.myGarage(function(err, cars) {
-	  res.render('mileage', {cars: cars});
+	invitations.validateUser(req, res, (err, uToken) => {
+		if (!uToken) {
+			res.sendStatus(401);
+			return;
+		}
+
+		serviceLogs.myGarage(uToken, function(err, cars) {
+		  res.render('mileage', {cars: cars});
+		});
 	});
 });
 

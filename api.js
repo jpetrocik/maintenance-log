@@ -26,6 +26,10 @@ router.post('/sendAuth', function (req, res) {
 	});
 });
 
+router.post('/mfa', function (req, res) {
+	res.sendStatus('200');
+});
+
 router.post('/car', function(req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
@@ -35,7 +39,7 @@ router.post('/car', function(req, res) {
 
 		serviceLogs.addCar(req.body, (err, car) => {
 			invitations.createInvitation( uToken, car, (err, iToken) => {
-				res.json(iToken);			
+				res.json({token: iToken, name: car.name});			
 			});
 		});
 	});
@@ -45,7 +49,7 @@ router.post('/car', function(req, res) {
 /**
  * Returns list of all car
  */
-router.get('/car/', function (req, res) {
+router.get('/car', function (req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
 			res.sendStatus(401);
@@ -108,7 +112,7 @@ router.get('/car/:iToken/service/:serviceId', function (req, res) {
 /**
  * Add service log entry
  */
-router.post('/car/:iToken/service/', function (req, res) {
+router.post('/car/:iToken/service', function (req, res) {
 	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
 		if (!carId) {
 			res.sendStatus(401);
@@ -179,15 +183,14 @@ router.put('/car/:iToken/mileage/:mileage', function (req, res) {
 			return;
 		}
 
-		serviceLogs.addMileage(carId, req.params.mileage, 
-			function(err, result){
-				if (err) {
-					res.status(500).json(err).end()
-				} else {
-					serviceLogs.serviceDue(req.params.carId, req.params.mileage, (err, result) => {
-						res.json(result);
-					});
-				}
+		serviceLogs.addMileage(carId, req.params.mileage, (err, result) => {
+			if (err) {
+				res.status(500).json(err).end()
+			} else {
+				serviceLogs.serviceDue(carId, (err, result) => {
+					res.json(result);
+				});
+			}
 		});
 	});
 });
@@ -195,7 +198,7 @@ router.put('/car/:iToken/mileage/:mileage', function (req, res) {
 /**
  * Get upcoming/needed service
  */
-router.get('/car/:iToken/schedule/', function (req, res) {
+router.get('/car/:iToken/schedule', function (req, res) {
 	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
 		if (!carId) {
 			res.sendStatus(401);

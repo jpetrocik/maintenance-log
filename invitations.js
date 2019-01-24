@@ -4,8 +4,8 @@ var config = require("./config.json");
 
 var pool = mysql.createPool(config.database);
 
-var INVITATIONS_TABLE = "CAR_INVITATIONS";
-var ACCOUNTS_TABLE = "CAR_ACCOUNTS";
+var INVITATIONS_TABLE = "invitations";
+var ACCOUNTS_TABLE = "user_accounts";
 
 var executeQuery = function(sqlStatement, sqlParams, callback) {
 	//console.log(sqlStatement);

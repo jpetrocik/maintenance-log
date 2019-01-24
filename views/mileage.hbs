@@ -67,13 +67,13 @@
 
 <div id="carList">
 	{{#each cars}}
-	<div class="car carButton" carId="{{id}}"><a href="#mileage">{{name}}</a></div>
+	<div class="car carButton" carId="{{token}}"><a href="#mileage">{{name}}</a></div>
 	{{/each}}
 </div>
 
 <div id="mileageForm">
 	<a anchor="mileage"></a>
-	<form method="POST" url="/api/car/:carId/mileage/:mileage">
+	<form method="POST">
 	<input id="carId" type="hidden"/>
 	<input id="mileage" type="number"/>
 	<input class="carButton" type="submit" value="Submit"/>

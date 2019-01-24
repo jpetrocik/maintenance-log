@@ -10,9 +10,23 @@ function formatCost(cost) {
 	return "$" + prettyCost.toFixed(2).toLocaleString();
 }
 
+
 (function($){
 
+	maintenanceApp.CarModel = Backbone.Model.extend({
+		idAttribute: "token",
+	    urlRoot: 'api/car'
+	});
+
 	maintenanceApp.ServiceRecord = Backbone.Model.extend();
+	maintenanceApp.ScheduledMaintenanceModel = Backbone.Model.extend();
+
+	maintenanceApp.MyGarage = Backbone.Collection.extend({
+		model: maintenanceApp.CarModel,
+		url: function() {
+			return "api/car";
+		}
+	});
 
 	maintenanceApp.ServiceLog = Backbone.Collection.extend({
 		carId: null,
@@ -22,9 +36,144 @@ function formatCost(cost) {
 		}
 	});
 
+
+	maintenanceApp.ScheduledMaintenanceCollection = Backbone.Collection.extend({
+		carId: null,
+		model: maintenanceApp.ScheduledMaintenanceModel,
+		url: function() {
+			return "api/car/" + this.carId + "/schedule/";
+		},
+	});
+
+	maintenanceApp.MyGarageList = Backbone.View.extend({
+		initialize: function() {
+			_.bindAll(this, 'render');
+
+			this.template = this.$el.children().clone();
+
+			this.listenTo(this.collection, "update", this.render);
+			this.listenTo(this.collection, "reset", this.render);
+		},
+
+		render: function(collection, event) {
+			let that = this;
+
+			this.$el.empty();
+			_.each(this.collection.models, function(m) {
+				var myGarageCarView = new maintenanceApp.MyGarageCarView({model: m, collection: this.collection, $parentEl: this.$el, template: this.template});
+				myGarageCarView.on("selected", function(view) {
+					that.trigger("selected", view.model);
+				});
+			}, this);
+
+			if (!event.add) { //prevents refresh when just adding new car
+				this.trigger("selected", this.collection.at(0));
+			}
+		}
+
+	});
+
+	maintenanceApp.MyGarageCarView = Backbone.View.extend({
+		initialize: function(options) {
+			_.bindAll(this, 'render');
+
+			this.setElement(options.template.clone());
+
+			this.$parentEl = options.$parentEl;
+
+			this.$parentEl.append(this.$el);
+
+			this.listenTo(this.model, "change", this.render);
+			this.render();
+
+		},
+
+		render: function() {
+			var that = this;
+			var carModel = this.model.toJSON();
+			this.$el.html(carModel.name);
+			this.$el.on("click", function(e) {
+				that.trigger("selected", that);
+			});
+
+			this.$el.show();
+
+
+		}
+	});
+
+	maintenanceApp.MyGarageAddView = Backbone.View.extend({
+		initialize: function() {
+			_.bindAll(this, 'render');
+			this.render();
+		},
+
+		render: function() {
+			var that = this;
+
+			//populate the years
+			let startYear = new Date().getFullYear()+1;
+			for (let year=startYear;year>1930;year--) {
+				that.$el.find("select[name=year]").append('<option value="' + year + '">' + year + '</option>');
+			}
+
+			this.$el.submit(function(e) {
+				e.preventDefault();
+
+				//validate form
+				let isFormValid = true;
+				that.$el.find(".warning").hide();
+				that.$el.find(".required").each(function(index, el){
+					if ($.trim($(el).find("input, select").val()).length == 0){
+						$(el).find(".warning .msg").html("Required");
+						$(el).find(".warning").show();
+				        isFormValid = false;
+					}
+				});
+
+				if (!isFormValid) {
+					return;
+				}
+
+				let newCar = new maintenanceApp.CarModel({
+					year: that.$el.find("select[name=year]").val(),
+					make: that.$el.find("input[name=make]").val(),
+					model: that.$el.find("input[name=model]").val(),
+					trim: that.$el.find("input[name=trim]").val(),
+					mileage: that.$el.find("input[name=mileage]").val(),
+				});
+
+				that.collection.add(newCar);
+				newCar.save();
+
+				that.$el.find("select, input[type=text]").val("");
+			});
+		}
+	});
+
+	maintenanceApp.CarDetailView = Backbone.View.extend({
+		initialize: function() {
+			_.bindAll(this, 'render');
+		},
+
+		setModel: function(model){
+			this.model = model;
+			this.listenTo(this.model, "change", this.render);
+		},
+
+		render: function() {
+			this.$el.find(".title").html(this.model.get("name"));
+			this.$el.find(".mileage").html(this.model.get("mileage"));
+			this.$el.find(".reported_on").html("(" + this.model.get("mileageReportedDays") + " days ago)");
+		}
+
+	});
+
 	maintenanceApp.ServiceLogTableView = Backbone.View.extend({
 		initialize: function() {
 			_.bindAll(this, 'render');
+
+			this.template = this.$el.children().clone(),
 
 			this.listenTo(this.collection, "update", this.render);
 			this.listenTo(this.collection, "reset", this.render);
@@ -33,25 +182,24 @@ function formatCost(cost) {
 		render: function() {
 			this.$el.empty();
 			_.each(this.collection.models, function(d) {
-				new maintenanceApp.ServiceLogTableRowView({model: d});
+				new maintenanceApp.ServiceLogTableRowView({model: d, $parentEl: this.$el, template: this.template});
 			}, this);
 		}
 
 	});
 
 	maintenanceApp.ServiceLogTableRowView = Backbone.View.extend({
-		template: $("#serviceGrid").children().clone(),
-		parent: $("#serviceGrid"),
-		initialize: function() {
+		initialize: function(options) {
 			_.bindAll(this, 'render');
 
-			this.$el = this.template.clone();
-			this.$el.show();
+			this.setElement(options.template.clone());
+			this.$parentEl = options.$parentEl;
 
-			this.parent.prepend(this.$el);
+			this.$parentEl.prepend(this.$el);
 
 			this.listenTo(this.model, "change", this.render);
 			this.listenTo(this.model, "destroy", this.destroy);
+
 			this.render();
 		},
 
@@ -74,6 +222,9 @@ function formatCost(cost) {
 
 			//add service attribute to each row for filtering
 			this.$el.attr("service",serviceRecord.service);
+
+			this.$el.show();
+
 		},
 
 		destroy: function() {
@@ -171,12 +322,10 @@ function formatCost(cost) {
 	maintenanceApp.ServiceRecordAddView = Backbone.View.extend({
 		initialize: function() {
 			_.bindAll(this, 'render');
-			this.render();
-		},
 
-		render: function() {
 			var that = this;
-			$("#maintenance").submit(function(e) {
+
+			this.$el.submit(function(e) {
 				e.preventDefault();
 				
 				var gridFriendlyDate = $("#gridFriendlyDate").val();
@@ -205,22 +354,23 @@ function formatCost(cost) {
 				$("#gridService").val("");
 				$("#gridService").focus();
 			});
+		},
+
+		setModel: function(model){
+			this.model = model;
+			this.listenTo(this.model, "change", this.render);
+		},
+
+		render: function() {
+			$("#gridMileage").attr('placeholder', this.model.get("mileage"));
 		}	
-	});
-
-	maintenanceApp.ScheduledMaintenanceModel = Backbone.Model.extend();
-
-	maintenanceApp.ScheduledMaintenanceCollection = Backbone.Collection.extend({
-		carId: null,
-		model: maintenanceApp.ScheduledMaintenanceModel,
-		url: function() {
-			return "api/car/" + this.carId + "/schedule/";
-		}
 	});
 
 	maintenanceApp.ScheduledMaintenanceTableView = Backbone.View.extend({
 		initialize: function() {
 			_.bindAll(this, 'render');
+
+			this.template = this.$el.children().clone(),
 
 			this.listenTo(this.collection, "update", this.render);
 			this.listenTo(this.collection, "reset", this.render);
@@ -236,30 +386,27 @@ function formatCost(cost) {
 				$('#service_due_alert').hide();
 			}
 			_.each(this.collection.models, function(m) {
-				let rowView = new maintenanceApp.ScheduledMaintenanceTableRowView({model: m, collection: that.collection});
-				rowView.setServiceLog(this.serviceLog);
+				let rowView = new maintenanceApp.ScheduledMaintenanceTableRowView({model: m, collection: that.collection, $parentEl: this.$el, template: this.template});
+				rowView.on("addServiceLog", function(newServiceRecord) {
+					that.trigger("addServiceLog", newServiceRecord);
+				});
 			}, this);
 		},
-
-		setServiceLog: function(serviceLog){
-			this.serviceLog=serviceLog;
-		}
 
 	});
 
 	maintenanceApp.ScheduledMaintenanceTableRowView = Backbone.View.extend({
-		template: $("#scheduledMaintenanceGrid").children().clone(),
-		parent: $("#scheduledMaintenanceGrid"),
-		initialize: function() {
+		initialize: function(options) {
 			_.bindAll(this, 'render');
 
-			this.setElement(this.template.clone());
-			this.$el.show();
+			this.setElement(options.template.clone());
+			this.$parentEl = options.$parentEl;
 
-			this.parent.prepend(this.$el);
+			this.$parentEl.prepend(this.$el);
 
 			this.listenTo(this.model, "change", this.render);
 			this.listenTo(this.model, "destroy", this.destroy);
+
 			this.render();
 		},
 
@@ -290,23 +437,22 @@ function formatCost(cost) {
 					note: that.$el.find(".notes input").val()
 				});
 
-				that.serviceLog.add(newServiceRecord);
-				newServiceRecord.save();
+				that.trigger("addServiceLog", newServiceRecord)
 				that.collection.remove(that.model);
 			});
+
+			this.$el.show();
+
 
 		},
 
 		destroy: function() {
 			this.$el.hide();
-		},
-
-		setServiceLog: function(serviceLog){
-			this.serviceLog=serviceLog;
 		}
 
-
 	});
+
+
 
 	})(jQuery);
 

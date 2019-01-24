@@ -52,6 +52,8 @@ body {
 #addCar {
 	cursor: pointer;
 	font-size: smaller;
+	/* text-align: center; */
+	padding-left: 3px;
 }
 
 .car {
@@ -61,6 +63,7 @@ body {
 	width:250px;
 	text-align:center;
 	border: 1px solid #909090;
+	cursor: pointer;
 }
 
 .car a {
@@ -98,7 +101,7 @@ body {
 	padding: 0 7px 0 5px;
 }
 
-#mileage_reported_on {
+#current_mileage .reported_on {
 	font-size: 10px;
 }
 
@@ -261,6 +264,7 @@ input, textarea, select {
 
 #registerCarForm {
 	border: 1px solid #fff;
+	border-radius: 5px;
 }
 
 #registerCarForm label {
@@ -289,6 +293,50 @@ input, textarea, select {
 
 .warning .msg {
 	padding-left: 5px;
+}
+
+#help {
+	width: 80%;
+	margin: auto;
+	background-color: #ffffff6e;
+	border: 1px solid #fff;
+	border-radius: 15px;
+	padding: 15px;
+}
+
+#help h1 {
+	text-align: center;
+	margin-top: 0px;
+}
+
+#help .section {
+	width: 40%;
+	border: 1px solid #fff;
+	padding: 15px;
+	margin: auto;
+	border-radius: 10px;
+}
+
+#help .section h2 {
+	text-align: center;
+	margin: 0 0 15px 0;
+}	
+
+
+#help .authLink {
+	background-color:#dfdfdf;
+	padding: 5px;
+	text-align: center;
+	border: 1px solid #fff;
+	margin: 10px;
+}
+
+#helpApple {
+	float: left;
+}
+
+#helpAndroid {
+	/* float: right; */
 }
 
 .ui-dialog .ui-dialog-titlebar {

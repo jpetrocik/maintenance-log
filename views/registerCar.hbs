@@ -97,7 +97,7 @@
 							data: $("#registerCarForm").serialize()
 						})
 						.done(function(data) {
-							$(location).attr('href',"/logs?oToken=" + data);
+							$(location).attr('href',"/");
 					  	})
 					 	.fail(function(jqXHR, status, error) {
 				 			$("#registerCarForm .errMsg .msg").html(status);

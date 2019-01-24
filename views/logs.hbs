@@ -35,11 +35,7 @@
 	<div id="carListHeader">My Garage<div class="close"><i class="fas fa-times"></i></div></div>
 	
 	<div id="carsList">
-		{{#each cars}}
-		<div class="car" id="carId{{token}}">
-			<a href="logs?oToken={{token}}">{{name}}</a>
-		</div>
-		{{/each}}
+		<div class="car" style="display:none"></div>
 	</div>
 	<div id="addCar"><i class="fas fa-plus-circle"></i> Add Another Car</div>
 	<form id="registerCarForm" style="display:none">
@@ -63,7 +59,7 @@
 		</div>
 		<div class="formField">
 			<label>Current Mileage:</label>
-			<input type="text"/>
+			<input type="text" name="mileage"/>
 		</div>
 		<div class="formSubmit"><input type="submit" value="Add"/></div>
 	</form>	
@@ -74,18 +70,17 @@
 <div id="carsListsBack"><img src="images/arrow-back.png"/ id="leftMenuButton"></div>
 <div id="service_due_alert" style="display:none"><i class="fas fa-exclamation-triangle"></i>Service Due!</div>
 <div id="carDetails">
-<div class="title">{{car.name}}</div>  
-<div id="current_mileage">Current mileage: {{car.mileage}} <span id="mileage_reported_on">({{car.mileage_reported_days}} days ago)</span></div>
+<div class="title"></div>  
+<div id="current_mileage">Current mileage: <span class="mileage"></span> <span class="reported_on"></span></div>
 </div>
 </div>
-<form id="maintenance" action="#">
-<input name="carId" type="hidden" value="{{car.id}}"/>
+<form id="addServiceForm">
 <table id="maintenanceGrid">
 <thead id="serviceAdd">
 	<tr>
 		<td class="date"><input id="gridFriendlyDate" type="text" autocomplete="off"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
 		<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="{{car.mileage}}" autocomplete="off"/></td>
-		<td class="service"><input id="gridService" name="service" type="text" placeholder="service" autocomplete="off"/></td>
+		<td class="service"><input id="gridService" name="service" type="text" placeholder="service description" autocomplete="off"/></td>
 		<td class="cost"><input id="gridCost" name="cost" type="text" placeholder="cost" autocomplete="off"></td>
 		<td class="notes"><input id="gridNote" name="note" type="text" placeholder="notes" autocomplete="off"/><input type="submit" style="display:none"/></td>
 		<td><button>Add</button></td>
@@ -117,7 +112,31 @@
 </tbody>
 </table>
 </form>
+
+<div id="help">
+<h1>Lets get started!</h1>
+
+<p>
+First thing you need to do is setup your mobile phone so you can easily report your mileage.  Periodically, you need to report mileage so the system can track when scheduled maintainence is due.  The best time to do this is when your getting gas, but you can report mileage at anyime.  It only takes a few second.</p>
+
+<p>
+Rather then having to install yet another app and worry about all the security and tracking concerns that go alone with that you just need to setup a web link on your phone's home screen.  Follow the steps below to setup your mobile phone. </p>
+
+<div id="helpAndroid" class="section">
+	<h2>Mobile Phone Setup</h2>
+
+	<li>Launch Chrome or Safari</li>
+	<li>Enter the follow web address</li>
+	<div class="authLink">http://XXXXXXX/mobile</div>
+	<li>Enter the following validation code on your phone</li>
+	<div class="authLink">4GS4G</div>
+
 </div>
+<div style="clear:both"></div>
+
+</div>
+
+
 
 <div id="editLogDialog">
 	<form id="editMaintenance" action="#">
@@ -147,45 +166,6 @@
 <script>
 
 $( document ).ready(function() {
-
-	let startYear = new Date().getFullYear()+1;
-	for (let year=startYear;year>1930;year--) {
-		$("#registerCarForm select[name=year]").append('<option value="' + year + '">' + year + '</option>');
-	}
-
-
-	$("#registerCarForm").submit(function(e) {
-		e.preventDefault();
-
-		//validate form
-		let isFormValid = true;
-		$("#registerCarForm .warning").hide();
-		$("#registerCarForm .required").each(function(index, el){
-			if ($.trim($(el).find("input, select").val()).length == 0){
-				$(el).find(".warning .msg").html("Required");
-				$(el).find(".warning").show();
-		        isFormValid = false;
-			}
-		});
-
-		if (!isFormValid) {
-			return;
-		}
-
-		$.ajax( {
-			method: "POST",
-			url: "/api/car",
-			data: $("#registerCarForm").serialize()
-		})
-		.done(function(data) {
-			//clear form
-			$("#registerCarForm .formField input").val("");
-	  	})
-	 	.fail(function(jqXHR, status, error) {
- 			$("#registerCarForm .errMsg .msg").html(status);
- 			$("#registerCarForm .errMsg").show();
-	 	});
-	});
 
 	$("#addCar").on("click", function() {
 		$("#registerCarForm").toggle();
@@ -229,42 +209,66 @@ $( document ).ready(function() {
 	$('#gridFriendlyDate').attr("placeholder", DATEUTILS.format(new Date()));
 
 
-	//place cursur in edit field
-	$("#gridMileage").focus();
-
-
-	//initailizes the maintenance log collection model
+	//initailizes the data model
+	var myGarage = new maintenanceApp.MyGarage();
 	var serviceLog = new maintenanceApp.ServiceLog();
-	serviceLog.carId = "{{car.token}}";
-
-	//initailizes maintenance log table view
+	var scheduledMaintenance = new maintenanceApp.ScheduledMaintenanceCollection();
+	
+	//initailizes service log table view
 	var logView = new maintenanceApp.ServiceLogTableView({
 		collection: serviceLog,
 		el: "#serviceGrid"
 	});
 
-	//initailizes the add maintenance log form
+	//initailizes the add service log form
 	var addLogView = new maintenanceApp.ServiceRecordAddView({
-		collection: serviceLog
+		collection: serviceLog,
+		el: "#addServiceForm"
 	});
 
-	//fetches the maintenance log from the server
-	serviceLog.fetch({reset: true});
-
-
-	//initailizes the maintenance log collection model
-	var scheduledMaintenance = new maintenanceApp.ScheduledMaintenanceCollection();
-	scheduledMaintenance.carId = "{{car.token}}";
-
-	//initailizes maintenance log table view
+	//initailizes scheduled maintenance table view
 	var scheduledMaintenanceGridView = new maintenanceApp.ScheduledMaintenanceTableView({
 		collection: scheduledMaintenance,
 		el: "#scheduledMaintenanceGrid"
 	});
-	scheduledMaintenanceGridView.setServiceLog(serviceLog);
+	scheduledMaintenanceGridView.on("addServiceLog", function(newServiceLog){
+		serviceLog.add(newServiceLog);
+		newServiceLog.save();
+	});
 
-	//fetches the maintenance log from the server
-	scheduledMaintenance.fetch({reset: true});
+
+	var carDetailView = new maintenanceApp.CarDetailView({
+		el: "#carDetails"
+	});
+
+	//initailizes my garage
+	var myGarageView = new maintenanceApp.MyGarageList({
+		collection: myGarage,
+		el: "#carsList",
+	});
+	myGarageView.on("selected", function(e) {
+		let selectedCar = new maintenanceApp.CarModel({token: e.get("token")});
+		selectedCar.fetch();
+		carDetailView.setModel(selectedCar);
+
+		addLogView.setModel(selectedCar);
+
+		serviceLog.carId = e.get("token");
+		serviceLog.fetch({reset: true});
+
+		scheduledMaintenance.carId = e.get("token");
+		scheduledMaintenance.fetch({reset: true});
+
+		$('#leftMenu').hide();
+
+	});
+
+	var myGarageAddView = new maintenanceApp.MyGarageAddView({
+		collection: myGarage,
+		el: "#registerCarForm"
+	});
+
+	myGarage.fetch({reset: true});
 
 	AutoComplete.create('#gridService', SERVICE_AUTOCOMPLETE_PLUGIN, serviceLog);
 	AutoComplete.create('#gridFriendlyDate', DATE_AUTOCOMPELTE_PLUGIN, DATEUTILS.months);

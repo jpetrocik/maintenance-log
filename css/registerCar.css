@@ -2,6 +2,7 @@
 body {
 	margin: 0px;
 	padding: 0px;
+	background-color: #687177;
 }
 
 #mainPage {
@@ -50,7 +51,7 @@ body {
 .subPage form input,
 .subPage form select {
 	width: 200px;
-	background-color: #dadada;
+	/* background-color: #dadada; */
 }
 
 .warning {

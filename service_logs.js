@@ -7,8 +7,8 @@ var pool = mysql.createPool(config.database);
 var SERVICE_LOG_TABLE = "service_history";
 var SCHEDULE_LOG_TABLE = "scheduled_maintenance";
 var MILEAGE_LOG_TABLE = "mileage_log";
-var CAR_DETAILS_TABLE = "car";
-var CAR_INVITATIONS = "CAR_INVITATIONS";
+var CAR_DETAILS_TABLE = "my_garage";
+var CAR_INVITATIONS = "invitations";
 
 var executeQuery = function(sqlStatement, sqlParams, callback) {
     // console.log(sqlStatement);
@@ -62,7 +62,7 @@ var serviceLog = {
   },
 
   carDetails: function(carId, callback) {
-	executeQuery("select c.*, max(mileage) as mileage, DATEDIFF(now(), max(created_date)) as mileage_reported_days \
+	executeQuery("select c.*, max(mileage) as mileage, DATEDIFF(now(), max(created_date)) as mileageReportedDays \
 		from " + CAR_DETAILS_TABLE + " c LEFT JOIN " + MILEAGE_LOG_TABLE + " m ON c.id=m.carId \
 		where c.id=?",
 		[carId], (err, results) => {callback(err, results[0])});
@@ -83,7 +83,7 @@ var serviceLog = {
 			DATE_ADD(COALESCE(max(s.serviceDate),c.inserviceDate), INTERVAL months  MONTH) as due_by, \
 			DATEDIFF(DATE_ADD(COALESCE(max(s.serviceDate),c.inserviceDate), INTERVAL months  MONTH), now()) as  due_in_days, \
 			COALESCE(max(s.mileage),ms.mileage)+ms.mileage-? as due_in_miles \
-			from car c left join " + SCHEDULE_LOG_TABLE + " ms on c.id=ms.carId left outer join " + SERVICE_LOG_TABLE + " s on s.service=ms.service and \
+			from " + CAR_DETAILS_TABLE + " c left join " + SCHEDULE_LOG_TABLE + " ms on c.id=ms.carId left outer join " + SERVICE_LOG_TABLE + " s on s.service=ms.service and \
 			s.carId=ms.carId where ms.carId=? \
 			group by ms.id, ms.service, ms.mileage, ms.months";
 		let upcomingServiceSql = "select * from (" + serviceSql + ") as s where due_in_days<30 or due_in_miles<500";
@@ -98,7 +98,11 @@ var serviceLog = {
   	}
 
     var sqlParams  = serviceRecord;
-    executeQuery("INSERT INTO " + SERVICE_LOG_TABLE + " SET ?", sqlParams, callback);
+    executeQuery("INSERT INTO " + SERVICE_LOG_TABLE + " SET ?", sqlParams, (err, results) => {
+    	serviceLog.addMileage(carId, mileage, () => { 
+    		callback(err, results);
+    	});
+    });
   },
 
   updateServiceLog: function(carId, serviceId, serviceDate, mileage, service, cost, note, regularService, monthsInterval, mileageInterval, callback) {
@@ -111,7 +115,8 @@ var serviceLog = {
     executeQuery("UPDATE " + SERVICE_LOG_TABLE + " SET ? WHERE id=? AND carId=?", sqlParams, (err, result) => {
             
         //add a scheduled service
-       	if (regularService === "true") {
+        console.log(regularService);
+       	if (regularService) {
 	   		serviceLog.addScheduledService(carId, mileageInterval, monthsInterval, service, callback);
 	   	} else {
        		callback(err, result);
