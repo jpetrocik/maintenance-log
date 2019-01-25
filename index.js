@@ -11,9 +11,10 @@ var app = express();
 
 var exphbs = require('express-handlebars');
 
-// process.on('uncaughtException', function (err) {
-//   console.log('Caught exception: ' + err);
-// });
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception');
+  console.log(err);
+});
 
 app.engine('.hbs', exphbs({extname: '.hbs', 
 	helpers: {
@@ -79,7 +80,7 @@ app.get('/logs', function (req, res) {
 app.get('/mileage', function (req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
-			res.sendStatus(401);
+			res.render('mobile');
 			return;
 		}
 

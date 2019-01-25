@@ -78,7 +78,6 @@ router.get('/car', function (req, res) {
 			return;
 		}
 
-		console.log(uToken);
 		serviceLogs.myGarage(uToken, function(err, rows){
 			res.json(rows);
 		});
