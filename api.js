@@ -78,6 +78,7 @@ router.get('/car', function (req, res) {
 			return;
 		}
 
+		console.log(uToken);
 		serviceLogs.myGarage(uToken, function(err, rows){
 			res.json(rows);
 		});
@@ -141,7 +142,6 @@ router.post('/car/:iToken/service', function (req, res) {
 			return;
 		}
 
-		console.log(req.body);
 		serviceLogs.addServiceLog(carId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note,
 			function(err, result){
 				if (err) {

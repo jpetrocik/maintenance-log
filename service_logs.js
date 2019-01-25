@@ -36,7 +36,7 @@ var tokenGenerator = function(tokenSize) {
 
 var serviceLog = {
   myGarage: function(utoken, callback) {
-    executeQuery("select iToken as token, name from " + CAR_DETAILS_TABLE + " c left join " + CAR_INVITATIONS + " i ON c.token=i.oToken \
+    executeQuery("select iToken as token, name from " + CAR_DETAILS_TABLE + " c left join " + CAR_INVITATIONS + " i ON c.id=i.carId \
     	where c.status='ACTIVE' and i.uToken=? \
      	order by c.year desc, c.make asc, c.model asc, c.id desc", [utoken], callback);
   },
@@ -96,7 +96,7 @@ var serviceLog = {
   	if (cost == undefined || cost != '') {
   		serviceRecord.cost = cost;
   	}
-  	
+
   	if (note) {
   		serviceRecord.note =note.trim()
   	}
@@ -119,7 +119,6 @@ var serviceLog = {
     executeQuery("UPDATE " + SERVICE_LOG_TABLE + " SET ? WHERE id=? AND carId=?", sqlParams, (err, result) => {
             
         //add a scheduled service
-        console.log(regularService);
        	if (regularService) {
 	   		serviceLog.addScheduledService(carId, mileageInterval, monthsInterval, service, callback);
 	   	} else {
