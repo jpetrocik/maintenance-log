@@ -92,9 +92,13 @@ var serviceLog = {
   },
 
   addServiceLog: function(carId, serviceDate, mileage, service, cost, note, callback) {
-  	var serviceRecord = {carId: carId, serviceDate: serviceDate, mileage: mileage, service: service.trim(), note:note.trim() }
+  	var serviceRecord = {carId: carId, serviceDate: serviceDate, mileage: mileage, service: service.trim() }
   	if (cost == undefined || cost != '') {
   		serviceRecord.cost = cost;
+  	}
+  	
+  	if (note) {
+  		serviceRecord.note =note.trim()
   	}
 
     var sqlParams  = serviceRecord;

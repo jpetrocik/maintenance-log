@@ -26,8 +26,30 @@ router.post('/sendAuth', function (req, res) {
 	});
 });
 
-router.post('/mfa', function (req, res) {
-	res.sendStatus('200');
+router.get('/validate', function (req, res) {
+	invitations.validateUser(req, res, (err, uToken) => {
+		if (!uToken) {
+			res.sendStatus(401);
+			return;
+		}
+
+		invitations.createValidationCode(uToken, (err, validationCode) => {
+			res.json({validationCode: validationCode });
+		});
+	});
+});
+
+router.post('/validate', function (req, res) {
+	invitations.validateCode(req.body.validationCode, (err, uToken) => {
+		invitations.loginUser(uToken, res, (err, result) => {
+			if (!result) {
+				res.sendStatus(401);
+				return;
+			}
+
+			res.sendStatus(200);
+		});
+	});
 });
 
 router.post('/car', function(req, res) {
@@ -119,6 +141,7 @@ router.post('/car/:iToken/service', function (req, res) {
 			return;
 		}
 
+		console.log(req.body);
 		serviceLogs.addServiceLog(carId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note,
 			function(err, result){
 				if (err) {

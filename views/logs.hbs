@@ -24,7 +24,6 @@
 	<script src="scripts/backbone-min.js"></script>
 
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
-
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 	<title>Service Logs</title>
@@ -129,7 +128,7 @@ Rather then having to install yet another app and worry about all the security a
 	<li>Enter the follow web address</li>
 	<div class="authLink">http://XXXXXXX/mobile</div>
 	<li>Enter the following validation code on your phone</li>
-	<div class="authLink">4GS4G</div>
+	<div id="mobileValidationCode" class="authLink">-----</div>
 
 </div>
 <div style="clear:both"></div>
@@ -208,6 +207,13 @@ $( document ).ready(function() {
 	//add todays date as placeholder
 	$('#gridFriendlyDate').attr("placeholder", DATEUTILS.format(new Date()));
 
+	$.ajax({
+		url: "api/validate",
+		type: "GET",
+		success: function(results) {
+			$("#mobileValidationCode").html(results.validationCode);
+		}
+	});
 
 	//initailizes the data model
 	var myGarage = new maintenanceApp.MyGarage();

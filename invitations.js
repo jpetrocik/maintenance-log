@@ -6,6 +6,7 @@ var pool = mysql.createPool(config.database);
 
 var INVITATIONS_TABLE = "invitations";
 var ACCOUNTS_TABLE = "user_accounts";
+var VALIDATION_TABLE = "validation_codes";
 
 var executeQuery = function(sqlStatement, sqlParams, callback) {
 	//console.log(sqlStatement);
@@ -59,6 +60,25 @@ var invitations = {
 	});
   },
 
+  createValidationCode:  function(uToken, callback) {
+	let expires = new Date(Date.now() + (30*60*1000));
+  	let validationCode = tokenGenerator(5).toUpperCase();
+	executeQuery("insert into " + VALIDATION_TABLE + " (uToken, validationCode, expires) values (?, ?, ?)", [uToken, validationCode, expires], (err, results) => { 
+		callback(err, validationCode)
+	});
+  },
+
+  validateCode:  function(validationCode, callback) {
+	executeQuery("select uToken from " + VALIDATION_TABLE + " where validationCode=? AND UNIX_TIMESTAMP(expires)>?", [validationCode, new Date()], (err, results) => { 
+		if (results.length == 0) {
+			callback(err);
+			return;
+		}
+		callback(err, results[0].uToken);
+
+	});
+  },
+
   sendAuth:  function(email, callback) {
 
 	executeQuery("select aToken from " + ACCOUNTS_TABLE + " where email=?", [email], (err, results) => {
@@ -93,6 +113,23 @@ var invitations = {
 
 		res.cookie('_aToken',aToken, { maxAge: (90 * 24 * 60 * 60) });
 		callback(err, results[0].uToken);
+	});
+  },
+
+  loginUser:  function(uToken, res, callback) {
+	if (uToken === undefined) {
+		callback("Login failed", false);
+		return;
+	}
+
+	executeQuery("select aToken from " + ACCOUNTS_TABLE + " where uToken=?", [uToken], (err, results) => {
+		if (results.length === 0) {
+			callback("Login failed", false);
+			return;
+		}
+
+		res.cookie('_aToken', results[0].aToken, { maxAge: (90 * 24 * 60 * 60) });
+		callback("Login succesful", true);
 	});
   },
 

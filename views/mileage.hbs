@@ -1,73 +1,61 @@
 <html>
 <head>
-<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-<link rel="manifest" href="images/manifest.json">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
-
+	<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+	<link rel="manifest" href="images/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<title>Gas Log</title>
-	<style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
 
-	.carButton {
-	    background-color: #afafaf;
-	    margin: 5px;
-	    border-radius: 5px;
-	    color: #fff;
-	    padding-top: 5px;
-	    padding-bottom: 5px;
-	    text-align: center;
-	    font-size:18px;
-	}
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="css/mileage.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
-	.car {
-	}
-
-	.car a {
-		color: #fff;
-	}
-
-	input {
-		width: 100%;
-		font-size: 18px;
-		margin: 5px;
-		border-radius: 5px;
-	}
-
-	input[type=submit] {
-	    background-color: #0663a5;
-	}
-
-	.selected { 
-	    background-color: #0663a5;
-	}
-
-
-	#mileageForm {
-		margin-top:25px;
-		margin: 25px 0 0 0;
-	}
-	</style>
+	<title>Mileage</title>
 </head>
-<body id="carList">
+<body>
 
+<div id="mileageReport" style="display:none">
+	<div class="header"><span>Mileage Stats</span><div class="close"><i class="fas fa-times"></i></div></div>
+
+	<table class="stats">
+		<tr><td class="label">Miles:</td><td class="data">---</td><td class="label">Day:</td><td class="data">--</td></tr>
+		<tr><td class="label">YTD:</td><td class="data">---</td><td class="label">Avg Week:</td><td class="data">--</td></tr>
+	</table>
+
+	<div class="header">Service Reminders</div>
+	<div id="serviceReminders">
+		<h2 class="noServiceDue">Congratulations, no maintainence due!</h2>
+		<div class="serviceDue" style="display:none">
+			<h3 class="serviceDescription">Oil Change</h3>
+			<div class="serviceSchedule">
+				<div>Due In: <span class="serviceMiles">454</span> miles</div>
+				<div>Due By: <span class="serviceDate">Oct 15, 2019</span></div>
+			</div>
+			<input class="button completed" type="button" value="Completed"/>
+		</div>
+	</div>
+</div>
+
+<div id="mainContent">
 <div id="carList">
 	{{#each cars}}
-	<div class="car carButton" carId="{{token}}"><a href="#mileage">{{name}}</a></div>
+	<div class="button car" carId="{{token}}">{{name}}</div>
 	{{/each}}
 </div>
 
@@ -76,21 +64,30 @@
 	<form method="POST">
 	<input id="carId" type="hidden"/>
 	<input id="mileage" type="number"/>
-	<input class="carButton" type="submit" value="Submit"/>
+	<input class="button" type="submit" value="Submit"/>
 	</form>
 </div>
-
+</div>
 <script>
 
-function resetPage() {
-	$("#carList .car").removeClass("selected");
-	$("#mileage").prop("disabled",true);
-	$("#mileage").val("");
-	$("#mileage").prop("placeholder","Select Car");
-}
 
 $( document ).ready(function() {
+
+	let resetPage = function() {
+		$("#carList .car").removeClass("selected");
+		$("#mileage").prop("disabled",true);
+		$("#mileage").val("");
+		$("#mileage").prop("placeholder","Select Car");
+	}
+
 	resetPage();
+
+	let serviceTemplate = $("#mileageReport .serviceDue").clone();
+	let noServiceTemplate = $("#mileageReport .noServiceDue").clone();
+
+	$( "#mileageReport .close" ).on("click", function() {
+		$("#mileageReport").fadeOut();
+	});
 
 	var carId = null;
 	$("#carList .car").on("click", function(e,f) {
@@ -106,20 +103,54 @@ $( document ).ready(function() {
 
 	$("#mileageForm form").on("submit", function(e) {
 		var mileage = $("#mileage").val();
-		console.log(carId + " " + mileage);
+		if (mileage.length === 0) {
+			return false;
+		}
+
+		resetPage();
+
 		$.ajax({
 			url: "api/car/" + carId + "/mileage/" + mileage,
 			type: "PUT",
 			success: function(results) {
-				resetPage();
+				var dateFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+				$("#serviceReminders").empty();
+
 				if (results.length > 0) {
-					let serviceAlertMsg = "Service Due\n";
-					results.forEach(function(r) {
-						serviceAlertMsg += ("\n" + r.service);
+
+					results.forEach(function (o, i) {
+						let newServiceReminder = serviceTemplate.clone();
+						newServiceReminder.find(".serviceDescription").html(o.service);
+						newServiceReminder.find(".serviceMiles").html(o.due_in_miles);
+						newServiceReminder.find(".serviceDate").html(new Date(o.due_by).toLocaleDateString("en-US",dateFormatOptions));
+						newServiceReminder.find(".completed").on("click", function(e) {
+
+							let d = new Date();
+							let serviceDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+							$.ajax({
+								url: "api/car/" + carId + "/service",
+								type: "POST",
+								contentType : 'application/json',
+								data: JSON.stringify({ 
+									service: o.service,
+									mileage: mileage,
+									serviceDate: serviceDate
+								}),
+								success: function(results) {
+									$(e.currentTarget).parent(".serviceDue").fadeOut();
+								}
+							});
+						});
+						newServiceReminder.show();
+
+						$("#serviceReminders").append(newServiceReminder);
 					});
-					alert(serviceAlertMsg);
-				} else 
-					alert("Thanks You");
+				} else {
+						$("#serviceReminders").append(noServiceTemplate.clone());
+				}
+
+				$("#mileageReport").show();
+
 			}
 		});
 		e.preventDefault();

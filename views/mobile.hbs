@@ -40,9 +40,9 @@ $( document ).ready(function() {
 		e.preventDefault();
 
 		$.ajax({
-			url: "api/mfa/",
+			url: "api/validate/",
 			type: "POST",
-			data: $("#validateForm form").serialize(),
+			data: { validationCode: $("#validationCode").val() },
 			success: function(results) {
 				$(location).attr('href','/mileage');
 			}
