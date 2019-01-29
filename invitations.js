@@ -85,6 +85,8 @@ var invitations = {
 		if (err) {
 			callback(err);
 		}
+
+		console.log(results);
 		if (results.length === 0) {
 			callback();
 		}
@@ -111,7 +113,7 @@ var invitations = {
 			return;
 		}
 
-		res.cookie('_aToken',aToken, { maxAge: (90 * 24 * 60 * 60) });
+		res.cookie('_aToken',aToken, { maxAge: (90 * 24 * 60 * 60 * 1000) });
 		callback(err, results[0].uToken);
 	});
   },
@@ -128,7 +130,7 @@ var invitations = {
 			return;
 		}
 
-		res.cookie('_aToken', results[0].aToken, { maxAge: (90 * 24 * 60 * 60) });
+		res.cookie('_aToken', results[0].aToken, { maxAge: (90 * 24 * 60 * 60 * 1000) });
 		callback("Login succesful", true);
 	});
   },
