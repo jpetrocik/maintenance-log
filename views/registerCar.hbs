@@ -87,13 +87,13 @@
  				//register and add car
 				$.ajax( {
 					method: "POST",
-					url: "/api/register",
+					url: "api/register",
 					data: {email: $("#registerCarForm input[name=email]").val()}
 				})
 				.done(function() {
 					$.ajax( {
 							method: "POST",
-							url: "/api/car",
+							url: "api/car",
 							data: $("#registerCarForm").serialize()
 						})
 						.done(function(data) {
@@ -137,7 +137,7 @@
  				//register and add car
 				$.ajax( {
 					method: "POST",
-					url: "/api/sendAuth",
+					url: "api/sendAuth",
 					data: $("#requestLinkForm").serialize()
 				})
 				.done(function() {
