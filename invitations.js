@@ -84,11 +84,13 @@ var invitations = {
 	executeQuery("select aToken from " + ACCOUNTS_TABLE + " where email=?", [email], (err, results) => {
 		if (err) {
 			callback(err);
+			return;
 		}
 
 		console.log(results);
 		if (results.length === 0) {
 			callback();
+			return;
 		}
 
 		console.log("?aToken=" + results[0].aToken);
