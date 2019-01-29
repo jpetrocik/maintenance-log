@@ -9,7 +9,8 @@ var ACCOUNTS_TABLE = "user_accounts";
 var VALIDATION_TABLE = "validation_codes";
 
 var executeQuery = function(sqlStatement, sqlParams, callback) {
-	//console.log(sqlStatement);
+	// console.log(sqlStatement);
+	// console.log(sqlParams);
     pool.query(sqlStatement, sqlParams, (error, results, fields) => {
     	if (error)
     		console.log(error);
@@ -69,7 +70,7 @@ var invitations = {
   },
 
   validateCode:  function(validationCode, callback) {
-	executeQuery("select uToken from " + VALIDATION_TABLE + " where validationCode=? AND UNIX_TIMESTAMP(expires)>?", [validationCode, new Date()], (err, results) => { 
+	executeQuery("select uToken from " + VALIDATION_TABLE + " where validationCode=? AND UNIX_TIMESTAMP(expires)>?", [validationCode, Date.now()/1000], (err, results) => { 
 		if (results.length == 0) {
 			callback(err);
 			return;

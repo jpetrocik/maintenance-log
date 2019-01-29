@@ -1,6 +1,8 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-	<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
+  	<!-- fav icons -->
+ 	<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
 	<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
 	<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
@@ -13,62 +15,88 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-	<link rel="manifest" href="images/manifest.json">
-	<meta name="msapplication-TileColor" content="#ffffff">
+	<link rel="manifest" href="manifest.json">
+	<meta name="msapplication-TileColor" content="#2770a4">
 	<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
-	<meta name="theme-color" content="#ffffff">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
-	<link rel="stylesheet" type="text/css" href="css/mileage.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+    <!-- Font Awesome -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="css/mileage.css">
 
 	<title>Mileage</title>
 </head>
 <body>
 
-<div id="mileageReport" style="display:none">
-	<div class="header"><span>Mileage Stats</span><div class="close"><i class="fas fa-times"></i></div></div>
+<div id="enterValidation" class="jumbotron mt-3" style="display:none">
+	<h1>Enter validation code</h1>
+	<p class="lead">Please enter the validation code found on the "Getting Started" section.</p>
+	
+	<input id="validationCode" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter code here"/>
+	<input type="button" id="validationCodeSend" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
+</div>
 
-	<table class="stats">
-		<tr><td class="label">Miles:</td><td class="data">---</td><td class="label">Day:</td><td class="data">--</td></tr>
-		<tr><td class="label">YTD:</td><td class="data">---</td><td class="label">Avg Week:</td><td class="data">--</td></tr>
-	</table>
+<div id="mileageReport" class="modal" tabindex="-1" role="dialog" xstyle="display:none">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header header p-0">
+        <h5 class="modal-title pl-2">Mileage Stats</h5>
+        <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
+	  </div>
+	  <div class="modal-body">
+		<table class="stats">
+			<tr><td class="label">Miles:</td><td class="data">---</td><td class="label">Day:</td><td class="data">--</td></tr>
+			<tr><td class="label">YTD:</td><td class="data">---</td><td class="label">Avg Week:</td><td class="data">--</td></tr>
+		</table>
+	  </div>
 
-	<div class="header">Service Reminders</div>
-	<div id="serviceReminders">
-		<h2 class="noServiceDue">Congratulations, no maintainence due!</h2>
-		<div class="serviceDue" style="display:none">
-			<h3 class="serviceDescription">Oil Change</h3>
-			<div class="serviceSchedule">
-				<div>Due In: <span class="serviceMiles">454</span> miles</div>
-				<div>Due By: <span class="serviceDate">Oct 15, 2019</span></div>
+      <div class="modal-header header p-0">
+        <h5 class="modal-title pl-2">Service Reminders</h5>
+	  </div>
+	  <div class="modal-body">
+		<div id="serviceReminders">
+			<p class="noServiceDue">Congratulations, no maintainence due!</p>
+			<div class="serviceDue" style="display:none">
+				<h3 class="serviceDescription">Oil Change</h3>
+				<div class="serviceSchedule">
+					<div>Due In: <span class="serviceMiles">454</span> miles</div>
+					<div>Due By: <span class="serviceDate">Oct 15, 2019</span></div>
+				</div>
+				<input class="btn completed" type="button" value="Completed"/>
 			</div>
-			<input class="button completed" type="button" value="Completed"/>
 		</div>
+	  </div>
+    </div>
+  </div>
+</div>
+
+<div id="mainContent" class="container mt-4">
+	<div id="carList" class="btn-group-vertical">
+		<div class="btn m-1 car" style="display:none"></div>
+	</div>
+
+	<div id="mileageForm" class='mt-4'>
+		<a anchor="mileage"></a>
+		<input id="carId" type="hidden"/>
+		<input id="mileage" class="form-control m-1 pt-0 pb-0" type="number"/>
+		<button id="submitMileage" class="btn btn_submit m-1">Submit"</button>
 	</div>
 </div>
 
-<div id="mainContent">
-<div id="carList">
-	{{#each cars}}
-	<div class="button car" carId="{{token}}">{{name}}</div>
-	{{/each}}
-</div>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
-<div id="mileageForm">
-	<a anchor="mileage"></a>
-	<form method="POST">
-	<input id="carId" type="hidden"/>
-	<input id="mileage" type="number"/>
-	<input class="button" type="submit" value="Submit"/>
-	</form>
-</div>
-</div>
+
 <script>
+
 
 
 $( document ).ready(function() {
@@ -78,31 +106,84 @@ $( document ).ready(function() {
 		$("#mileage").prop("disabled",true);
 		$("#mileage").val("");
 		$("#mileage").prop("placeholder","Select Car");
+	};
+
+	let setupMileageForm = function(carId) {
+		$("#carId").val(carId);
+		$("#mileage").prop("disabled",false);
+		$("#mileage").prop("placeholder","Enter Mileage");
+		$("#mileage").focus();
+	};
+
+	let loadCarData = function() {
+		//retrieve car list
+		$.ajax({
+			url: "api/car",
+			type: "GET",
+			success: function(results) {
+				$("#carList").empty();
+
+				if (results.length > 0) {
+					results.forEach(function (o, i) {
+						let newCar = carTemplate.clone();
+						newCar.html(o.name);
+						newCar.data("carId", o.token);
+						newCar.on("click", function(e, f) {
+							$("#carList .car").removeClass("selected");
+
+							let selectedCar = $(e.currentTarget);
+							selectedCar.addClass("selected");
+							let carId = selectedCar.data("carId");
+							setupMileageForm(carId);
+						});
+						newCar.show();
+
+						$("#carList").append(newCar);
+
+					});
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$("#mainContent").hide();
+				$("#enterValidation").show();
+			}
+
+		});
 	}
 
 	resetPage();
 
+	//save templates
+	let carTemplate = $("#carList .car").clone();
 	let serviceTemplate = $("#mileageReport .serviceDue").clone();
 	let noServiceTemplate = $("#mileageReport .noServiceDue").clone();
 
-	$( "#mileageReport .close" ).on("click", function() {
-		$("#mileageReport").fadeOut();
+	// $( "#mileageReport .close" ).on("click", function() {
+	// 	$("#mileageReport").fadeOut();
+	// });
+
+	$("#validationCodeSend").on("click", function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			url: "api/validate/",
+			type: "POST",
+			data: { validationCode: $("#validationCode").val() },
+			success: function(results) {
+				loadCarData();
+				$("#enterValidation").fadeOut(400, function() {
+					$("#mainContent").fadeIn();
+				});
+			}
+		});
+
+		return false; 
 	});
 
-	var carId = null;
-	$("#carList .car").on("click", function(e,f) {
-		$("#carList .car").removeClass("selected");
-		var selectedCar = $(e.currentTarget);
-		selectedCar.addClass("selected");
-		carId = selectedCar.attr("carId");
-		$("#mileage").prop("disabled",false);
-		$("#mileage").prop("placeholder","Enter Mileage");
-		$("#mileage").focus();
-
-	});
-
-	$("#mileageForm form").on("submit", function(e) {
-		var mileage = $("#mileage").val();
+	//submit mileage
+	$("#submitMileage").on("click", function(e) {
+		let carId = $("#carId").val();
+		let mileage = $("#mileage").val();
 		if (mileage.length === 0) {
 			return false;
 		}
@@ -113,7 +194,7 @@ $( document ).ready(function() {
 			url: "api/car/" + carId + "/mileage/" + mileage,
 			type: "PUT",
 			success: function(results) {
-				var dateFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+				let dateFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 				$("#serviceReminders").empty();
 
 				if (results.length > 0) {
@@ -149,7 +230,7 @@ $( document ).ready(function() {
 						$("#serviceReminders").append(noServiceTemplate.clone());
 				}
 
-				$("#mileageReport").show();
+				$('#mileageReport').modal();
 
 			}
 		});
@@ -157,6 +238,10 @@ $( document ).ready(function() {
 
 		return false; 
 	});
+
+
+	loadCarData();
+
 });
 </script>
 </body>

@@ -1,56 +1,131 @@
-<html>
-<head>
-<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-<link rel="manifest" href="images/manifest.json">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
+<!doctype html>
+<html lang="en">
+  <head>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<title>Mobile Setup</title>
-	<style>
-	</style>
-</head>
-<body>
+  	<!-- fav icons -->
+ 	<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+	<link rel="manifest" href="manifest.json">
+	<meta name="msapplication-TileColor" content="#2770a4">
+	<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
 
-<div id="validateForm">
-	<form method="POST">
-	<input id="validationCode" type="text" placeholder="Enter code here"/>
-	<input type="submit" value="Submit"/>
-	</form>
-</div>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-$( document ).ready(function() {
-	$("#validateForm form").on("submit", function(e) {
-		e.preventDefault();
+    <!-- Font Awesome -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
-		$.ajax({
-			url: "api/validate/",
-			type: "POST",
-			data: { validationCode: $("#validationCode").val() },
-			success: function(results) {
-				$(location).attr('href','mileage');
-			}
+	<link rel="stylesheet" type="text/css" href="css/mobile.css">
+
+	<title>Setup Mobile</title>
+  </head>
+  <body>
+
+	<div id="enterValidation" class="jumbotron mt-3">
+    	<h1>Enter validation code</h1>
+    	<p class="lead">Please enter the validation code found on the "Getting Started" section.</p>
+    	
+		<input id="validationCode" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter code here"/>
+		<input type="button" id="validationCodeSend" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
+  	</div>
+
+	<div id="installWebApp" class="jumbotron mt-3" style="display:none">
+    	<h1>Install Web Link</h1>
+    	<p class="lead">The simplest method to setup your mobile device to report your mileage is to install the web link on your home screen.</p>
+		<input type="button" id="webAppInstall" class="btn btn-lg btn-primary btn-block mt-1" value="Install WebApp"/>
+
+		<p>Alternatively, you can bookmark the following link <a class="text-reset" href="http://localhost:3000/mileage">http://localhost:3000/mileage"</a> to report mileage.</p>
+	</div>
+
+	<div id="webAppInstallationComplete" class="jumbotron mt-3" style="display:none">
+    	<h1>Ready To Go!</h1>
+    	<p class="lead">You are now all setup to report your mileage, it takes only a few seconds. A great time to report mileage is when you are filling up on gas. To report mileage next time you fill up on gas, find the icon on your home screen that matches the icon below and tap it. Everytime you report mileage your car's service history is scanned for any upcoming scheduled maintenance.  If any services are coming due you will get a list of those services.</p>
+		<a href="mileage"><img src="images/favicon-96x96.png"/></a>
+	</div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+
+	<script>
+
+	$( document ).ready(function() {
+
+		if ('serviceWorker' in navigator) {
+		  window.addEventListener('load', function() {
+		    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+		      // Registration was successful
+		      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+		    }, function(err) {
+		      // registration failed :(
+		      console.log('ServiceWorker registration failed: ', err);
+		    });
+		  });
+		}
+
+		//setup install weblink
+		let deferredPrompt;
+		window.addEventListener('beforeinstallprompt', (e) => {
+		  e.preventDefault();
+		  deferredPrompt = e;
 		});
 
-		return false; 
+		$("#webAppInstall").on("click", function(e) {
+			e.preventDefault();
+
+			deferredPrompt.prompt().catch(function(e) {
+				console.log(e);
+			});;
+
+			// Wait for the user to respond to the prompt
+			deferredPrompt.userChoice.then((choiceResult) => {
+				if (choiceResult.outcome === 'accepted') {
+					$("#installWebApp").fadeOut(400, function() {
+						$("#webAppInstallationComplete").fadeIn();
+					});
+				} else {
+					console.log('User dismissed the A2HS prompt');
+				}
+				deferredPrompt = null;
+			});
+		});
+
+		$("#validationCodeSend").on("click", function(e) {
+			e.preventDefault();
+
+			$.ajax({
+				url: "api/validate/",
+				type: "POST",
+				data: { validationCode: $("#validationCode").val() },
+				success: function(results) {
+					$("#enterValidation").fadeOut(400, function() {
+						$("#installWebApp").fadeIn();
+					});
+				}
+			});
+
+			return false; 
+		});
 	});
-});
-</script>
-</body>
+	</script>
+   </body>
 </html>

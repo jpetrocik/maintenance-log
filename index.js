@@ -32,9 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use('/css', express.static('css'));
-app.use('/images', express.static('images'));
-app.use('/scripts', express.static('scripts'));
+app.use(express.static('static'));
 
 //Import api routes under /api
 app.use('/api', apiRoutes);
@@ -53,7 +51,16 @@ app.get('/', function (req, res) {
 
 
 app.get('/mobile', function (req, res) {
-	res.render('mobile');
+	invitations.validateUser(req, res, (err, uToken) => {
+		if (!uToken) {
+			res.render('mobile');
+			return;
+		}
+
+		serviceLogs.myGarage(uToken, function(err, cars) {
+		  res.render('mileage', {cars: cars});
+		});
+	});
 });
 
 app.get('/logs', function (req, res) {
@@ -78,16 +85,7 @@ app.get('/logs', function (req, res) {
 });
 
 app.get('/mileage', function (req, res) {
-	invitations.validateUser(req, res, (err, uToken) => {
-		if (!uToken) {
-			res.render('mobile');
-			return;
-		}
-
-		serviceLogs.myGarage(uToken, function(err, cars) {
-		  res.render('mileage', {cars: cars});
-		});
-	});
+  res.render('mileage');
 });
 
 
