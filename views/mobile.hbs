@@ -59,7 +59,6 @@
 	</div>
 
 
-    <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
@@ -112,10 +111,15 @@
 		$("#validationCodeSend").on("click", function(e) {
 			e.preventDefault();
 
+			let vCode = $("#validationCode").val();
+			if (vCode.trim().length === 0) {
+				return false;
+			}
+
 			$.ajax({
 				url: "api/validate/",
 				type: "POST",
-				data: { validationCode: $("#validationCode").val() },
+				data: { validationCode: vCode.toUpperCase() },
 				success: function(results) {
 					$("#enterValidation").fadeOut(400, function() {
 						$("#installWebApp").fadeIn();

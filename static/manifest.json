@@ -48,7 +48,7 @@
   "start_url": "\/mileage",
   "background_color": "#2770a4",
   "display": "standalone",
-  "orientation": "landscape",
+  "orientation": "portrait",
   "scope": "\/",
   "theme_color": "#2770a4"
 }
