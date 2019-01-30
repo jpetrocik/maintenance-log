@@ -1,6 +1,17 @@
 var express = require('express'),
     router = express.Router();
 
+router.head('/', function (req, res) {
+	invitations.validateUser(req, res, (err, uToken) => {
+		if (!uToken) {
+			res.sendStatus(401);
+			return;
+		}
+
+		res.sendStatus(200);
+	});
+});
+
 /**
  * Registers user with a new car
  */
