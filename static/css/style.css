@@ -192,6 +192,7 @@ body {
 }
 
 #scheduledMaintenanceGrid .actions a {
+	color: #ffff;
 }
 
 #scheduledMaintenanceGrid input {
@@ -205,7 +206,6 @@ body {
 }
 
 #scheduledMaintenanceGrid input.passedDue {
-	font-weight: bold;
 }
 
 #scheduledMaintenanceGrid input:focus {
