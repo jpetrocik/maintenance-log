@@ -40,7 +40,7 @@ app.use('/api', apiRoutes);
 app.get('/', function (req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
-			res.render('registerCar');
+			res.render('register');
 			return;
 		}
 
