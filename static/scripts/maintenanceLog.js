@@ -363,6 +363,19 @@ function formatCost(cost) {
 
 		render: function() {
 			$("#gridMileage").attr('placeholder', this.model.get("mileage"));
+
+			//clears out placeholder when focused and restored it on blur
+			this.$el.find("#gridCost, #gridNote, #gridService").on("focus", function(e) {
+				let pHolder = $(e.currentTarget).attr('placeholder');
+				$(e.currentTarget).data('placeholder',pHolder);
+				$(e.currentTarget).attr('placeholder','');
+			});
+
+			this.$el.find("#gridCost, #gridNote, #gridService").on("blur", function(e) {
+				let pHolder = $(e.currentTarget).data('placeholder');
+				$(e.currentTarget).attr('placeholder',pHolder);
+			});
+
 		}	
 	});
 
@@ -413,19 +426,30 @@ function formatCost(cost) {
 		render: function() {
 			var that = this;
 			var scheduledMaintenance = this.model.toJSON();
-			this.$el.find(".date").html(DATEUTILS.format(new Date(scheduledMaintenance.due_by)));
-			this.$el.find(".mileage").html(parseInt(scheduledMaintenance.due_in_miles).toLocaleString());
+
+			let dueBy = new Date(scheduledMaintenance.due_by);
+			this.$el.find(".date input").attr('placeholder', DATEUTILS.format(dueBy));
+			if (dueBy.getTime() < Date.now()) {
+				this.$el.find(".date input").addClass("passedDue");
+			}
+
+			let dueIn = scheduledMaintenance.due_in_miles;
+			this.$el.find(".mileage input").attr('placeholder', parseInt(dueIn).toLocaleString());
+			if (dueIn < 0) {
+				this.$el.find(".mileage input").addClass("passedDue");
+			}
+
 			this.$el.find(".service").html(scheduledMaintenance.service);
 			// this.$el.find(".actions .edit").attr("href", "#maintenanceId=" + scheduledMaintenance.id);
 			this.$el.find(".actions .completed").attr("href", "#maintenanceId=" + scheduledMaintenance.id);
 			this.$el.find(".actions .completed").on("click", function(e) {
 
-				var gridFriendlyDate = $("#gridFriendlyDate").val();
-				if (gridFriendlyDate.length===0)
+				let gridFriendlyDate = that.$el.find(".date input").val();
+				if (gridFriendlyDate.length===0) //use current date is not supplied
 					gridFriendlyDate = $("#gridFriendlyDate").attr('placeholder');
 
-				var gridMileage = $("#gridMileage").val().replace(/,/g, '');
-				if (gridMileage.length===0)
+				var gridMileage = that.$el.find(".mileage input").val().replace(/,/g, '');
+				if (gridMileage < 500) //if the mile is less then the alert mileage copy current mileage
 					gridMileage = $("#gridMileage").attr('placeholder').replace(/,/g, '');
 
 				var newServiceRecord = new maintenanceApp.ServiceRecord({
@@ -439,6 +463,18 @@ function formatCost(cost) {
 
 				that.trigger("addServiceLog", newServiceRecord)
 				that.collection.remove(that.model);
+			});
+
+			//clears out placeholder when focused and restored it on blur
+			this.$el.find("input[type=text]").on("focus", function(e) {
+				let pHolder = $(e.currentTarget).attr('placeholder');
+				$(e.currentTarget).data('placeholder',pHolder);
+				$(e.currentTarget).attr('placeholder','');
+			});
+
+			this.$el.find("input[type=text]").on("blur", function(e) {
+				let pHolder = $(e.currentTarget).data('placeholder');
+				$(e.currentTarget).attr('placeholder',pHolder);
 			});
 
 			this.$el.show();

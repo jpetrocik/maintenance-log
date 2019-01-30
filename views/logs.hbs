@@ -77,7 +77,7 @@
 <thead id="serviceAdd">
 	<tr>
 		<td class="date"><input id="gridFriendlyDate" type="text" autocomplete="off"/><input id="gridServiceDate" name="serviceDate" type="hidden"/></td>
-		<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="{{car.mileage}}" autocomplete="off"/></td>
+		<td class="mileage"><input id="gridMileage" name="mileage" type="text" placeholder="" autocomplete="off"/></td>
 		<td class="service"><input id="gridService" name="service" type="text" placeholder="service description" autocomplete="off"/></td>
 		<td class="cost"><input id="gridCost" name="cost" type="text" placeholder="cost" autocomplete="off"></td>
 		<td class="notes"><input id="gridNote" name="note" type="text" placeholder="notes" autocomplete="off"/><input type="submit" style="display:none"/></td>
@@ -86,8 +86,8 @@
 </thead>
 <tbody id="scheduledMaintenanceGrid">
 <tr style="display:none">
-<td class="date"></td>
-<td class="mileage"></td>
+<td class="date"><input type="text" placeholder=""/></td>
+<td class="mileage"><input type="text" placeholder=""/></td>
 <td class="service"></td>
 <td class="cost"><input type="text" placeholder="cost"/></td>
 <td class="notes"><input type="text" placeholder="notes"/></td>

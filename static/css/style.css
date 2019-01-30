@@ -136,7 +136,7 @@ body {
 	padding-left: 15px;
 }
 
-#maintenanceGrid .mileage input,
+#maintenanceGrid .mileage input {
 	text-align:right;
 }
 
@@ -150,7 +150,7 @@ body {
 	text-align:left;
 }
 
-#maintenanceGrid .cost input,
+#maintenanceGrid .cost input {
 	text-align:right;
 }
 
@@ -186,14 +186,26 @@ body {
 	color: #1f1d1d;
 }
 
+#scheduledMaintenanceGrid td {
+	padding-left: 3px;
+	border: 1px solid #1f1d1d;
+}
+
 #scheduledMaintenanceGrid .actions a {
-	color: #ffff;
 }
 
 #scheduledMaintenanceGrid input {
 	background-color: #a96c6c;
 	border: 0px;
 	color: #1f1d1d;
+}
+
+#scheduledMaintenanceGrid input::-webkit-input-placeholder {
+	color: #1f1d1d;
+}
+
+#scheduledMaintenanceGrid input.passedDue {
+	font-weight: bold;
 }
 
 #scheduledMaintenanceGrid input:focus {
