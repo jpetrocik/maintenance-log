@@ -51,16 +51,7 @@ app.get('/', function (req, res) {
 
 
 app.get('/mobile', function (req, res) {
-	invitations.validateUser(req, res, (err, uToken) => {
-		if (!uToken) {
-			res.render('mobile');
-			return;
-		}
-
-		serviceLogs.myGarage(uToken, function(err, cars) {
-		  res.render('mileage', {cars: cars});
-		});
-	});
+	res.render('mobile');
 });
 
 app.get('/logs', function (req, res) {
