@@ -1,6 +1,12 @@
-var CACHE_NAME = 'page_cache-v1';
+var CACHE_NAME = 'mileage_cache-v1';
 var urlsToCache = [
-  '/mileage'
+  '/mileage',
+  '/scripts/bootstrap_4_2_1.min.js',
+  '/css/bootstrap_4_2_1.min.css',
+  '/scripts/jquery_3_3_1.min.js',
+  '/scripts/popper_1_14_6.min.js',
+  '/css/fontawesome_all_5_5_0.css',
+  '/css/mileage.css'
 ];
 
 self.addEventListener('install', function(event) {
