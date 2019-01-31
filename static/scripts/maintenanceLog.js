@@ -325,6 +325,19 @@ function formatCost(cost) {
 
 			var that = this;
 
+			//clears out placeholder when focused and restored it on blur
+			this.$el.find("#gridCost, #gridNote, #gridService").on("focus", function(e) {
+				let pHolder = $(e.currentTarget).attr('placeholder');
+				$(e.currentTarget).data('placeholder',pHolder);
+				$(e.currentTarget).attr('placeholder','');
+			});
+
+			this.$el.find("#gridCost, #gridNote, #gridService").on("blur", function(e) {
+				let pHolder = $(e.currentTarget).data('placeholder');
+				$(e.currentTarget).attr('placeholder',pHolder);
+			});
+
+
 			this.$el.submit(function(e) {
 				e.preventDefault();
 				
@@ -348,11 +361,13 @@ function formatCost(cost) {
 				that.collection.add(log);
 				log.save();
 
-				TableFilter.clear();
-				AutoComplete.clear($("#gridService"));
 				$("#gridCost").val("");
 				$("#gridService").val("");
 				$("#gridService").focus();
+
+				TableFilter.clear();
+				AutoComplete.clear($("#gridService"));
+
 			});
 		},
 
@@ -364,17 +379,6 @@ function formatCost(cost) {
 		render: function() {
 			$("#gridMileage").attr('placeholder', this.model.get("mileage"));
 
-			//clears out placeholder when focused and restored it on blur
-			this.$el.find("#gridCost, #gridNote, #gridService").on("focus", function(e) {
-				let pHolder = $(e.currentTarget).attr('placeholder');
-				$(e.currentTarget).data('placeholder',pHolder);
-				$(e.currentTarget).attr('placeholder','');
-			});
-
-			this.$el.find("#gridCost, #gridNote, #gridService").on("blur", function(e) {
-				let pHolder = $(e.currentTarget).data('placeholder');
-				$(e.currentTarget).attr('placeholder',pHolder);
-			});
 
 		}	
 	});
