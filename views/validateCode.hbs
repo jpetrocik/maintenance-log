@@ -32,24 +32,13 @@
   </head>
   <body>
 
-	<div id="installWebApp" class="jumbotron mt-3">
-    	<h1>Install App</h1>
-    	<p class="lead">Use the mileage app to report your mileage at any time.  A good time to report mileage is when your filling up on gas.  We've designed the app to be super fast to get you back to checking social media before your tank is full. Click the button below to install the app, if the button is grayed out click on "Having trouble?"</p>
-		<input type="button" id="webAppInstall" class="btn btn-lg btn-primary btn-block mt-1 disabled" value="Install WebApp"/>
-
-		<p><small>Alternatively, you can bookmark the following link <a class="text-reset" href="https://cars.petrocik.net/mileage">https://cars.petrocik.net/mileage"</a> to report mileage.</small></p>
-
-
-		<p class="text-danger"><a class="text-reset" href="mobile">Having trouble?</a></p>
-
-	</div>
-
-	<div id="webAppInstallationComplete" class="jumbotron mt-3" style="display:none">
-    	<h1>Ready To Go!</h1>
-    	<p class="lead">You are now all setup, it takes only a few seconds to report your mileage.  To report mileage next time you're filling up on gas, find the mileage icon below either on your home screen or with your other apps.  Each time you report mileage your car's service history is scanned for any upcoming scheduled maintenance.  Any services that are coming due will be list on the mileage report.</p>
-		<a href="mileage"><img src="images/favicon-96x96.png"/></a>
-	</div>
-
+	<div id="enterValidation" class="jumbotron mt-3">
+    	<h1>Setting Up Your Mobile Phone</h1>
+    	<p class="lead">Keeping track of your mileage is an important part of knowing when scheduled maintanence is due.  You can use your phone to report your mileage at any time.  To get started enter the validation code.</p>
+    	
+		<input id="validationCode" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter code here"/>
+		<input type="button" id="validationCodeSend" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
+  	</div>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -59,45 +48,24 @@
 
 	$( document ).ready(function() {
 
-		if ('serviceWorker' in navigator) {
-		  window.addEventListener('load', function() {
-		    navigator.serviceWorker.register('/sw.js').then(function(registration) {
-		      // Registration was successful
-		      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-		    }, function(err) {
-		      // registration failed :(
-		      console.log('ServiceWorker registration failed: ', err);
-		    });
-		  });
-		}
-
-		//setup install weblink
-		let deferredPrompt;
-		window.addEventListener('beforeinstallprompt', (e) => {
-		  e.preventDefault();
-		  deferredPrompt = e;
-
-		  $("#webAppInstall").removeClass("disabled");
-		});
-
-		$("#webAppInstall").on("click", function(e) {
+		$("#validationCodeSend").on("click", function(e) {
 			e.preventDefault();
 
-			deferredPrompt.prompt().catch(function(e) {
-				console.log(e);
-			});;
+			let vCode = $("#validationCode").val();
+			if (vCode.trim().length === 0) {
+				return false;
+			}
 
-			// Wait for the user to respond to the prompt
-			deferredPrompt.userChoice.then((choiceResult) => {
-				if (choiceResult.outcome === 'accepted') {
-					$("#installWebApp").fadeOut(400, function() {
-						$("#webAppInstallationComplete").fadeIn();
-					});
-				} else {
-					console.log('User dismissed the A2HS prompt');
+			$.ajax({
+				url: "api/validate/",
+				type: "POST",
+				data: { validationCode: vCode.toUpperCase() },
+				success: function(results) {
+					location.reload();
 				}
-				deferredPrompt = null;
 			});
+
+			return false; 
 		});
 
 	});
