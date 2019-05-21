@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+ 	<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+	<link rel="manifest" href="manifest.json">
+	<meta name="msapplication-TileColor" content="#2770a4">
+	<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap_4_2_1.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS">
+	<link rel="stylesheet" type="text/css" href="css/mileage.css">
+
+	<title>Service</title>
+</head>
+<body>
+
+<div id="mileageReport" tabindex="-1">
+  	<div id="mileageSummary">
+    	<div class="header p-0">
+        	<h5 class="pl-2" id="carName">&nbsp;</h5>
+	  	</div>
+	  	<div>
+			<span>Mileage:&nbsp;</span><span id="reportMileage">&nbsp;</span><span id="reportMileageSince">&nbsp;</span>
+		</div>
+		<div>
+			<div class="serviceMessage">Next Service Due: 634 Miles</div>
+			<div class="serviceBar"><div class="serviceBarProgess">&nbsp;</div></div>
+		</div>
+	</div>
+
+	<div id="serviceSummary">
+		<div class="header p-0">
+	    	<h5 class="pl-2">Service Reminders</h5>
+	    </div>
+		<div id="serviceReminders">
+			<div class="serviceDue" style="display:none">
+				<h3 class="serviceDescription">Oil Change</h3>
+				<div class="serviceSchedule">
+					<div>Due In: <span class="serviceMiles">454</span> miles</div>
+					<div>Due By: <span class="serviceDate">Oct 15, 2019</span></div>
+				</div>
+				<input class="btn btn-danger completed" type="button" value="Completed"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="serviceEdit" style="display:none">
+			<h3 class="serviceDescription">Oil Change</h3>
+			<div class="serviceDetails">
+				<div><label>Mileage:</label><input type="text" class="serviceMileage" value="198,456"/></div>
+				<div><label>Cost:</label><input type="text"  class="serviceMileage" value="$12.98"/></div>
+				<div>
+					<label>Notes:</label>
+					<textarea class="serviceNotes"></textarea>
+				</div>
+				<div>Documents:</div>
+				<div class="documentUploader">
+					<div class="document"><i class="fas fa-camera"></i></div>
+				</div>
+			</div>
+			<input class="btn btn-primary completed" type="button" value="Update"/>
+		</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="scripts/underscore-min.js"></script>
+<script src="scripts/backbone-min.js"></script>
+
+ <script src="scripts/maintenanceLog.js"></script>
+<script>
+
+
+
+$( document ).ready(function() {
+
+	let loadCarDetails = function() {
+		$.ajax({
+			url: "api/car/C9Uz3Ii1Zyo92XvcTWhZY5ZAc/",
+			type: "GET",
+			success: function(results) {
+				currentCarData = results;
+				$("#carName").html(results.name);
+				$("#reportMileage").html(results.mileage);
+				$("#reportMileageSince").html("( " + results.mileageReportedDays + " Days Ago )");
+				loadServiceIndicator();
+			}
+		});
+	}
+
+
+	let loadServiceIndicator = function() {
+		$.ajax({
+			url: "api/car/C9Uz3Ii1Zyo92XvcTWhZY5ZAc/serviceLife/",
+			type: "GET",
+			success: function(results) {
+				let percentageUsed = results.serviceLife*100;
+				if (percentageUsed>1)
+					percentageUsed=100;
+
+				if (percentageUsed == 100) {
+					$("#mileageReport .serviceBarProgess").addClass("alertService");
+				} else if (percentageUsed>75) {
+					$("#mileageReport .serviceBarProgess").addClass("warnService");
+				}
+
+				$("#mileageReport .serviceBarProgess").width(percentageUsed + "%");
+				loadScheduleMaintence();
+			}
+		});
+	}
+
+	let loadScheduleMaintence = function() {
+		$.ajax({
+			url: "api/car/C9Uz3Ii1Zyo92XvcTWhZY5ZAc/schedule/",
+			type: "GET",
+			success: function(results) {
+				let dateFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+				$("#serviceReminders").empty();
+
+				if (results.length > 0) {
+
+					results.forEach(function (o, i) {
+						let newServiceReminder = serviceTemplate.clone();
+						newServiceReminder.find(".serviceDescription").html(o.service);
+						newServiceReminder.find(".serviceMiles").html(o.due_in_miles);
+						newServiceReminder.find(".serviceDate").html(new Date(o.due_by).toLocaleDateString("en-US",dateFormatOptions));
+						newServiceReminder.find(".completed").on("click", function(e) {
+
+							let d = new Date();
+							let serviceDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+							$.ajax({
+								url: "api/car/C9Uz3Ii1Zyo92XvcTWhZY5ZAc/service",
+								type: "POST",
+								contentType : 'application/json',
+								data: JSON.stringify({ 
+									service: o.service,
+									mileage: currentCarData.mileage,
+									serviceDate: serviceDate
+								}),
+								success: function(results) {
+									let serviceEdit = serviceEditTemplate.clone();
+									serviceEdit.find(".serviceDescription").html(o.service);
+									serviceEdit.find(".serviceMileage").html(o.due_in_miles);
+									serviceEdit.find(".serviceCost").html(o.due_in_miles);
+									serviceEdit.find(".completed").on("click", function(e2) {	
+										$(e2.currentTarget).parent(".serviceEdit").fadeOut();
+									});
+									$(e.currentTarget).parent(".serviceDue").hide();
+									serviceEdit.show();
+									$(e.currentTarget).parent(".serviceDue").replaceWith(serviceEdit);
+								}
+							});
+						});
+						newServiceReminder.show();
+
+						$("#serviceReminders").append(newServiceReminder);
+					});
+				} else {
+						$("#serviceReminders").append(noServiceTemplate.clone());
+				}
+
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$("#mainContent").hide();
+				$("body").html("Access Denied!");
+			}
+		});
+	}
+
+
+	//save templates
+	let serviceTemplate = $("#mileageReport .serviceDue").clone();
+	let noServiceTemplate = $("#mileageReport .noServiceDue").clone();
+	let serviceEditTemplate = $("#mileageReport .serviceEdit").clone();
+
+
+
+	loadCarDetails();
+});
+</script>
+</body>
+</html>

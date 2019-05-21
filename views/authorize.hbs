@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+ 	<link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+	<link rel="manifest" href="manifest.json">
+	<meta name="msapplication-TileColor" content="#2770a4">
+	<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="css/bootstrap_4_2_1.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS">
+	<link rel="stylesheet" href="css/fontawesome_all_5_5_0.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU">
+	<link rel="stylesheet" type="text/css" href="css/mileage.css">
+
+	<title>Mileage</title>
+</head>
+<body>
+
+<div id="enterPhone" class="jumbotron mt-3">
+       <h1>Enter Mobile Number</h1>
+       <p class="lead">Please enter the mobile number used when you signed up.</p>
+
+       <input id="mobileNumber" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter mobile number"/>
+       <input type="button" id="submitMobileNumber" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
+</div>
+
+<div id="enterValidation" class="jumbotron mt-3" style="display:none">
+       <h1>Enter validation code</h1>
+       <p class="lead">Please enter the validation code send to you phone.</p>
+
+       <input id="mfaToken" type="hidden"/>
+       <input id="mfaCode" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter code here"/>
+       <input type="button" id="validationCodeSend" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="scripts/jquery_3_3_1.min.js"></script>
+<script src="scripts/popper_1_14_6.min.js"></script>
+<script src="scripts/bootstrap_4_2_1.min.js"></script>
+
+
+<script>
+
+
+
+$( document ).ready(function() {
+
+	$("#submitMobileNumber").on("click", function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			url: "api/mfa/",
+			type: "GET",
+			data: { phone: $("#mobileNumber").val() },
+			success: function(results) {
+				$("#mfaToken").val(results);
+				$("#enterPhone").fadeOut(400, function() {
+					$("#enterValidation").fadeIn();
+				});
+			}
+		});
+	});
+
+	$("#validationCodeSend").on("click", function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			url: "api/mfa/",
+			type: "POST",
+			data: { code: $("#mfaCode").val(), token: $("#mfaToken").val() },
+			success: function(results) {
+				$("#enterValidation").fadeOut(400, function() {
+				});
+			}
+		});
+
+		return false; 
+	});
+
+
+});
+
+</script>
+</body>
+</html>

@@ -1,4 +1,12 @@
 
+body {
+	font-size:14px;
+}
+
+.btn { 
+    width: 150px;
+}
+
 #mainContent .btn-group-vertical {
 	width:100%;
 }
@@ -11,7 +19,7 @@
     background-color: #afafaf;
     color: #fff;
     text-align: center;
-    font-size:18px;
+    font-size:1.2rem;
     cursor: pointer;
 }
 
@@ -34,25 +42,22 @@
 }
 
 #mileageReport .header {
-	font-size: 18px;
+	font-size: 1.2rem;
 	background-color: #0062a7;
 	color: #fff;
 }
 
-#mileageReport .serviceDue {
-	width: 100%;
-	margin: 0 0 15px 15px;
+#mileageReport .serviceDue, #mileageReport .serviceEdit {
+	/* width: 100%; */
+	margin: 0 15px 15px 15px;
+	border:  1px solid #000;
+	padding: 5px;
+	border-radius: 10px;
 }
 
 #mileageReport .serviceDue h3{
 	margin: 0;
-	font-size: 14px;
-}
-
-#mileageReport .serviceDue .btn{
-    width: 150px;
-    font-size: small;
-    background-color: #bf3434;
+	font-size: 1.1rem;
 }
 
 #mileageReport .serviceSchedule {
@@ -84,9 +89,57 @@
 	text-shadow: none;
 }
 
-#mileageReport .modal-header {
-	border-radius: 0px;
+#mileageReport #mileageSummary {
+	padding-bottom: 5px;
 }
 
+#mileageReport .serviceBar {
+	border-radius: 5px;
+	height: 10px;
+	border: 1px solid #000;
+	background-color: #fff;
+	width: 80%;
+	margin-left:auto;
+   	margin-right:auto;
+}
 
+#mileageReport .serviceBarProgess {
+	background-color: #00FF00;
+	width: 0%;
+	border-radius: 5px;
+	height: 8px;
+}
 
+#mileageReport .serviceBarProgess.warnService {
+	background-color: #dcbf33;
+}
+
+#mileageReport .serviceBarProgess.alertService {
+	background-color: #be3434;
+}
+
+#mileageReport .serviceMessage {
+	text-align: center;
+	font-size: small;
+}
+
+#serviceSummary .serviceEdit .documentUploader {
+    padding:5px;
+}
+
+#serviceSummary .serviceEdit .document {
+	width: 70px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    text-align:center;
+    font-size:50px;
+}
+
+#serviceSummary .serviceEdit .serviceNotes {
+	width:100%;
+	height: 50px;
+}
+
+#serviceSummary .serviceEdit h3 {
+	font-size:1.1rem;
+}

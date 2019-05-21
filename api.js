@@ -1,5 +1,8 @@
 var express = require('express'),
-    router = express.Router();
+    router = express.Router(),
+	tokenGenerator = require('./tokens.js');
+
+let Role = invitations.Role;
 
 router.head('/', function (req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
@@ -35,6 +38,40 @@ router.post('/sendAuth', function (req, res) {
 	invitations.sendAuth(req.body.email, function(err){
 		res.sendStatus('200');
 	});
+});
+
+router.get('/mfa', function(req, res) {
+	invitations.generateMfa(req.query.phone, (err, token) => {
+		if (err) {
+            console.log(err);
+			res.sendStatus(401);
+			return;
+		}
+
+        res.json(token);
+	});
+
+});
+
+router.post('/mfa', function(req, res) {
+	invitations.validateMfa(req.body, (err, uToken) => {
+		if (err) {
+            console.log(err);
+			res.sendStatus(401);
+			return;
+		}
+
+        invitations.loginUser(uToken, res, (err, status) => {
+            if (err) {
+                console.log(err);
+                res.sendStatus(401);
+                return;
+            }
+
+            res.sendStatus(200);
+        });
+	});
+
 });
 
 router.get('/validate', function (req, res) {
@@ -99,12 +136,12 @@ router.get('/car', function (req, res) {
  * Returns the car details
  */
 router.get('/car/:iToken', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
-		serviceLogs.carDetails(carId, function(err, rows){
+		serviceLogs.carDetails(oToken, function(err, rows){
 			rows.token = req.params.iToken;
 			res.json(rows);
 		});
@@ -115,13 +152,13 @@ router.get('/car/:iToken', function (req, res) {
  * Returns the service history for a car
  */
 router.get('/car/:iToken/service', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
 
-		serviceLogs.completeServiceLog(carId, function(err, rows){
+		serviceLogs.completeServiceLog(oToken, function(err, rows){
 			res.json(rows);
 		});
 	});
@@ -131,12 +168,12 @@ router.get('/car/:iToken/service', function (req, res) {
  * Returns a particular service log
  */
 router.get('/car/:iToken/service/:serviceId', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
-		serviceLogs.serviceLog(carId, req.params.serviceId, function(err, rows){
+		serviceLogs.serviceLog(oToken, req.params.serviceId, function(err, rows){
 			res.json(rows);
 		});
 	});
@@ -146,13 +183,13 @@ router.get('/car/:iToken/service/:serviceId', function (req, res) {
  * Add service log entry
  */
 router.post('/car/:iToken/service', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
 
-		serviceLogs.addServiceLog(carId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note,
+		serviceLogs.addServiceLog(oToken, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note,
 			function(err, result){
 				if (err) {
 					res.status(500).json(err).end()
@@ -167,13 +204,13 @@ router.post('/car/:iToken/service', function (req, res) {
  * Updates service log entry
  */
 router.put('/car/:iToken/service/:serviceId', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
 
-		serviceLogs.updateServiceLog(carId, req.params.serviceId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note, req.body.regularService, req.body.monthsInterval, req.body.mileageInterval,
+		serviceLogs.updateServiceLog(oToken, req.params.serviceId, req.body.serviceDate, req.body.mileage, req.body.service, req.body.cost, req.body.note, req.body.regularService, req.body.monthsInterval, req.body.mileageInterval,
 			function(err, result){
 				if (err) {
 					res.status(500).json(err).end()
@@ -188,13 +225,13 @@ router.put('/car/:iToken/service/:serviceId', function (req, res) {
  * Deletes service log entry
  */
 router.delete('/car/:iToken/service/:serviceId', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
 
-		serviceLogs.deleteServiceLog(carId, req.params.serviceId,
+		serviceLogs.deleteServiceLog(oToken, req.params.serviceId,
 			function(err, result){
 				if (err) {
 					res.status(500).json(err).end()
@@ -210,17 +247,17 @@ router.delete('/car/:iToken/service/:serviceId', function (req, res) {
  * Adds a mileage log
  */
 router.put('/car/:iToken/mileage/:mileage', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
 
-		serviceLogs.addMileage(carId, req.params.mileage, (err, result) => {
+		serviceLogs.addMileage(oToken, req.params.mileage, (err, result) => {
 			if (err) {
 				res.status(500).json(err).end()
 			} else {
-				serviceLogs.serviceDue(carId, (err, result) => {
+				serviceLogs.serviceDue(oToken, (err, result) => {
 					res.json(result);
 				});
 			}
@@ -232,16 +269,36 @@ router.put('/car/:iToken/mileage/:mileage', function (req, res) {
  * Get upcoming/needed service
  */
 router.get('/car/:iToken/schedule', function (req, res) {
-	invitations.resolveInvitation(req.params.iToken, (err, carId) => {
-		if (!carId) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
 			res.sendStatus(401);
 			return;
 		}
 
-		serviceLogs.serviceDue(carId, (err, result) => {
+		serviceLogs.serviceDue(oToken, (err, result) => {
 			res.json(result);
 		});
 	});
+});
+
+/**
+ * Get upcoming/needed service
+ */
+router.get('/car/:iToken/serviceLife', function (req, res) {
+	invitations.resolveInvitation(req.params.iToken, Role.USER, (err, oToken) => {
+		if (!oToken) {
+			res.sendStatus(401);
+			return;
+		}
+
+		serviceLogs.serviceLife(oToken, (err, result) => {
+			res.json(result);
+		});
+	});
+});
+
+router.get('/token', function (req, res) {
+	res.json(tokenGenerator(25));
 });
 
 module.exports = router;
