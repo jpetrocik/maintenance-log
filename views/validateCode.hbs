@@ -32,11 +32,20 @@
   </head>
   <body>
 
-	<div id="enterValidation" class="jumbotron mt-3">
-    	<h1>Setting Up Your Mobile Phone</h1>
-    	<p class="lead">Keeping track of your mileage is an important part of knowing when scheduled maintanence is due.  You can use your phone to report your mileage at any time.  To get started enter the validation code.</p>
+	<div id="enterPhone" class="jumbotron mt-3">
+    	<h1>Get Started</h1>
+    	<p class="lead">To get started enter you mobile number used when you registered.</p>
+    	
+		<input id="regPhone" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter phone number"/>
+		<input type="button" id="reguestMfaCode" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
+  	</div>
+
+	<div id="enterValidation" class="jumbotron mt-3" style="display:none">
+    	<h1>Enter the validation code sent to your phone</h1>
+    	<p class="lead">You will shortly recieve a text message with a validation code, please enter the validation code below.</p>
     	
 		<input id="validationCode" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter code here"/>
+		<input id="mfaToken" type="hidden"/>
 		<input type="button" id="validationCodeSend" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
   	</div>
 
@@ -48,6 +57,29 @@
 
 	$( document ).ready(function() {
 
+		$("#reguestMfaCode").on("click", function(e) {
+			e.preventDefault();
+
+			let regPhone = $("#regPhone").val();
+			if (regPhone.trim().length === 0) {
+				return false;
+			}
+
+			$.ajax({
+				url: "api/mfa/",
+				type: "GET",
+				data: { phone: regPhone },
+				success: function(results) {
+					$("#mfaToken").val(results);
+					$("#enterPhone").fadeOut(300, function() {
+						$("#enterValidation").fadeIn();
+					});
+				}
+			});
+
+			return false; 
+		});
+
 		$("#validationCodeSend").on("click", function(e) {
 			e.preventDefault();
 
@@ -57,9 +89,9 @@
 			}
 
 			$.ajax({
-				url: "api/validate/",
+				url: "api/mfa/",
 				type: "POST",
-				data: { validationCode: vCode.toUpperCase() },
+				data: { code: vCode, token: $("#mfaToken").val() },
 				success: function(results) {
 					location.reload();
 				}

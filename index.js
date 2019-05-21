@@ -83,7 +83,13 @@ app.get('/logs', function (req, res) {
 });
 
 app.get('/mileage', function (req, res) {
-  res.render('mileage');
+ 	invitations.validateUser(req, res, (err, uToken) => {
+		if (!uToken) {
+			res.render('validateCode');
+			return;
+		}
+		res.render('mileage');
+	});
 });
 
 

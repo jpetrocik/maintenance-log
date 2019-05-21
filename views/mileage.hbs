@@ -29,30 +29,12 @@
 </head>
 <body>
 
-<div id="enterValidation" class="jumbotron mt-3" style="display:none">
-	<h1>Enter validation code</h1>
-	<p class="lead">Please enter the validation code found on the "Getting Started" section.</p>
-	
-	<input id="validationCode" class="form-control mr-sm-2 pt-0 pb-0" type="text" placeholder="Enter code here"/>
-	<input type="button" id="validationCodeSend" class="btn btn-lg btn-primary btn-block mt-1" value="Submit"/>
-</div>
-
 <div id="mileageReport" class="modal" tabindex="-1" role="dialog" xstyle="display:none">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header header p-0">
-        <h5 class="modal-title pl-2">Mileage Stats</h5>
-        <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
-	  </div>
-	  <div class="modal-body">
-		<table class="stats">
-			<tr><td class="label">Miles:</td><td class="data">---</td><td class="label">Day:</td><td class="data">--</td></tr>
-			<tr><td class="label">YTD:</td><td class="data">---</td><td class="label">Avg Week:</td><td class="data">--</td></tr>
-		</table>
-	  </div>
-
-      <div class="modal-header header p-0">
         <h5 class="modal-title pl-2">Service Reminders</h5>
+        <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times"></i></button>
 	  </div>
 	  <div class="modal-body">
 		<div id="serviceReminders">
@@ -80,7 +62,7 @@
 		<a anchor="mileage"></a>
 		<input id="carId" type="hidden"/>
 		<input id="mileage" class="form-control m-1 pt-0 pb-0" type="number"/>
-		<button id="submitMileage" class="btn btn_submit m-1">Submit"</button>
+		<button id="submitMileage" class="btn btn_submit m-1">Submit</button>
 	</div>
 </div>
 
@@ -140,7 +122,6 @@ $( document ).ready(function() {
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				$("#mainContent").hide();
-				$("#enterValidation").show();
 			}
 
 		});
@@ -152,28 +133,6 @@ $( document ).ready(function() {
 	let carTemplate = $("#carList .car").clone();
 	let serviceTemplate = $("#mileageReport .serviceDue").clone();
 	let noServiceTemplate = $("#mileageReport .noServiceDue").clone();
-
-	// $( "#mileageReport .close" ).on("click", function() {
-	// 	$("#mileageReport").fadeOut();
-	// });
-
-	$("#validationCodeSend").on("click", function(e) {
-		e.preventDefault();
-
-		$.ajax({
-			url: "api/validate/",
-			type: "POST",
-			data: { validationCode: $("#validationCode").val() },
-			success: function(results) {
-				loadCarData();
-				$("#enterValidation").fadeOut(400, function() {
-					$("#mainContent").fadeIn();
-				});
-			}
-		});
-
-		return false; 
-	});
 
 	//submit mileage
 	$("#submitMileage").on("click", function(e) {

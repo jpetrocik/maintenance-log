@@ -63,6 +63,40 @@ router.post('/validate', function (req, res) {
 	});
 });
 
+router.get('/mfa', function(req, res) {
+	invitations.generateMfa(req.query.phone, (err, token) => {
+		if (err) {
+            console.log(err);
+			res.sendStatus(401);
+			return;
+		}
+
+        res.json(token);
+	});
+
+});
+
+router.post('/mfa', function(req, res) {
+	invitations.validateMfa(req.body, (err, uToken) => {
+		if (err) {
+            console.log(err);
+			res.sendStatus(401);
+			return;
+		}
+
+        invitations.loginUser(uToken, res, (err, status) => {
+            if (err) {
+                console.log("Error: " + err);
+                res.sendStatus(401);
+                return;
+            }
+
+            res.sendStatus(200);
+        });
+	});
+
+});
+
 router.post('/car', function(req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
