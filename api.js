@@ -1,5 +1,8 @@
 var express = require('express'),
     router = express.Router();
+const config = require("./config.json");
+const exceptions = require('./exceptions.js');
+const plivo = require('./plivo.js');
 
 router.head('/', function (req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
@@ -16,9 +19,9 @@ router.head('/', function (req, res) {
  * Registers user with a new car
  */
 router.post('/register', function (req, res) {
-	invitations.register(req.body.email, function(err, aToken){
+	invitations.register(req.body.email, req.body.phone, function(err, user){
 		if (err) {
-			if (err.code === 'ER_DUP_ENTRY') {
+			if (err.code === exceptions.USER_EXISTS.code) {
 				res.sendStatus(400);
 				return;
 			}
@@ -26,7 +29,7 @@ router.post('/register', function (req, res) {
 			return;
 		}
 
-		res.cookie('_aToken',aToken, { maxAge: (90 * 24 * 60 * 60)});
+		res.cookie('_aToken', user.aToken, { maxAge: (90 * 24 * 60 * 60)});
 		res.sendStatus('200');
 	});
 });
@@ -97,6 +100,65 @@ router.post('/mfa', function(req, res) {
 
 });
 
+router.post('/share/:token', function (req, res) {
+    invitations.resolveInvitation(req.params.token, (err, carId, carToken) => {
+        if (!carToken) {
+            console.log('Connection unauthorized' );
+            res.sendStatus(401);
+            return;
+        }
+
+        //method to create an invitation
+        let createInvitationCallBack = function(user, carId, carToken) {
+            invitations.createInvitation(user.uToken, carId, carToken, (err, iToken) => {
+                if (err) {
+                	res.sendStatus(409);
+                    return;
+                }
+
+                let inviteLink = config.host + '/setup/' + iToken;
+
+                if (config.plivo.enabled) {
+                    plivo.messages.create(
+                        config.plivo.phone,
+                        user.phone,
+                        inviteLink        
+                    ).then(function(message_created) {
+                        res.sendStatus(200);
+                    });
+                } else {
+                    console.log(inviteLink);
+                    res.sendStatus(200);
+                }
+            });
+        };
+
+        invitations.register(req.body.email, req.body.phone, (err, user) => {
+            if (err) {
+                if (err.code === exceptions.USER_EXISTS.code) {
+                	console.log("User exists, looking up by phone...");
+                    invitations.lookupUserByPhone(req.body.phone, (err, user) => {
+                        if (err) {
+                            console.log(err);
+                            res.sendStatus(500);
+                            return;
+                        }
+                    	console.log("Found user!");
+
+                        createInvitationCallBack(user, carId, carToken);
+                    });
+                    return;
+                } else {
+                    res.sendStatus(500);
+                    return;
+                }
+            }
+            createInvitationCallBack(user, carId, carToken);
+        });
+
+    });
+});
+
 router.post('/car', function(req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
@@ -105,7 +167,7 @@ router.post('/car', function(req, res) {
 		}
 
 		serviceLogs.addCar(req.body, (err, car) => {
-			invitations.createInvitation( uToken, car, (err, iToken) => {
+			invitations.createInvitation( uToken, car.id, car.token, (err, iToken) => {
 				res.json({token: iToken, name: car.name});			
 			});
 		});

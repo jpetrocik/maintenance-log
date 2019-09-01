@@ -2,6 +2,7 @@ const pool = require('./mysql');
 const config = require("./config.json");
 const exceptions = require('./exceptions.js');
 const tokenGenerator = require('./tokens.js');
+const plivo = require('./plivo.js');
 
 var INVITATIONS_TABLE = "invitations";
 var ACCOUNTS_TABLE = "user_accounts";
@@ -42,22 +43,43 @@ var invitations = {
 
 	resolveInvitation: function(iToken, callback) {
 		executeQuery("select oToken, carId from " + INVITATIONS_TABLE + " where iToken=?", [iToken],  (err, results) => {
-			callback(err, results[0].carId);
+			callback(err, results[0].carId, results[0].oToken);
 		});
 	},
 
-	createInvitation:  function(uToken, car, callback) {
+	createInvitation:  function(uToken, carId, carToken, callback) {
 		let iToken = tokenGenerator(25);
-		executeQuery("insert into " + INVITATIONS_TABLE + " (iToken, uToken, oToken, carId) values (?, ?, ?, ?)", [iToken, uToken, car.token, car.id], (err, results) => {
+		executeQuery("insert into " + INVITATIONS_TABLE + " (iToken, uToken, oToken, carId) values (?, ?, ?, ?)", [iToken, uToken, carToken, carId], (err, results) => {
 			callback(err, iToken);
 		});
 	},
 
-	register:  function(email, callback) {
+	register:  function(email, phone, callback) {
 		let uToken = tokenGenerator(25);
 		let aToken = tokenGenerator(25);
-		executeQuery("insert into " + ACCOUNTS_TABLE + " (email, uToken, aToken) values (?, ?, ?)", [email, uToken, aToken], (err, results) => { 
-			callback(err, aToken)
+
+		if (!phone)
+			phone = null;
+
+		if (!email)
+			email = null;
+
+		executeQuery("insert into " + ACCOUNTS_TABLE + " (email, phone, uToken, aToken) values (?, ?, ?, ?)", [email, phone, uToken, aToken], (err, results) => { 
+			if (err){
+				if (err.code === 'ER_DUP_ENTRY') {
+					callback(exceptions.USER_EXISTS);
+				} else {
+					callback(exceptions.GENERIC_SQL_ERROR);
+				}
+				return;
+			}
+
+			user = {};
+			user.uToken = uToken;
+			user.aToken = aToken;
+			user.email = email;
+			user.phone = phone;
+			callback(err, user);
 		});
 	},
 
@@ -81,14 +103,12 @@ var invitations = {
 	},
 
 	sendAuth:  function(email, callback) {
-
 		executeQuery("select aToken from " + ACCOUNTS_TABLE + " where email=?", [email], (err, results) => {
 			if (err) {
 				callback(err);
 				return;
 			}
 
-			console.log(results);
 			if (results.length === 0) {
 				callback();
 				return;
@@ -99,7 +119,6 @@ var invitations = {
 		});
 
 	},
-
 
 	generateMfa:  function(phone, callback) {
 		let expires = new Date(Date.now() + (30*60*1000));
@@ -119,7 +138,7 @@ var invitations = {
 				}
 
 				if (config.plivo.enabled) {
-					client.messages.create(
+					plivo.messages.create(
 						config.plivo.phone,
 						phone,
 						'Your verification code is ' + code
