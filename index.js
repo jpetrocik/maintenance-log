@@ -24,6 +24,8 @@ app.engine('.hbs', exphbs({extname: '.hbs',
     }
 }));
 
+//disble layouts
+app.locals.layout = false;
 
 app.set('view engine', '.hbs');
 app.set('views', './views');
