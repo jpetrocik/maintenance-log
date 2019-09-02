@@ -57,6 +57,7 @@ app.get('/', function (req, res) {
 app.get('/mobile', function (req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
+			res.status(401);
 			res.render('validateCode');
 			return;
 		}
@@ -89,6 +90,7 @@ app.get('/logs', function (req, res) {
 app.get('/mileage', function (req, res) {
  	invitations.validateUser(req, res, (err, uToken) => {
 		if (!uToken) {
+			res.status(401);
 			res.render('validateCode');
 			return;
 		}

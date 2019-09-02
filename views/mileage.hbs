@@ -78,6 +78,48 @@
 
 $( document ).ready(function() {
 
+	if ('serviceWorker' in navigator) {
+	  window.addEventListener('load', function() {
+	    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+	      // Registration was successful
+	      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+	    }, function(err) {
+	      // registration failed :(
+	      console.log('ServiceWorker registration failed: ', err);
+	    });
+	  });
+	}
+
+	// //setup install weblink
+	// let deferredPrompt;
+	// window.addEventListener('beforeinstallprompt', (e) => {
+	//   e.preventDefault();
+	//   deferredPrompt = e;
+
+	//   $("#webAppInstall").removeClass("disabled");
+	// });
+
+	// $("#webAppInstall").on("click", function(e) {
+	// 	e.preventDefault();
+
+	// 	deferredPrompt.prompt().catch(function(e) {
+	// 		console.log(e);
+	// 	});;
+
+	// 	// Wait for the user to respond to the prompt
+	// 	deferredPrompt.userChoice.then((choiceResult) => {
+	// 		if (choiceResult.outcome === 'accepted') {
+	// 			$("#installWebApp").fadeOut(400, function() {
+	// 				$("#webAppInstallationComplete").fadeIn();
+	// 			});
+	// 		} else {
+	// 			console.log('User dismissed the A2HS prompt');
+	// 		}
+	// 		deferredPrompt = null;
+	// 	});
+	// });
+
+
 	let resetPage = function() {
 		$("#carList .car").removeClass("selected");
 		$("#mileage").prop("disabled",true);
