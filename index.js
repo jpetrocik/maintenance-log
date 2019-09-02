@@ -5,6 +5,7 @@ var express = require('express'),
 	serviceLogs = require('./service_logs.js'),
 	invitations = require('./invitations.js'),
 	apiRoutes = require('./api.js');
+	cronRoutes = require('./cron.js');
 
 
 var app = express();
@@ -38,6 +39,7 @@ app.use(express.static('static'));
 
 //Import api routes under /api
 app.use('/api', apiRoutes);
+app.use('/cron', cronRoutes);
 
 app.get('/', function (req, res) {
 	invitations.validateUser(req, res, (err, uToken) => {
