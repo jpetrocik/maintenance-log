@@ -60,7 +60,7 @@
 
 	<div id="mileageForm" class='mt-4'>
 		<a anchor="mileage"></a>
-		<input id="carId" type="hidden"/>
+		<input id="carToken" type="hidden"/>
 		<input id="mileage" class="form-control m-1 pt-0 pb-0" type="number"/>
 		<button id="submitMileage" class="btn btn_submit m-1">Submit</button>
 	</div>
@@ -78,6 +78,8 @@
 
 $( document ).ready(function() {
 
+	let queryParams = new URLSearchParams(location.search);
+
 	if ('serviceWorker' in navigator) {
 	  window.addEventListener('load', function() {
 	    navigator.serviceWorker.register('/sw.js').then(function(registration) {
@@ -90,36 +92,6 @@ $( document ).ready(function() {
 	  });
 	}
 
-	// //setup install weblink
-	// let deferredPrompt;
-	// window.addEventListener('beforeinstallprompt', (e) => {
-	//   e.preventDefault();
-	//   deferredPrompt = e;
-
-	//   $("#webAppInstall").removeClass("disabled");
-	// });
-
-	// $("#webAppInstall").on("click", function(e) {
-	// 	e.preventDefault();
-
-	// 	deferredPrompt.prompt().catch(function(e) {
-	// 		console.log(e);
-	// 	});;
-
-	// 	// Wait for the user to respond to the prompt
-	// 	deferredPrompt.userChoice.then((choiceResult) => {
-	// 		if (choiceResult.outcome === 'accepted') {
-	// 			$("#installWebApp").fadeOut(400, function() {
-	// 				$("#webAppInstallationComplete").fadeIn();
-	// 			});
-	// 		} else {
-	// 			console.log('User dismissed the A2HS prompt');
-	// 		}
-	// 		deferredPrompt = null;
-	// 	});
-	// });
-
-
 	let resetPage = function() {
 		$("#carList .car").removeClass("selected");
 		$("#mileage").prop("disabled",true);
@@ -127,12 +99,19 @@ $( document ).ready(function() {
 		$("#mileage").prop("placeholder","Select Car");
 	};
 
-	let setupMileageForm = function(carId) {
-		$("#carId").val(carId);
+	let setupMileageForm = function(carToken) {
+		$("#carToken").val(carToken);
 		$("#mileage").prop("disabled",false);
 		$("#mileage").prop("placeholder","Enter Mileage");
 		$("#mileage").focus();
 	};
+
+	let setSelectedCar = function(selectedCar) { 
+		$("#carList .car").removeClass("selected");
+		selectedCar.addClass("selected");
+		let carToken = selectedCar.attr("carToken");
+		setupMileageForm(carToken);
+	}
 
 	let loadCarData = function() {
 		//retrieve car list
@@ -146,20 +125,27 @@ $( document ).ready(function() {
 					results.forEach(function (o, i) {
 						let newCar = carTemplate.clone();
 						newCar.html(o.name);
-						newCar.data("carId", o.token);
+						newCar.attr("carToken", o.token);
 						newCar.on("click", function(e, f) {
-							$("#carList .car").removeClass("selected");
-
 							let selectedCar = $(e.currentTarget);
-							selectedCar.addClass("selected");
-							let carId = selectedCar.data("carId");
-							setupMileageForm(carId);
+							setSelectedCar(selectedCar);
 						});
+
 						newCar.show();
 
 						$("#carList").append(newCar);
-
 					});
+
+					//use query parameter to pre-select car
+					let cTokenParam = queryParams.get("cToken");
+					if (cTokenParam) {
+						let requestedCar = $(".car[carToken=" + cTokenParam+ "]")
+						if (requestedCar.length > 0) {
+							setSelectedCar(requestedCar);
+						}
+					}
+							
+
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -178,7 +164,7 @@ $( document ).ready(function() {
 
 	//submit mileage
 	$("#submitMileage").on("click", function(e) {
-		let carId = $("#carId").val();
+		let carToken = $("#carToken").val();
 		let mileage = $("#mileage").val();
 		if (mileage.length === 0) {
 			return false;
@@ -187,7 +173,7 @@ $( document ).ready(function() {
 		resetPage();
 
 		$.ajax({
-			url: "api/car/" + carId + "/mileage/" + mileage,
+			url: "api/car/" + carToken + "/mileage/" + mileage,
 			type: "PUT",
 			success: function(results) {
 				let dateFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -205,7 +191,7 @@ $( document ).ready(function() {
 							let d = new Date();
 							let serviceDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
 							$.ajax({
-								url: "api/car/" + carId + "/service",
+								url: "api/car/" + carToken + "/service",
 								type: "POST",
 								contentType : 'application/json',
 								data: JSON.stringify({ 
