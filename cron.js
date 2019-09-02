@@ -36,7 +36,7 @@ router.get('/unreported', function (req, res) {
 					plivo.messages.create(
 						config.plivo.phone,
 						fields['phone'],
-						'You have not report mileage for your ' + fields['car'] + ' in over ' + fields['last_reported'] + ' days. Follow link to report mileage\n\nh' + config.host + '/mileage'
+						'You have not report mileage for your ' + fields['car'] + ' in over ' + fields['last_reported'] + ' days. Follow link to report mileage\n\nh' + config.host + '/mileage?noCache=1_2'
 					).then(function(message_created) {
 
 					});
