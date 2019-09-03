@@ -316,9 +316,10 @@ router.put('/car/:iToken/mileage/:mileage', function (req, res) {
 			if (err) {
 				res.status(500).json(err).end()
 			} else {
-				serviceLogs.serviceDue(carId, (err, result) => {
-					res.json(result);
-				});
+				res.sendStatus(200);
+				// serviceLogs.serviceDue(carId, (err, result) => {
+				// 	res.json(result);
+				// });
 			}
 		});
 	});

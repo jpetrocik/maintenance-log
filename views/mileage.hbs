@@ -38,7 +38,7 @@
 	  </div>
 	  <div class="modal-body">
 		<div id="serviceReminders">
-			<p class="noServiceDue">Congratulations, no maintainence due!</p>
+			<p class="noServiceDue">Thank You!</p>
 			<div class="serviceDue" style="display:none">
 				<h3 class="serviceDescription">Oil Change</h3>
 				<div class="serviceSchedule">
@@ -179,38 +179,39 @@ $( document ).ready(function() {
 				let dateFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 				$("#serviceReminders").empty();
 
-				if (results.length > 0) {
+				$("#serviceReminders").append(noServiceTemplate.clone());
+				// if (results.length > 0) {
 
-					results.forEach(function (o, i) {
-						let newServiceReminder = serviceTemplate.clone();
-						newServiceReminder.find(".serviceDescription").html(o.service);
-						newServiceReminder.find(".serviceMiles").html(o.due_in_miles);
-						newServiceReminder.find(".serviceDate").html(new Date(o.due_by).toLocaleDateString("en-US",dateFormatOptions));
-						newServiceReminder.find(".completed").on("click", function(e) {
+				// 	results.forEach(function (o, i) {
+				// 		let newServiceReminder = serviceTemplate.clone();
+				// 		newServiceReminder.find(".serviceDescription").html(o.service);
+				// 		newServiceReminder.find(".serviceMiles").html(o.due_in_miles);
+				// 		newServiceReminder.find(".serviceDate").html(new Date(o.due_by).toLocaleDateString("en-US",dateFormatOptions));
+				// 		newServiceReminder.find(".completed").on("click", function(e) {
 
-							let d = new Date();
-							let serviceDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
-							$.ajax({
-								url: "api/car/" + carToken + "/service",
-								type: "POST",
-								contentType : 'application/json',
-								data: JSON.stringify({ 
-									service: o.service,
-									mileage: mileage,
-									serviceDate: serviceDate
-								}),
-								success: function(results) {
-									$(e.currentTarget).parent(".serviceDue").fadeOut();
-								}
-							});
-						});
-						newServiceReminder.show();
+				// 			let d = new Date();
+				// 			let serviceDate = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+				// 			$.ajax({
+				// 				url: "api/car/" + carToken + "/service",
+				// 				type: "POST",
+				// 				contentType : 'application/json',
+				// 				data: JSON.stringify({ 
+				// 					service: o.service,
+				// 					mileage: mileage,
+				// 					serviceDate: serviceDate
+				// 				}),
+				// 				success: function(results) {
+				// 					$(e.currentTarget).parent(".serviceDue").fadeOut();
+				// 				}
+				// 			});
+				// 		});
+				// 		newServiceReminder.show();
 
-						$("#serviceReminders").append(newServiceReminder);
-					});
-				} else {
-						$("#serviceReminders").append(noServiceTemplate.clone());
-				}
+				// 		$("#serviceReminders").append(newServiceReminder);
+				// 	});
+				// } else {
+				// 		$("#serviceReminders").append(noServiceTemplate.clone());
+				// }
 
 				$('#mileageReport').modal();
 
