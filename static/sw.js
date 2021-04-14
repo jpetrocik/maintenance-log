@@ -1,5 +1,5 @@
-var CACHE_NAME = 'mileage_cache-v1.2';
-var urlsToCache = ['/mileage', '/css/mileage.css'];
+var CACHE_NAME = 'mileage_cache-v1.3';
+var urlsToCache = ['/mileage', '/service', '/css/mileage.css'];
 // [
 //   '/scripts/bootstrap_4_2_1.min.js',
 //   '/css/bootstrap_4_2_1.min.css',
