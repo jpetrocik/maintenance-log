@@ -129,6 +129,17 @@ $( document ).ready(function() {
                         else if (o.due_in_days < 0)
 	    					serviceRecord.find(".card-text small").html("(" + o.due_in_days + " days)");
 
+                        serviceRecord.find(".card-body .btn").on("click", function(e) {
+                            $.ajax({
+                                url: "api/car/" + carToken + "/service",
+                                type: "POST",
+                                data: { service: o.service},
+                                success: function(results) {
+                                    serviceRecord.fadeOut();
+                                }
+                            })
+                        });
+
 						serviceRecord.attr("carToken", o.token);
 
 						serviceRecord.show();
