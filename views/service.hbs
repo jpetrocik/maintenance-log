@@ -1,83 +1,83 @@
 <!doctype html>
 <html lang="en">
 <head>
-     <link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="msapplication-TileColor" content="#2770a4">
-    <meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
+	 <link rel="apple-touch-icon" sizes="57x57" href="images/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+	<link rel="manifest" href="manifest.json">
+	<meta name="msapplication-TileColor" content="#2770a4">
+	<meta name="msapplication-TileImage" content="images/ms-icon-144x144.png">
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" type="text/css" href="css/mileage.css">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+	<link rel="stylesheet" type="text/css" href="css/mileage.css">
 
-    <title>Mileage</title>
+	<title>Mileage</title>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img src="images/favicon-32x32.png"></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="mileage">Mileage</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="service">Service</a>
-        </li>
-      </ul>
-    </div>
+	<a class="navbar-brand" href="#"><img src="images/favicon-32x32.png"></a>
+	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	  <span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+		<li class="nav-item">
+		  <a class="nav-link" aria-current="page" href="mileage">Mileage</a>
+		</li>
+		<li class="nav-item">
+		  <a class="nav-link" href="service">Service</a>
+		</li>
+	  </ul>
+	</div>
   </div>
 </nav>
 
 <div id="mainContent" class="container mt-4">
-    <div id="carList" class="btn-group-vertical w-100">
-        <div class="btn btn-secondary m-1 car" style="display:none"></div>
-    </div>
+	<div id="carList" class="btn-group-vertical w-100">
+		<div class="btn btn-secondary m-1 car" style="display:none"></div>
+	</div>
 
-    <div id="serviceList" class="btn-group-vertical w-100">
-        <div class="service w-100 m-4" style="display:none;">
-            <div class="card">
-            <div class="card-header">
-                Overdue Service
-            </div>
-            <div class="card-body">
-                <p class="card-text"><span>Oil Change</span><small class="text-muted">(-475 miles)</small></p>
-                <a href="#" class="btn btn-secondary">Completed</a>
-            </div>
-            </div>
-        </div>
+	<div id="serviceList" class="btn-group-vertical w-100">
+		<div class="service w-100 m-4" style="display:none;">
+			<div class="card">
+			<div class="card-header">
+				Overdue Service
+			</div>
+			<div class="card-body">
+				<p class="card-text"><span>Oil Change</span><small class="text-muted">(-475 miles)</small></p>
+				<a href="#" class="btn btn-secondary">Completed</a>
+			</div>
+			</div>
+		</div>
 
-        <div class="serviceForm w-100 m-4" style="display:none;">
-            <div class="card">
-                <div class="card-header">
-                    Add Service
-                </div>
-                <div class="card-body">
-                    <input id="service" placeholder="Enter Description" class="serviceDescr form-control m-1 pt-0 pb-0"/>
-                    <a href="#" class="btn btn-secondary">Save</a>
-                </div>
-            </div>
-        </div>
-    </div>
+		<div class="serviceForm w-100 m-4" style="display:none;">
+			<div class="card">
+				<div class="card-header">
+					Add Service
+				</div>
+				<div class="card-body">
+					<input id="service" placeholder="Enter Description" class="serviceDescr form-control m-1 pt-0 pb-0"/>
+					<a href="#" class="btn btn-secondary">Save</a>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 </div>
@@ -93,149 +93,153 @@
 
 $( document ).ready(function() {
 
-    let queryParams = new URLSearchParams(location.search);
+	let queryParams = new URLSearchParams(location.search);
 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js').then(function(registration) {
-          // Registration was successful
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }, function(err) {
-          // registration failed :(
-          console.log('ServiceWorker registration failed: ', err);
-        });
-      });
-    }
+	if ('serviceWorker' in navigator) {
+	  window.addEventListener('load', function() {
+		navigator.serviceWorker.register('/sw.js').then(function(registration) {
+		  // Registration was successful
+		  console.log('ServiceWorker registration successful with scope: ', registration.scope);
+		}, function(err) {
+		  // registration failed :(
+		  console.log('ServiceWorker registration failed: ', err);
+		});
+	  });
+	}
 
-    let setupSubmitServiceForm = function(carToken) {
-        let serviceForm = serviceFormTemplate.clone();
-        serviceForm.attr("carToken", carToken);
-        serviceForm.find(".card-body .btn").on("click", function(e) {
-            $.ajax({
-                url: "api/car/" + carToken + "/service",
-                type: "POST",
-                data: { service: serviceForm.find(".serviceDescr").val()},
-                success: function(results) {
-                    let newServiceForm = serviceForm.find(".card");
-                    serviceForm.find(".serviceDescr").val("");
-                }
-            });
-            e.preventDefault();
-        });
+	let setupSubmitServiceForm = function(carToken) {
+		let serviceForm = serviceFormTemplate.clone();
+		serviceForm.attr("carToken", carToken);
+		serviceForm.find(".card-body .btn").on("click", function(e) {
+			$.ajax({
+				url: "api/car/" + carToken + "/service",
+				type: "POST",
+				data: { service: serviceForm.find(".serviceDescr").val()},
+				success: function(results) {
+					let newServiceForm = serviceForm.find(".card");
+					serviceForm.find(".serviceDescr").val("");
+				}
+			});
+			e.preventDefault();
+		});
 
-        return serviceForm;
-    };
+		return serviceForm;
+	};
 
-    let setupServiceForm = function(carToken) {
-        $.ajax({
-            url: "api/car/" + carToken + "/schedule",
-            type: "GET",
-            success: function(results) {
-                $("#serviceList").empty();
+	let setupServiceForm = function(carToken) {
+		$.ajax({
+			url: "api/car/" + carToken + "/schedule",
+			type: "GET",
+			success: function(results) {
+				$("#serviceList").empty();
 
-                if (results.length > 0) {
-                    results.forEach(function (o, i) {
-                        let serviceRecord = serviceTemplate.clone();
-                        if (o.due_in_days < 0 || o.due_in_miles < 0)
-                            serviceRecord.find(".card-header").addClass("bg-danger").html("<i class=\"bi bi-exclamation-triangle-fill\"></i> Overdue Service");
-                        else
-                            serviceRecord.find(".card-header").addClass("bg-warning").html("<i class=\"bi bi-shield-exclamation\"></i> Service Soon");
+				if (results.length > 0) {
+					results.forEach(function (o, i) {
+						let serviceRecord = serviceTemplate.clone();
+						if (o.due_in_days < 0 || o.due_in_miles < 0)
+							serviceRecord.find(".card-header").addClass("bg-danger").html("<i class=\"bi bi-exclamation-triangle-fill\"></i> Overdue Service");
+						else
+							serviceRecord.find(".card-header").addClass("bg-warning").html("<i class=\"bi bi-shield-exclamation\"></i> Service Soon");
 
-                        serviceRecord.find(".card-text span").html(o.service);
+						serviceRecord.find(".card-text span").html(o.service);
 
-                        if (o.due_in_miles < 0)
-                            serviceRecord.find(".card-text small").html("(" + o.due_in_miles + " miles)");
-                        else if (o.due_in_days < 0)
-                            serviceRecord.find(".card-text small").html("(" + o.due_in_days + " days)");
+						if (o.due_in_miles < 0)
+							serviceRecord.find(".card-text small").html("(" + o.due_in_miles + " miles)");
+						else if (o.due_in_days < 0)
+							serviceRecord.find(".card-text small").html("(" + o.due_in_days + " days)");
 
-                        serviceRecord.find(".card-body .btn").on("click", function(e) {
-                            $.ajax({
-                                url: "api/car/" + carToken + "/service",
-                                type: "POST",
-                                data: { service: o.service},
-                                success: function(results) {
-                                    serviceRecord.fadeOut();
-                                }
-                            })
-                            e.preventDefault();
-                        });
+						serviceRecord.find(".card-body .btn").on("click", function(e) {
+							$.ajax({
+								url: "api/car/" + carToken + "/service",
+								type: "POST",
+								data: { service: o.service},
+								success: function(results) {
+									serviceRecord.fadeOut();
+								}
+							})
+							e.preventDefault();
+						});
 
-                        serviceRecord.attr("carToken", o.token);
-                        serviceRecord.show();
+						serviceRecord.attr("carToken", o.token);
+						serviceRecord.show();
 
-                        $("#serviceList").append(serviceRecord);
-                    });
-                }
+						$("#serviceList").append(serviceRecord);
+					});
+				}
 
-                let serviceForm = setupSubmitServiceForm(carToken);
-                serviceForm.show();
-                $("#serviceList").append(serviceForm);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $("#mainContent").hide();
-            }
-        })
-    };
+				let serviceForm = setupSubmitServiceForm(carToken);
+				serviceForm.show();
+				$("#serviceList").append(serviceForm);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$("#mainContent").hide();
+			}
+		})
+	};
 
-    let setSelectedCar = function(selectedCar) { 
-        $("#carList .car").removeClass("selected");
-        selectedCar.addClass("selected");
-        $("#serviceList").empty();
-        $("#serviceList").insertAfter(selectedCar);
-        let carToken = selectedCar.attr("carToken");
-        setupServiceForm(carToken);
-    }
+	let setSelectedCar = function(selectedCar) {
+		$("#carList .car").removeClass("selected");
+		selectedCar.addClass("selected");
+		$("#serviceList").empty();
+		$("#serviceList").insertAfter(selectedCar);
+		let carToken = selectedCar.attr("carToken");
+		setupServiceForm(carToken);
+	}
 
-    let loadCarData = function() {
-        //retrieve car list
-        $.ajax({
-            url: "api/car",
-            type: "GET",
-            success: function(results) {
-                $("#carList").empty();
+	let loadCarData = function() {
+		//retrieve car list
+		$.ajax({
+			url: "api/car",
+			type: "GET",
+			success: function(results) {
+				$("#carList").empty();
 
-                if (results.length > 0) {
-                    results.forEach(function (o, i) {
-                        let newCar = carTemplate.clone();
-                        newCar.html(o.name);
-                        newCar.attr("carToken", o.token);
-                        newCar.on("click", function(e, f) {
-                            let selectedCar = $(e.currentTarget);
-                            setSelectedCar(selectedCar);
-                        });
+				if (results.length > 0) {
+					results.forEach(function (o, i) {
+						let newCar = carTemplate.clone();
+						newCar.html(o.name);
+						newCar.attr("carToken", o.token);
+						newCar.on("click", function(e, f) {
+							let selectedCar = $(e.currentTarget);
+							setSelectedCar(selectedCar);
+						});
 
-                        newCar.show();
+						newCar.show();
 
-                        $("#carList").append(newCar);
-                    });
+						$("#carList").append(newCar);
+					});
 
-                    //use query parameter to pre-select car
-                    let cTokenParam = queryParams.get("cToken");
-                    if (cTokenParam) {
-                        let requestedCar = $(".car[carToken=" + cTokenParam+ "]")
-                        if (requestedCar.length > 0) {
-                            setSelectedCar(requestedCar);
-                        }
-                    }
-                            
+					//use query parameter to pre-select car
+					let cTokenParam = queryParams.get("cToken");
+					if (cTokenParam) {
+						let requestedCar = $(".car[carToken=" + cTokenParam+ "]")
+						if (requestedCar.length > 0) {
+							setSelectedCar(requestedCar);
+							$('html, body').animate({
+								scrollTop: ($("#carList .car.selected").offset().top - $("nav").outerHeight() - 10)
+							},200);
 
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $("#mainContent").hide();
-            }
+						}
+					}
 
-        });
-    }
 
-    //resetPage();
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$("#mainContent").hide();
+			}
 
-    //save templates
-    let carTemplate = $("#carList .car").clone();
-    let serviceTemplate = $("#serviceList .service").clone();
-    let serviceFormTemplate = $("#serviceList .serviceForm").clone();
+		});
+	}
 
-    loadCarData();
+	//resetPage();
+
+	//save templates
+	let carTemplate = $("#carList .car").clone();
+	let serviceTemplate = $("#serviceList .service").clone();
+	let serviceFormTemplate = $("#serviceList .serviceForm").clone();
+
+	loadCarData();
 
 });
 </script>
