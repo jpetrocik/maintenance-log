@@ -186,6 +186,11 @@ $( document ).ready(function() {
 		setupServiceForm(carToken);
 	}
 
+	let unselectCar = function(selectedCar) {
+		selectedCar.removeClass("selected");
+		$("#serviceList").empty();
+	}
+
 	let loadCarData = function() {
 		//retrieve car list
 		$.ajax({
@@ -201,7 +206,10 @@ $( document ).ready(function() {
 						newCar.attr("carToken", o.token);
 						newCar.on("click", function(e, f) {
 							let selectedCar = $(e.currentTarget);
-							setSelectedCar(selectedCar);
+							if (selectedCar.hasClass("selected"))
+							    unselectCar(selectedCar);
+							else
+								setSelectedCar(selectedCar);
 						});
 
 						newCar.show();
