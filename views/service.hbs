@@ -165,11 +165,11 @@ $( document ).ready(function() {
 
                         $("#serviceList").append(serviceRecord);
                     });
-
-                    let serviceForm = setupSubmitServiceForm(carToken);
-                    serviceForm.show();
-                    $("#serviceList").append(serviceForm);
                 }
+
+                let serviceForm = setupSubmitServiceForm(carToken);
+                serviceForm.show();
+                $("#serviceList").append(serviceForm);
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 $("#mainContent").hide();
