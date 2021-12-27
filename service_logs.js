@@ -120,11 +120,30 @@ let serviceLog = {
 	},
 
 	addMileage: function(carId, mileage, callback) {
-		var sqlParams = {carId: carId, mileage: mileage};
-		var sql = "INSERT INTO " + MILEAGE_LOG_TABLE + " SET ?";
-		executeQuery(sql, sqlParams, (error, results) => {
-			if (!error)
-				executeQuery("UPDATE " + CAR_DETAILS_TABLE + " SET mileage=? WHERE id=?", [mileage, carId], callback);
+		this.carDetails(carId, (err, carDetails) => {
+			if (err) {
+				callback(err);
+				return;
+			}
+
+			if (!carDetails || carDetails.mileage > mileage) {
+				callback("Mileage too low!");
+				return
+			}
+
+			let maxApproximateMileage = carDetails.mileage+(50 * carDetails.mileageReportedDays);
+			if (!carDetails || maxApproximateMileage < mileage) {
+				callback("Mileage too high!");
+				return;
+			}
+
+			var sqlParams = {carId: carId, mileage: mileage};
+
+			var sql = "INSERT INTO " + MILEAGE_LOG_TABLE + " SET ?";
+			executeQuery(sql, sqlParams, (error, results) => {
+				if (!error)
+					executeQuery("UPDATE " + CAR_DETAILS_TABLE + " SET mileage=? WHERE id=?", [mileage, carId], callback);
+			});
 		});
 	}
 
