@@ -104,6 +104,7 @@ $( document ).ready(function() {
 		$("#mileage").prop("disabled",true);
 		$("#mileage").val("");
 		$("#mileage").prop("placeholder","Select Car");
+		$("#mileage").removeClass("is-invalid");
 	};
 
 	let setupMileageForm = function(carToken) {
@@ -175,12 +176,12 @@ $( document ).ready(function() {
 			return false;
 		}
 
-		resetPage();
-
 		$.ajax({
 			url: "api/car/" + carToken + "/mileage/" + mileage,
 			type: "PUT",
 			success: function(results) {
+				resetPage();
+
 				let dateFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
 
 				if (results.length > 0) {
@@ -194,6 +195,11 @@ $( document ).ready(function() {
 
 				mileageConfirmToast.show();
 
+			},
+  			error: function (xhr, ajaxOptions, thrownError) {
+				$("#mileage").attr("placeholder", xhr.responseJSON);
+				$("#mileage").val("");
+				$("#mileage").addClass("is-invalid");
 			}
 		});
 		e.preventDefault();
