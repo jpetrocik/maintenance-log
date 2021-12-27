@@ -136,17 +136,13 @@ $( document ).ready(function() {
 				if (results.length > 0) {
 					results.forEach(function (o, i) {
 						let serviceRecord = serviceTemplate.clone();
-						if (o.due_in_days < 0 || o.due_in_miles < 0)
+						if (o.due_in < 0 )
 							serviceRecord.find(".card-header").addClass("bg-danger").html("<i class=\"bi bi-exclamation-triangle-fill\"></i> Overdue Service");
 						else
 							serviceRecord.find(".card-header").addClass("bg-warning").html("<i class=\"bi bi-shield-exclamation\"></i> Service Soon");
 
 						serviceRecord.find(".card-text span").html(o.service);
-
-						if (o.due_in_miles < 0)
-							serviceRecord.find(".card-text small").html("(" + o.due_in_miles + " miles)");
-						else if (o.due_in_days < 0)
-							serviceRecord.find(".card-text small").html("(" + o.due_in_days + " days)");
+						serviceRecord.find(".card-text small").html("(" + o.due_in + " miles)");
 
 						serviceRecord.find(".card-body .btn").on("click", function(e) {
 							$.ajax({

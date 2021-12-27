@@ -437,7 +437,7 @@ function formatCost(cost) {
 				this.$el.find(".date input").addClass("passedDue");
 			}
 
-			let dueIn = scheduledMaintenance.due_in_miles;
+			let dueIn = scheduledMaintenance.due_in;
 			this.$el.find(".mileage input").attr('placeholder', parseInt(dueIn).toLocaleString());
 			if (dueIn < 0) {
 				this.$el.find(".mileage input").addClass("passedDue");
