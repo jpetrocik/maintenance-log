@@ -1,13 +1,8 @@
 const pool = require('./mysql.js');
-const config = require("./config.json");
+const sql = require('./sql');
 const tokenGenerator = require('./tokens.js');
 const { call } = require('body-parser');
 
-const SERVICE_LOG_TABLE = "service_history";
-const SCHEDULE_LOG_TABLE = "scheduled_maintenance";
-const MILEAGE_LOG_TABLE = "mileage_log";
-const CAR_DETAILS_TABLE = "my_garage";
-const CAR_INVITATIONS = "invitations";
 
 let executeQuery = function(sqlStatement, sqlParams, callback) {
 	// console.log(sqlStatement);
@@ -56,7 +51,7 @@ let serviceLog = {
 
 	completeServiceLog:  function(carId, callback) {
 		executeQuery("select s.* from " + CAR_DETAILS_TABLE + " c join " + SERVICE_LOG_TABLE + " s on c.id=s.carId where c.id=? \
-			order by mileage asc, serviceDate asc", [carId], callback);
+			order by mileage desc, serviceDate desc", [carId], callback);
 	},
 
 	serviceLog:  function(carId, serviceId, callback) {
@@ -64,15 +59,7 @@ let serviceLog = {
 	},
 
 	serviceDue: function(carId, callback) {
-		let serviceSql = "select ms.carId, ms.id, ms.service, ms.mileage, ms.months, max(s.serviceDate) as last_service_date, max(s.mileage) as last_service_mileage, \
-			DATE_ADD(COALESCE(max(s.serviceDate),c.inserviceDate), INTERVAL months  MONTH) as due_by, \
-			DATEDIFF(DATE_ADD(COALESCE(max(s.serviceDate),c.inserviceDate), INTERVAL months  MONTH), now()) as  due_in_days, \
-			COALESCE(max(s.mileage),0)+ms.mileage-c.mileage as due_in_miles \
-			from " + CAR_DETAILS_TABLE + " c left join " + SCHEDULE_LOG_TABLE + " ms on c.id=ms.carId left outer join " + SERVICE_LOG_TABLE + " s on s.service=ms.service and \
-			s.carId=ms.carId where ms.carId=? \
-			group by ms.id, ms.service, ms.mileage, ms.months";
-		let upcomingServiceSql = "select * from (" + serviceSql + ") as s where due_in_days<30 or due_in_miles<500 order by due_in_days, due_in_miles";
-		executeQuery(upcomingServiceSql, [carId], callback);
+		executeQuery(sql.serviceDue, [carId], callback);
 	},
 
 	addServiceLog: function(carId, serviceDate, mileage, service, cost, note, callback) {
