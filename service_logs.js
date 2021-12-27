@@ -51,7 +51,7 @@ let serviceLog = {
 
 	completeServiceLog:  function(carId, callback) {
 		executeQuery("select s.* from " + CAR_DETAILS_TABLE + " c join " + SERVICE_LOG_TABLE + " s on c.id=s.carId where c.id=? \
-			order by mileage desc, serviceDate desc", [carId], callback);
+			order by mileage asc, serviceDate asc", [carId], callback);
 	},
 
 	serviceLog:  function(carId, serviceId, callback) {
