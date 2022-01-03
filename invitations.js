@@ -43,7 +43,9 @@ var invitations = {
 
 	resolveInvitation: function(iToken, callback) {
 		executeQuery("select oToken, carId from " + INVITATIONS_TABLE + " where iToken=?", [iToken],  (err, results) => {
-			callback(err, results[0].carId, results[0].oToken);
+			carId = results.length ? results[0].carId : undefined
+			oToken = results.length ? results[0].oToken : undefined
+			callback(err, carId, oToken);
 		});
 	},
 

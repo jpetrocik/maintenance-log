@@ -42,15 +42,7 @@ app.use('/api', apiRoutes);
 app.use('/cron', cronRoutes);
 
 app.get('/', function (req, res) {
-	invitations.validateUser(req, res, (err, uToken) => {
-		if (!uToken) {
-			res.render('register');
-			return;
-		}
-
-
-		res.render('logs');
-	});
+	res.redirect('logs');
 });
 
 
@@ -67,23 +59,13 @@ app.get('/mobile', function (req, res) {
 });
 
 app.get('/logs', function (req, res) {
-	invitations.resolveInvitation(req.query.oToken, (err, carId) => {
-		if (!carId) {
-			res.sendStatus(401);
+	invitations.validateUser(req, res, (err, uToken) => {
+		if (!uToken) {
+			res.render('register');
 			return;
 		}
 
-		invitations.validateUser(req, res, (err, uToken) => {
-			if (!uToken) {
-				res.sendStatus(401);
-				return;
-			}
-			serviceLogs.myGarage(uToken, function(err, cars) {
-				serviceLogs.carDetails(carId, function(err, car) {
-					res.render('logs', {car: car, cars: cars});
-				});
-			});
-		});
+		res.render('logs');
 	});
 });
 
