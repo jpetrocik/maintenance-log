@@ -17,7 +17,7 @@ let executeQuery = function(sqlStatement, sqlParams, callback) {
 
 let serviceLog = {
 	myGarage: function(utoken, callback) {
-		executeQuery("select iToken as token, name, mileage from " + CAR_DETAILS_TABLE + " c left join " + CAR_INVITATIONS + " i ON c.id=i.carId \
+		executeQuery("select iToken as token, name, mileage from my_garage c left join invitations i ON c.id=i.carId \
 			where c.status='ACTIVE' and i.uToken=? \
 		 	order by c.year desc, c.make asc, c.model asc, c.id desc", [utoken], callback);
 	},
@@ -29,7 +29,7 @@ let serviceLog = {
 		let car  = {token: token, name: name, make: params.make, model: params.model, 
 			trim: params.trim, year: params.year, inserviceDate: inserviceDate, status: "ACTIVE"};
 
-		executeQuery("insert into " + CAR_DETAILS_TABLE + " set ?" , car, (err, results) => { 
+		executeQuery("insert into my_garage set ?" , car, (err, results) => { 
 			car.id = results.insertId;
 
 			let mileage = params.mileage;
@@ -44,18 +44,18 @@ let serviceLog = {
 
 	carDetails: function(carId, callback) {
 		executeQuery("select c.*, max(m.mileage) as mileage, DATEDIFF(now(), max(m.created_date)) as mileageReportedDays \
-			from " + CAR_DETAILS_TABLE + " c LEFT JOIN " + MILEAGE_LOG_TABLE + " m ON c.id=m.carId \
+			from my_garage c LEFT JOIN mileage_log m ON c.id=m.carId \
 			where c.id=?",
 			[carId], (err, results) => {callback(err, results[0])});
 	},
 
 	completeServiceLog:  function(carId, callback) {
-		executeQuery("select s.* from " + CAR_DETAILS_TABLE + " c join " + SERVICE_LOG_TABLE + " s on c.id=s.carId where c.id=? \
+		executeQuery("select s.* from my_garage c join service_history s on c.id=s.carId where c.id=? \
 			order by mileage asc, serviceDate asc", [carId], callback);
 	},
 
 	serviceLog:  function(carId, serviceId, callback) {
-		executeQuery("select * from " + SERVICE_LOG_TABLE + " where id=? and carId=?", [serviceId, carId], callback);
+		executeQuery("select * from service_history where id=? and carId=?", [serviceId, carId], callback);
 	},
 
 	serviceDue: function(carId, callback) {
@@ -85,7 +85,7 @@ let serviceLog = {
 	
 			var sqlParams  = serviceRecord;
 	
-			executeQuery("INSERT INTO " + SERVICE_LOG_TABLE + " SET ?", sqlParams, callback);
+			executeQuery("INSERT INTO service_history SET ?", sqlParams, callback);
 	
 		});
 	},
@@ -97,7 +97,7 @@ let serviceLog = {
 		}
 
 		var sqlParams  = [serviceRecord, serviceId, carId];
-		executeQuery("UPDATE " + SERVICE_LOG_TABLE + " SET ? WHERE id=? AND carId=?", sqlParams, (err, result) => {
+		executeQuery("UPDATE service_history SET ? WHERE id=? AND carId=?", sqlParams, (err, result) => {
 		        
 		    //add a scheduled service
 		   	if (regularService) {
@@ -111,7 +111,7 @@ let serviceLog = {
 
 	deleteServiceLog: function(carId, serviceId, callback) {
 		var sqlParams = [serviceId, carId];
-		executeQuery("DELETE FROM " + SERVICE_LOG_TABLE + " WHERE id = ? AND carId=?", sqlParams, callback);
+		executeQuery("DELETE FROM service_history WHERE id = ? AND carId=?", sqlParams, callback);
 	},
 
 	addScheduledService: function(carId, mileageInterval, monthsInterval, service, callback) {
@@ -126,23 +126,30 @@ let serviceLog = {
 				return;
 			}
 
-			if (!carDetails || carDetails.mileage > mileage) {
+			if (!carDetails) {
+				callback("Car not found");
+				return;
+			}
+
+			if (carDetails.mileage > mileage) {
 				callback("Mileage too low!");
 				return
 			}
 
-			let maxApproximateMileage = carDetails.mileage+(50 * carDetails.mileageReportedDays);
-			if (!carDetails || maxApproximateMileage < mileage) {
-				callback("Mileage too high!");
-				return;
+			if (carDetails.mileage) {
+				let maxApproximateMileage = carDetails.mileage+(50 * carDetails.mileageReportedDays);
+				if (maxApproximateMileage < mileage) {
+					callback("Mileage too high!");
+					return;
+				}
 			}
 
 			var sqlParams = {carId: carId, mileage: mileage};
 
-			var sql = "INSERT INTO " + MILEAGE_LOG_TABLE + " SET ?";
+			var sql = "INSERT INTO mileage_log SET ?";
 			executeQuery(sql, sqlParams, (error, results) => {
 				if (!error)
-					executeQuery("UPDATE " + CAR_DETAILS_TABLE + " SET mileage=? WHERE id=?", [mileage, carId], callback);
+					executeQuery("UPDATE my_garage SET mileage=? WHERE id=?", [mileage, carId], callback);
 			});
 		});
 	}
