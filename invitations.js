@@ -139,18 +139,18 @@ var invitations = {
 					return;
 				}
 
+				console.log({ token: token, code: code });
+
 				if (config.plivo.enabled) {
 					plivo.messages.create(
 						config.plivo.phone,
 						phone,
 						'Your verification code is ' + code
-					).then(function(message_created) {
-						callback(err, token);
-					});
-				} else {
-					console.log({ token: token, code: code });
-					callback(err, token);
+					).catch( e => console.log(e));
 				}
+				
+				callback(err, token);
+
 			});
 		});
 	},
