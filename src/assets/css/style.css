@@ -1,0 +1,10 @@
+#mainContent {
+	.service .required {
+		font-weight: 700;
+	}
+
+	.service .soon {
+		font-weight: 500;
+	}
+
+}

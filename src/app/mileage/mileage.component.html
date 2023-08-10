@@ -1,1 +1,15 @@
-<p>mileage works!</p>
+<div id="carList">
+<mat-button-toggle-group class="fw" name="carList" vertical >
+    <mat-button-toggle class="btn" *ngFor="let car of garage" (click)="selectCar(car)">{{car.name}} <small>({{car.lastReported}} days ago)</small></mat-button-toggle >
+</mat-button-toggle-group>
+</div>
+
+<div id="mileageForm">
+    <form [formGroup]="mileageForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="fw">
+        <input matInput #mileage name="mileage" placeholder="mileage" formControlName="mileage" type="number"/>
+        </mat-form-field>
+        <button mat-flat-button class="btn" color="primary" [disabled]="this.mileageForm.disabled">Submit</button>
+    </form>
+</div>
+
