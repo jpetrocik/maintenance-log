@@ -1,7 +1,7 @@
 
-function tokenGenerator(tokenSize) {
+function _tokenGenerator(tokenSize: number) : string {
     let token = "";
-    for (i=0; i < tokenSize ; i++) {
+    for (let i = 0; i < tokenSize ; i++) {
         let base = Math.floor(Math.random() * 62)
         if (base > 51 )
             token += (base - 52)
@@ -13,4 +13,4 @@ function tokenGenerator(tokenSize) {
     return token;
 }
 
-module.exports = tokenGenerator;
+module.exports = _tokenGenerator;

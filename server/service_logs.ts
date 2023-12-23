@@ -1,10 +1,10 @@
-const pool = require('./mysql.js');
+const pool = require('./mysql.ts');
 const sql = require('./sql');
-const tokenGenerator = require('./tokens.js');
+const tokenGenerator = require('./tokens.ts');
 const { call } = require('body-parser');
 
 
-let executeQuery = function(sqlStatement, sqlParams, callback) {
+let executeQuery = function(sqlStatement: string, sqlParams: any[], callback: any) {
 	// console.log(sqlStatement);
 	// console.log(sqlParams);
 	pool.query(sqlStatement, sqlParams, (error, results, fields) => {
@@ -16,13 +16,13 @@ let executeQuery = function(sqlStatement, sqlParams, callback) {
 };
 
 let serviceLog = {
-	myGarage: function(utoken, callback) {
+	myGarage: function(utoken: string, callback: any) {
 		executeQuery("select iToken as token, name, mileage from my_garage c left join invitations i ON c.id=i.carId \
 			where c.status='ACTIVE' and i.uToken=? \
 		 	order by c.year desc, c.make asc, c.model asc, c.id desc", [utoken], callback);
 	},
 
-	addCar: function(params, callback) {
+	addCar: function(params: any, callback: any) {
 		let token = tokenGenerator(25);
 		let inserviceDate = (params.inserviceDate)?params.inserviceDate:new Date();
 		let name = "'" + params.year.substring(2) + " " + params.make + " " + params.model;
