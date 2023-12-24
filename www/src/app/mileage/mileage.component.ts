@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Car, MaintenanceService } from '../maintenance.service';
+import { Vehicle, MaintenanceService } from '../maintenance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -13,8 +13,8 @@ import { Router } from '@angular/router';
 export class MileageComponent implements OnInit, AfterViewInit {
   @ViewChild('mileage') mileageInput! : ElementRef;
 
-  garage: Car[] = [];
-  selectedCar!: Car | undefined;
+  garage: Vehicle[] = [];
+  selectedVehicle!: Vehicle | undefined;
   mileageForm!: FormGroup; 
 
   constructor(private _maintenanceService: MaintenanceService,
@@ -35,21 +35,25 @@ export class MileageComponent implements OnInit, AfterViewInit {
   ngAfterViewInit():void {
   }
 
-  selectCar(car: Car) {
-    this.selectedCar = car;
+  selectVehicle(vehicle: Vehicle) {
+    this.selectedVehicle = vehicle;
     this.mileageForm.enable();
     this.mileageInput.nativeElement.focus();
   }
 
   resetForm() {
-    this.selectedCar = undefined;
+    this.selectedVehicle = undefined;
     this.setMileage('');
     this.mileageForm.disable();
 
   }
 
   onSubmit() {
-    this._maintenanceService.submitMileage().subscribe({
+    if (!this.selectedVehicle) {
+      return
+    }
+
+    this._maintenanceService.submitMileage(this.selectedVehicle.invitationToken, this.mileageForm.controls['mileage'].value).subscribe({
       next: () => {
 
       this.resetForm();
@@ -67,8 +71,8 @@ export class MileageComponent implements OnInit, AfterViewInit {
       //   $("service_good").show();
       // }
     },
-    error: () => {
-      this._snackBar.open("Invalid Mileage", "Ok").onAction().subscribe();
+    error: (message) => {
+      this._snackBar.open(message.statusText, "Ok").onAction().subscribe();
     }});
   };
 

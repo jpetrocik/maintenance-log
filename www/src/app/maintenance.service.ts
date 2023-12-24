@@ -1,10 +1,13 @@
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 
-export interface Car {
+export interface Vehicle {
+    invitationToken: string;
     name: string;
     token: string;
-    lastReported: number;
+    mileage: number;
+    mileageReportedDays: number;
 }
   
 @Injectable({
@@ -12,19 +15,22 @@ export interface Car {
   })
 export class MaintenanceService {
 
-  constructor(
-  ) {
+  constructor(private httpClient: HttpClient
+  ) {}
+
+  public myGarage() : Observable<Vehicle[]> {
+    return this.httpClient.get<Vehicle[]>("/api/vehicle")
   }
 
-  public myGarage() : Observable<Car[]> {
-    return of([
-        { name: "'05 Volvo s60 T5", token: "1232", lastReported: 180},
-        { name: "'23 Chevy Colorafo", token: "3232", lastReported: 61}
-    ]);
+  public submitMileage(invitationToken: string, mileage: number) : Observable<any> {
+    return this.httpClient.put<Vehicle[]>(`/api/vehicle/${invitationToken}/mileage/${mileage}`, '');
   }
 
-  public submitMileage() : Observable<Car[]> {
-    return of([{ name: "'05 Volvo s60 T5", token: "1232", lastReported: 180}]);
+  public login(email: string, authToken: string) : Observable<any> {
+    return this.httpClient.get(`/api/login?email=${email}&authToken=${authToken}`);
   }
 
+  public sendAuth(email: string) : Observable<any> {
+    return this.httpClient.get(`/api/sendAuth?email=${email}`);
+  }
 }

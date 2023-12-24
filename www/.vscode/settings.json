@@ -1,0 +1,9 @@
+{
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/.angular": true,
+        "**/tmp": true,
+        "package-lock.json": true
+    }
+}

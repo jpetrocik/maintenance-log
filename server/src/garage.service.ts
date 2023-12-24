@@ -71,19 +71,20 @@ class GarageService extends BaseService {
 	public async myGarage(utoken: string) {
 
 		let results = await this.executeQuery("select i.invitationToken, name, max(m.mileage) as mileage, DATEDIFF(now(), max(m.created_date)) as mileageReportedDays \
-		 from my_garage c join invitation i ON c.id=i.carId \
+		 from my_garage c join invitation i ON c.token=i.objectToken \
 		 left join  mileage_log m ON c.id=m.carId \
 		 where c.status='ACTIVE' and i.userToken=? \
+		 group by i.invitationToken, name \
 		order by c.year desc, c.make asc, c.model asc, c.id desc", [utoken]);
 
-		return results[0];
+		return results
 	}
 
-	public async addCar(params: any) : Promise<Vehicle> {
+	public async addVehicle(params: any) : Promise<Vehicle> {
 		let token = tokenGenerator(25);
 		let inserviceDate = (params.inserviceDate)?params.inserviceDate:new Date();
 		let name = "'" + params.year.substring(2) + " " + params.make + " " + params.model;
-		let car  = {
+		let vehicle  = {
 			token: token, 
 			name: name, 
 			make: params.make, 
@@ -93,21 +94,21 @@ class GarageService extends BaseService {
 			inserviceDate: inserviceDate, 
 			status: "ACTIVE" } as Vehicle;
 
-		let results = await this.executeQuery("insert into my_garage set ?" , car);
+		let results = await this.executeQuery("insert into my_garage set ?" , vehicle);
 
-		car.id = results.insertId;
+		vehicle.id = results.insertId;
 
 		let mileage = params.mileage;
 		if (!mileage) {
 			mileage=0;
 		}
 		
-		await this.addMileage(car.token, mileage);
+		await this.reportMileage(vehicle.token, mileage);
 
-		return car;
+		return vehicle;
 	};
 
-	public async carDetails(objectToken: string): Promise<Vehicle|undefined> {
+	public async vehicleDetails(objectToken: string): Promise<Vehicle|undefined> {
 		let results = await this.executeQuery("select c.*, max(m.mileage) as mileage, DATEDIFF(now(), max(m.created_date)) as mileageReportedDays \
 			from my_garage c LEFT JOIN mileage_log m ON c.id=m.carId \
 			where c.token=?",
@@ -121,7 +122,7 @@ class GarageService extends BaseService {
 
 	public completeServiceLog(objectToken: string) : Promise<ServiceRecord[]> {
 		return this.executeQuery("select s.* from my_garage c join service_history s on c.id=s.carId where c.token=? \
-			order by mileage asc, serviceDate asc", [objectToken]);
+			order by mileage desc, serviceDate desc", [objectToken]);
 	}
 
 	public async serviceLog(objectToken: string, serviceId: number) : Promise<ServiceRecord|undefined> {
@@ -134,60 +135,20 @@ class GarageService extends BaseService {
 
 	}
 
-	public async serviceDue(objectToken: string) {
-		return this.executeQuery(UPCOMING_SERVICE_SQL, [objectToken]);
-	};
-
-	public async addServiceLog(objectToken: string, serviceRecord: ServiceRecord) {
-		let car = await this.carDetails(objectToken);
-		if (!car)
-			return undefined;
-
-		if (!serviceRecord.mileage) {
-			serviceRecord.mileage = car.mileage;
-		}
-
-		if (!serviceRecord.serviceDate) {
-			serviceRecord.serviceDate = new Date();
-		}
-		
-		await this.executeQuery("INSERT INTO service_history SET ?", serviceRecord);
-	};
-
-	public async updateServiceLog(serviceRecord: ServiceRecord) {
-
-		await this.executeQuery("UPDATE service_history SET ? WHERE id=? AND carId=?", [serviceRecord]);
-
-		//add a scheduled maintenance
-		// if (regularService) {
-		// 	this.addScheduledService(carId, mileageInterval, monthsInterval, description);
-		// }
-	};
-
-	public async deleteServiceLog(objecToken: string, serviceId: number) {
-		var sqlParams = [serviceId, objecToken];
-		this.executeQuery("DELETE FROM service_history WHERE id = ? AND token=?", sqlParams);
-	};
-
-	public async addScheduledService(carId, mileageInterval, monthsInterval, service) {
-		var scheduleLog  = {carId: carId, mileage: mileageInterval, months: monthsInterval, service: service};
-		this.executeQuery("INSERT INTO scheduled_maintenance SET ?", scheduleLog);
-	};
-
-	public async addMileage(objectToken: string, mileage: number) {
-		let vehicle = await this.carDetails(objectToken);
+	public async reportMileage(objectToken: string, mileage: number) {
+		let vehicle = await this.vehicleDetails(objectToken);
 		if (!vehicle) {
 			return;
 		}
 
 		if (vehicle.mileage > mileage) {
-			throw("Mileage too low!");
+			throw new Error("Mileage too low");
 		}
 
 		if (vehicle.mileage) {
 			let maxApproximateMileage = vehicle.mileage+(50 * vehicle.mileageReportedDays);
 			if (maxApproximateMileage < mileage) {
-				throw("Mileage too high!");
+				throw new Error("Mileage too high");
 			}
 		}
 

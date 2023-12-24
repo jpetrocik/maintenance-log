@@ -1,7 +1,8 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import {invitationService} from './invitation.service'
 import {accountService, Account} from './acount.service'
 import {ServiceRecord, garageService} from './garage.service'
+import { maintenanceService  } from './maintenance.service';
 
 const apiRoutes = Router();
 // var express = require('express'),
@@ -30,7 +31,23 @@ async function validateUser(request: Request, response: Response): Promise<Accou
 }
 
 
-apiRoutes.head('/', async (request: Request, response: Response) => {
+apiRoutes.head('/', headHandler);
+apiRoutes.post('/register', registerHandler);
+apiRoutes.get('/login', loginHandler);
+apiRoutes.get('/sendAuth', sendAuthHandler);
+apiRoutes.get('/mfa', mfaHandler);
+apiRoutes.post('/mfa', mfaValidateHandler) ;
+apiRoutes.post('/vehicle', vehicleAddHandler);
+apiRoutes.get('/vehicle', vehicleHandler);
+apiRoutes.get('/vehicle/:iToken', vehicleDetailHandler);
+apiRoutes.post('/vehicle/:iToken/service', serviceRecordAddHisotry);
+apiRoutes.get('/vehicle/:iToken/service', serviceHistoryHandler);
+apiRoutes.get('/vehicle/:iToken/service/:serviceId', serviceRecordHandler);
+apiRoutes.put('/vehicle/:iToken/service/:serviceId', serviceRecordUpdateHandler);
+apiRoutes.delete('/vehicle/:iToken/service/:serviceId', serviceRecordDeleteHandler);
+apiRoutes.put('/vehicle/:iToken/mileage/:mileage', reportMileageHandler);
+
+async function headHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -38,12 +55,9 @@ apiRoutes.head('/', async (request: Request, response: Response) => {
 	}
 
 	response.sendStatus(200);
-});
+}
 
-/**
- * Registers user with a new car
- */
-apiRoutes.post('/register', async (request: Request, response: Response) => {
+async function registerHandler(request: Request, response: Response) {
 	const authToken = accountService.register(request.body.email, request.body.phone);
 	if (!authToken) {
 		response.sendStatus(400);
@@ -52,9 +66,9 @@ apiRoutes.post('/register', async (request: Request, response: Response) => {
 
 	response.cookie('_authToken', authToken, { maxAge: (90 * 24 * 60 * 60)});
 	response.sendStatus(200);
-});
+}
 
-apiRoutes.get('/login', async (request: Request, response: Response) => {
+async function loginHandler(request: Request, response: Response) {
 	let email = request.query.email as string;
 	let authToken = request.query.authToken as string;
 	if (!email || !authToken) {
@@ -69,14 +83,15 @@ apiRoutes.get('/login', async (request: Request, response: Response) => {
 	}
 	response.cookie('_authToken', authToken, { maxAge: (90 * 24 * 60 * 60)});
 	response.sendStatus(204);
-});
+}
 
-apiRoutes.get('/sendAuth', async (request: Request, response: Response) => {
+async function sendAuthHandler(request: Request, response: Response) {
 	await accountService.sendAuthToken(request.query.email);
 	response.sendStatus(204);
-});
+}
 
-apiRoutes.get('/mfa', async(request: Request, response: Response) => {
+
+async function mfaHandler(request: Request, response: Response) {
 	let account: Account|undefined;
 	if (request.query.phone) {
 		account = await accountService.lookupUserByPhone(request.query.phone);
@@ -90,9 +105,9 @@ apiRoutes.get('/mfa', async(request: Request, response: Response) => {
 	let token = await accountService.generateValidationCode(request.query.phone);
 
 	response.json(token);
-});
+}
 
-apiRoutes.post('/mfa', async (request: Request, response: Response) => {
+async function mfaValidateHandler (request: Request, response: Response) {
 	let userToken = await accountService.validateValidationCode(request.body.token, request.body.code);
 	if (!userToken) {
 		response.sendStatus(401);
@@ -106,22 +121,22 @@ apiRoutes.post('/mfa', async (request: Request, response: Response) => {
 	}
 
 	response.cookie('_authToken', account.authToken, { maxAge: (90 * 24 * 60 * 60 * 1000) });
-});
+}
 
 
-apiRoutes.post('/car', async (request: Request, response: Response) => {
+async function vehicleAddHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
 		return;
 	}
 
-	let newCar = await garageService.addCar(request.body);
-	let invitationToken = await invitationService.createInvitation( account.userToken, newCar.token);
-	response.json({token: invitationToken, name: newCar.name});			
-});
+	let newvehicle = await garageService.addVehicle(request.body);
+	let invitationToken = await invitationService.createInvitation( account.userToken, newvehicle.token);
+	response.json({token: invitationToken, name: newvehicle.name});			
+}
 
-apiRoutes.get('/car', async (request: Request, response: Response) => {
+async function vehicleHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -130,9 +145,10 @@ apiRoutes.get('/car', async (request: Request, response: Response) => {
 
 	let garage = await garageService.myGarage(account.userToken);
 	response.json(garage);
-});
+}
 
-apiRoutes.get('/car/:iToken', async (request: Request, response: Response) => {
+
+async function vehicleDetailHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -145,11 +161,11 @@ apiRoutes.get('/car/:iToken', async (request: Request, response: Response) => {
 		return;
 	}
 
-	let car = await garageService.carDetails(objectToken);
-	response.json(car);
-});
+	let vehicle = await garageService.vehicleDetails(objectToken);
+	response.json(vehicle);
+}
 
-apiRoutes.get('/car/:iToken/service', async (request: Request, response: Response) => {
+async function serviceHistoryHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -162,11 +178,12 @@ apiRoutes.get('/car/:iToken/service', async (request: Request, response: Respons
 		return;
 	}
 
-	let allServiceRecords = garageService.completeServiceLog(objectToken);
+	let allServiceRecords = await garageService.completeServiceLog(objectToken);
 	response.json(allServiceRecords);
-});
+}
 
-apiRoutes.get('/car/:iToken/service/:serviceId', async (request: Request, response: Response) => {
+
+async function serviceRecordHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -179,11 +196,12 @@ apiRoutes.get('/car/:iToken/service/:serviceId', async (request: Request, respon
 		return;
 	}
 
-	let serviceRecord = garageService.serviceLog(objectToken, +request.params.serviceId);
+	let serviceRecord = await garageService.serviceLog(objectToken, +request.params.serviceId);
 	response.json(serviceRecord);
-});
+}
 
-apiRoutes.post('/car/:iToken/service', async (request: Request, response: Response) => {
+
+async function serviceRecordAddHisotry(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -196,11 +214,12 @@ apiRoutes.post('/car/:iToken/service', async (request: Request, response: Respon
 		return;
 	}
 
-	await garageService.addServiceLog(objectToken, request.body as ServiceRecord);
+	await maintenanceService.addServiceLog(objectToken, request.body as ServiceRecord);
 	response.sendStatus(204);
-});
+}
 
-apiRoutes.put('/car/:iToken/service/:serviceId', async (request: Request, response: Response) => {
+
+async function serviceRecordUpdateHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -213,11 +232,12 @@ apiRoutes.put('/car/:iToken/service/:serviceId', async (request: Request, respon
 		return;
 	}
 
-	garageService.updateServiceLog(request.body as ServiceRecord);
+	await maintenanceService.updateServiceLog(request.body as ServiceRecord);
 	response.sendStatus(204);
-});
+}
 
-apiRoutes.delete('/car/:iToken/service/:serviceId', async (request: Request, response: Response) => {
+
+async function serviceRecordDeleteHandler(request: Request, response: Response) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -230,12 +250,12 @@ apiRoutes.delete('/car/:iToken/service/:serviceId', async (request: Request, res
 		return;
 	}
 
-	garageService.deleteServiceLog(objectToken, +request.params.serviceId);
+	await maintenanceService.deleteServiceLog(+request.params.serviceId);
 	response.sendStatus(204);
-});
+}
 
 
-apiRoutes.put('/car/:iToken/mileage/:mileage', async (request: Request, response: Response) => {
+async function reportMileageHandler(request: Request, response: Response, next: NextFunction) {
 	const account = await validateUser(request, response);
 	if (!account) {
 		response.sendStatus(401);
@@ -248,26 +268,14 @@ apiRoutes.put('/car/:iToken/mileage/:mileage', async (request: Request, response
 		return;
 	}
 
-	await garageService.addMileage(objectToken, +request.params.mileage);
+	try {
+	await garageService.reportMileage(objectToken, +request.params.mileage);
 	response.sendStatus(204);
-});
-
-apiRoutes.get('/car/:iToken/schedule', async (request: Request, response: Response) => {
-	const account = await validateUser(request, response);
-	if (!account) {
-		response.sendStatus(401);
-		return;
+	} catch (err) {
+		response.statusMessage = err.message;
+		response.sendStatus(404);
 	}
+}
 
-	let objectToken = await invitationService.resolveInvitation(request.params.iToken);
-	if (!objectToken) {
-		response.sendStatus(401);
-		return;
-	}
-
-
-	let serviceDue = await garageService.serviceDue(objectToken);
-	response.json(serviceDue);
-});
 
 export { apiRoutes }

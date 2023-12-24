@@ -1,5 +1,7 @@
 import {BaseService} from './base.service';
 import {tokenGenerator} from './tokens';
+import nodemailer from 'nodemailer';
+import config from './config.json';
 
 export class Account{
 	// @ts-ignore: Object is possibly 'null'.
@@ -32,8 +34,14 @@ class AccountService extends BaseService {
 
 		if (results.length) {
 			const authToken = results[0].authToken;
-			console.log("Email not implemented.");
 			console.log(`AuthToken:${authToken}`);
+			var mailOptions = {
+				from: config.mail.username,
+				to: email,
+				subject: 'Vehicle Maintenance Log',
+				text: `Here is your login link:\n\nhttp://localhost:4200/login?email=${email}&authToken=${authToken}`
+			  };
+			this.sednEmail(mailOptions);
 		}
 	};
 
@@ -116,6 +124,25 @@ class AccountService extends BaseService {
 		}
 
 		return results[0] as Account;
+	}
+
+	async sednEmail(mailOptions) {
+
+		var transporter = nodemailer.createTransport({
+			host: "hermes.petrocik.net",
+			port: 25,
+			secure: false,
+			tls: {rejectUnauthorized: false},
+			debug:true
+		});
+				
+		transporter.sendMail(mailOptions, function(error, info){
+		  if (error) {
+			console.log(error);
+		  } else {
+			console.log('Email sent: ' + info.response);
+		  }
+		});	
 	}
 
 }
