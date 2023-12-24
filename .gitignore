@@ -33,7 +33,6 @@ node_modules
 .node_repl_history
 
 config.json
-# See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Compiled output
 /dist
@@ -75,3 +74,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+bin
+
