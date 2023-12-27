@@ -10,9 +10,9 @@
 </mat-toolbar-row>
  </mat-toolbar>
  <mat-toolbar color="primary" *ngIf="showMenu">
-	<mat-toolbar-row *ngFor="let vehicle of _maintenanceService.myGarage$ | async" >
-	<button mat-icon-button [routerLink]="['/mileage', vehicle.invitationToken]">
-		<span>{{vehicle.name}} <small>({{vehicle.mileageReportedDays}} days ago)</small></span>
+	<mat-toolbar-row>
+	<button mat-icon-button [routerLink]="['/home']">
+		<mat-icon>garage</mat-icon> <span>My Garage</span>
 	</button>
 </mat-toolbar-row>
  </mat-toolbar>

@@ -58,7 +58,11 @@ export class MaintenanceService {
   }
 
   public login(email: string, authToken: string) : Observable<any> {
-    return this.httpClient.get(`/api/login?email=${email}&authToken=${authToken}`);
+    return this.httpClient.get(`/api/login?email=${email}&authToken=${authToken}`).pipe(
+      map((data) => {
+        this.loadMyGarage();
+        return data;
+      }));;
   }
 
   public sendAuth(email: string) : Observable<any> {
