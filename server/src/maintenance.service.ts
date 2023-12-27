@@ -38,7 +38,7 @@ class MaintenanceService extends BaseService {
 	};
 
 	public async serviceHistory(objectToken: string) : Promise<ServiceRecord[]|undefined> {
-		let results = await this.executeQuery("select sh.* from service_history sh join my_garage g on sh.carId=g.id where g.token=? order by sh.mileage desc", [objectToken]);
+		let results = await this.executeQuery("select sh.* from service_history sh join my_garage g on sh.carId=g.id where g.token=? order by sh.mileage desc, sh.serviceDate desc", [objectToken]);
 
 		if (!results.length)
 			return undefined;
@@ -78,7 +78,8 @@ class MaintenanceService extends BaseService {
 
 		//add a scheduled maintenance
 		// if (regularService) {
-		// 	this.addScheduledService(carId, mileageInterval, monthsInterval, description);
+			// var scheduleLog  = {token: objectToken, mileage: mileageInterval, months: monthsInterval, service: service};
+			// 	this.addScheduledService(carId, mileageInterval, monthsInterval, description);
 		// }
 	};
 
@@ -86,13 +87,19 @@ class MaintenanceService extends BaseService {
 		await this.executeQuery("DELETE FROM service_history WHERE id = ?", [serviceId]);
 	};
 
-	public async addScheduledService(objectToken, mileageInterval, monthsInterval, service) {
-		var scheduleLog  = {token: objectToken, mileage: mileageInterval, months: monthsInterval, service: service};
-		this.executeQuery("INSERT INTO scheduled_maintenance SET ?", scheduleLog);
+	public async addScheduledService(objectToken, scheduledMaintenance: ScheduledMaintenance) {
+		// var scheduleLog  = {token: objectToken, mileage: mileageInterval, months: monthsInterval, service: service};
+		let vehicle = await garageService.vehicleDetails(objectToken);
+		if (!vehicle)
+			return undefined;
+
+		scheduledMaintenance.carId = vehicle.id;
+
+			await this.executeQuery("INSERT INTO scheduled_maintenance SET ?", scheduledMaintenance);
 	};
 
 	public async scheduledMaintenance(objectToken) : Promise<ServiceRecord|undefined> {
-		let results = await this.executeQuery("SELECT sm.* FROM scheduled_maintenance sm JOIN my_garage g ON sm.carID=g.Id WHERE g.token=?", objectToken);
+		let results = await this.executeQuery("SELECT sm.* FROM scheduled_maintenance sm JOIN my_garage g ON sm.carID=g.Id WHERE g.token=? ORDER BY sm.mileage", objectToken);
 
 		if (!results.length)
 			return undefined;

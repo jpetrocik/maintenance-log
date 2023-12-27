@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import {invitationService} from './invitation.service'
 import {accountService, Account} from './acount.service'
 import {Vehicle, garageService} from './garage.service'
-import { maintenanceService, ServiceDueRecord, ServiceRecord  } from './maintenance.service';
+import { maintenanceService, ScheduledMaintenance, ServiceDueRecord, ServiceRecord  } from './maintenance.service';
 
 function Authorized(target: Function, context) {
 	if (context.kind === "method") {
@@ -212,6 +212,18 @@ class ApiHandler {
 		}
 	}
 
+	@Authorized
+	@ResolveInvitation
+	async addScheduledMaintenanceHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
+		try {
+			let scheduledMaintenance = await maintenanceService.addScheduledService(objectToken, request.body as ScheduledMaintenance);
+			response.json(scheduledMaintenance);
+		} catch (err) {
+			response.statusMessage = err.message;
+			response.sendStatus(400);
+		}
+	}
+
 }
 
 const apiRoutes = Router();
@@ -242,6 +254,8 @@ apiRoutes.delete('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecord
 apiRoutes.put('/vehicle/:iToken/mileage/:mileage', apiHandler.reportMileageHandler);
 // @ts-ignore
 apiRoutes.get('/vehicle/:iToken/maintenance', apiHandler.scheduledMaintenanceHandler);
+// @ts-ignore
+apiRoutes.post('/vehicle/:iToken/maintenance', apiHandler.addScheduledMaintenanceHandler);
 
 
 export { apiRoutes }

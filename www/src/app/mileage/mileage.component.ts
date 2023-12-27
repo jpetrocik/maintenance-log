@@ -16,7 +16,9 @@ export class MileageComponent implements OnInit, AfterViewInit {
 
   iToken!: string;
   vehicle!: Vehicle | undefined;
-  mileageForm!: FormGroup; 
+  mileageForm: FormGroup; 
+  serviceForm: FormGroup
+  scheduleMaintenanceForm: FormGroup
   serviceDueAll!: ServiceDueRecord[];
   serviceHistoryAll!: ServiceRecord[];
   scheduledMaintenanceAll!: ScheduledMaintenance[];
@@ -34,6 +36,25 @@ export class MileageComponent implements OnInit, AfterViewInit {
     this.mileageForm = new FormGroup({
       mileage: new FormControl('', [Validators.required]),
     })
+
+    this.serviceForm = new FormGroup({
+      description: new FormControl("", [
+        Validators.required,
+      ]),
+    });
+
+    this.scheduleMaintenanceForm = new FormGroup({
+      mileage: new FormControl("", [
+        Validators.required,
+      ]),
+      months: new FormControl("", [
+        Validators.required,
+      ]),
+      description: new FormControl("", [
+        Validators.required,
+      ]),
+    });
+
   }
 
   ngOnInit(): void {
@@ -58,11 +79,12 @@ export class MileageComponent implements OnInit, AfterViewInit {
     this.setMileage('');
   }
 
-  onSubmit() {
+  reportMileage() {
     if (!this.vehicle) {
       return
     }
 
+    //TODO Car description does not refersh
     this._maintenanceService.submitMileage(this.vehicle.invitationToken, this.mileageForm.controls['mileage'].value).subscribe({
       next: () => {
 
@@ -130,4 +152,19 @@ export class MileageComponent implements OnInit, AfterViewInit {
       this.loadScheduledMaintenance(this.iToken);
     }
   }
+
+  addService() {
+    this._maintenanceService.serviceCompleted(this.iToken, this.serviceForm.value).subscribe(() => {
+      // this.loadServiceDue(this.iToken);
+      this.loadServiceHistory(this.iToken);
+    });
+  }
+
+  addScheduledMaintenance() {
+    this._maintenanceService.adScheduledMaintenace(this.iToken, this.scheduleMaintenanceForm.value).subscribe(() => {
+      this.loadScheduledMaintenance(this.iToken);
+      this.loadServiceDue(this.iToken);
+    });
+  }
+
 }
