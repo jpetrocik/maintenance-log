@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaintenanceService } from '../maintenance.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -9,9 +10,17 @@ import { MaintenanceService } from '../maintenance.service';
 })
 export class LoginComponent implements OnInit {
 
+  loginForm: FormGroup;
+  
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
-    private maintenanceService: MaintenanceService) { }
+    private maintenanceService: MaintenanceService) {
+      this.loginForm = new FormGroup({
+        email: new FormControl("", [
+          Validators.required,
+        ]),
+      });
+     }
 
   ngOnInit(): void {
 
@@ -27,7 +36,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.maintenanceService.sendAuth('john@petrocik.net').subscribe();
+    this.maintenanceService.sendAuth(this.loginForm.get('email')?.value).subscribe();
   }
 
 }

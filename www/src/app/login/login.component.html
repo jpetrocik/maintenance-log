@@ -1,2 +1,8 @@
-<p>login works!</p>
-<button mat-flat-button class="btn" color="primary" (click)="login()">Submit</button>
+<p>Login</p>
+
+<form [formGroup]="loginForm" (ngSubmit)="login()">
+<mat-form-field class="fw">
+    <input matInput name="email" placeholder="email" formControlName="email"/>
+</mat-form-field>
+<button mat-flat-button class="btn" type="submit" color="primary">Login</button>
+</form>
