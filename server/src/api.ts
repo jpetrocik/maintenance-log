@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import {invitationService} from './invitation.service'
 import {accountService, Account} from './acount.service'
 import {garageService} from './garage.service'
-import { maintenanceService, ServiceRecord  } from './maintenance.service';
+import { maintenanceService, ServiceDueRecord, ServiceRecord  } from './maintenance.service';
 
 function Authorized(target: Function, context) {
 	if (context.kind === "method") {
@@ -144,6 +144,13 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	async serviceDueHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
+		let allServiceRecords = await maintenanceService.serviceDue(objectToken);
+		response.json(allServiceRecords);
+	}
+
+	@Authorized
+	@ResolveInvitation
 	async serviceHistoryHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		let allServiceRecords = await maintenanceService.serviceHistory(objectToken);
 		response.json(allServiceRecords);
@@ -160,8 +167,8 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
-	async serviceRecordAddHisotry(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
-		await maintenanceService.addService(objectToken, request.body as ServiceRecord);
+	async serviceDueCompletedHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
+		await maintenanceService.addService(objectToken, request.body as ServiceDueRecord);
 		response.sendStatus(204);
 	}
 
@@ -211,12 +218,14 @@ apiRoutes.get('/vehicle', apiHandler.vehicleHandler);
 // @ts-ignore
 apiRoutes.get('/vehicle/:iToken', apiHandler.vehicleDetailHandler);
 // @ts-ignore
-apiRoutes.post('/vehicle/:iToken/service', apiHandler.serviceRecordAddHisotry);
+apiRoutes.post('/vehicle/:iToken/service', apiHandler.serviceDueCompletedHandler);
 // @ts-ignore
-apiRoutes.get('/vehicle/:iToken/service', apiHandler.serviceHistoryHandler);
-apiRoutes.get('/vehicle/:iToken/service/:serviceId', apiHandler.serviceRecordHandler);
-apiRoutes.put('/vehicle/:iToken/service/:serviceId', apiHandler.serviceRecordUpdateHandler);
-apiRoutes.delete('/vehicle/:iToken/service/:serviceId', apiHandler.serviceRecordDeleteHandler);
+apiRoutes.get('/vehicle/:iToken/service', apiHandler.serviceDueHandler);
+// @ts-ignore
+apiRoutes.get('/vehicle/:iToken/history', apiHandler.serviceHistoryHandler);
+apiRoutes.get('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordHandler);
+apiRoutes.put('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordUpdateHandler);
+apiRoutes.delete('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordDeleteHandler);
 // @ts-ignore
 apiRoutes.put('/vehicle/:iToken/mileage/:mileage', apiHandler.reportMileageHandler);
 

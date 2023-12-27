@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Vehicle, MaintenanceService } from '../maintenance.service';
+import { Vehicle, MaintenanceService, ServiceRecord, ServiceDueRecord } from '../maintenance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { take, map} from 'rxjs';
 
 
 @Component({
@@ -13,61 +14,55 @@ import { Router } from '@angular/router';
 export class MileageComponent implements OnInit, AfterViewInit {
   @ViewChild('mileage') mileageInput! : ElementRef;
 
-  selectedVehicle!: Vehicle | undefined;
+  iToken!: string;
+  vehicle!: Vehicle | undefined;
   mileageForm!: FormGroup; 
+  serviceDue!: ServiceDueRecord[];
+  addNote = false;
 
   constructor(public _maintenanceService: MaintenanceService,
     private _snackBar: MatSnackBar,
-    private _router: Router
+    private _route: ActivatedRoute
     ) { 
     this.mileageForm = new FormGroup({
       mileage: new FormControl('', [Validators.required]),
     })
-
-    this.mileageForm.disable();
   }
 
   ngOnInit(): void {
+    this._route.params.subscribe((params) => {
+      this.iToken = params['iToken'];
+      this._maintenanceService.myGarage$.subscribe((data) =>{
+        this.vehicle = data.filter(d => d.invitationToken == this.iToken)[0];
+      })
+      this.loadServiceDue(this.iToken);
+   });
   }
 
   ngAfterViewInit():void {
   }
 
   selectVehicle(vehicle: Vehicle) {
-    this.selectedVehicle = vehicle;
-    this.mileageForm.enable();
+    this.vehicle = vehicle;
     this.mileageInput.nativeElement.focus();
   }
 
   resetForm() {
-    this.selectedVehicle = undefined;
     this.setMileage('');
-    this.mileageForm.disable();
-
   }
 
   onSubmit() {
-    if (!this.selectedVehicle) {
+    if (!this.vehicle) {
       return
     }
 
-    this._maintenanceService.submitMileage(this.selectedVehicle.invitationToken, this.mileageForm.controls['mileage'].value).subscribe({
+    this._maintenanceService.submitMileage(this.vehicle.invitationToken, this.mileageForm.controls['mileage'].value).subscribe({
       next: () => {
 
       this.resetForm();
-      this._snackBar.open("Service Due", "View", {
+      this._snackBar.open("Service Due", undefined, {
         duration: 15000
-      }).onAction().subscribe(() => {
-        this._router.navigate(['service'])
       });
-            // if (results.length > 0) {
-      //   $("#service_due").show();
-      //   $("#service_due a").attr("href", "service?cToken=" + carToken);
-      //   $("service_good").hide();
-      // } else {
-      //   $("#service_due").hide();
-      //   $("service_good").show();
-      // }
     },
     error: (message) => {
       this._snackBar.open(message.statusText, "Ok").onAction().subscribe();
@@ -78,6 +73,21 @@ export class MileageComponent implements OnInit, AfterViewInit {
     this.mileageForm.patchValue({
       mileage: value
     }); 
+  }
 
+  loadServiceDue(iToken: string) {
+    this._maintenanceService.serviceDue(iToken).subscribe((data) => {
+      this.serviceDue = data;
+    });
+  };
+
+  serviceCompleted(serviceDue: ServiceDueRecord) {
+    this._maintenanceService.serviceCompleted(this.iToken, serviceDue).subscribe(() => {
+      this.loadServiceDue(this.iToken);
+    });
+  }
+
+  enableNote() {
+    this.addNote = !this.addNote
   }
 }

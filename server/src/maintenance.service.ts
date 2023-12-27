@@ -3,31 +3,34 @@ import { BaseService } from './base.service';
 import { garageService } from './garage.service';
 
 export interface ServiceRecord {
-	// @ts-ignore: Object is possibly 'null'.
 	id: number;
-	// @ts-ignore: Object is possibly 'null'.
 	carId: number;
-	// @ts-ignore: Object is possibly 'null'.
 	mileage: number;
-	// @ts-ignore: Object is possibly 'null'.
 	serviceDate: Date;
-	// @ts-ignore: Object is possibly 'null'.
 	description: string;
-	// @ts-ignore: Object is possibly 'null'.
 	cost: number;
-	// @ts-ignore: Object is possibly 'null'.
 	note: string;
 }
 
+export interface ServiceDueRecord {
+	carId: number;
+	description: string;
+	mileage: number;
+	month: number,
+	lastServiceDate: Date;
+	lastServiceMileage: number;
+	dueDays: number;
+	dueIn: number;
+}
 
 class MaintenanceService extends BaseService {
 
-	public upcomingService(objectToken: string) {
+	public serviceDue(objectToken: string) : Promise<ServiceDueRecord> {
 		return this.executeQuery(UPCOMING_SERVICE_SQL, [objectToken]);
 	};
 
 	public async serviceHistory(objectToken: string) : Promise<ServiceRecord|undefined> {
-		let results = await this.executeQuery("select * from service_history sh join my_garage g on sh.carId=g.carId where g.token=?", [objectToken]);
+		let results = await this.executeQuery("select * from service_history sh join my_garage g on sh.id=g.carId where g.token=?", [objectToken]);
 
 		if (!results.length)
 			return undefined;
@@ -46,16 +49,19 @@ class MaintenanceService extends BaseService {
 
 	}
 
-	public async addService(objectToken: string, serviceRecord: ServiceRecord) {
+	public async addService(objectToken: string, serviceRecord: ServiceDueRecord) {
 		let vehicle = await garageService.vehicleDetails(objectToken);
 		if (!vehicle)
 			return undefined;
 
-        serviceRecord.carId = vehicle.id;
-        serviceRecord.mileage ??= vehicle.mileage;
-        serviceRecord.serviceDate ??= new Date();
-		
-		await this.executeQuery("INSERT INTO service_history SET ?", serviceRecord);
+		const serviceHistory = {
+        	mileage: vehicle.mileage,
+			description: serviceRecord.description,
+        	carId: vehicle.id,
+        	serviceDate: new Date(),
+		};
+
+		await this.executeQuery("INSERT INTO service_history SET ?", serviceHistory);
 	};
 
 	public async updateServiceLog(serviceRecord: ServiceRecord) {

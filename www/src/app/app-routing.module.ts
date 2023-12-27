@@ -8,7 +8,7 @@ import { LoginComponent } from './login/login.component';
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full'},
   { path: 'service', component: ServiceComponent },
-  { path: 'mileage', component: MileageComponent },
+  { path: 'mileage/:iToken', component: MileageComponent },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
 ];

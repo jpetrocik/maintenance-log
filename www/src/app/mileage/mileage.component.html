@@ -1,15 +1,51 @@
-<div id="carList">
-<mat-button-toggle-group class="fw" name="carList" vertical >
-    <mat-button-toggle class="btn" *ngFor="let car of _maintenanceService.myGarage$ | async" (click)="selectVehicle(car)">{{car.name}} <small>({{car.mileageReportedDays}} days ago)</small></mat-button-toggle >
-</mat-button-toggle-group>
+<div>
+<h1 style="margin-bottom: 0px;">{{vehicle?.name}}</h1>
+<h3>Mileage: {{vehicle?.mileage}} ({{vehicle?.mileageReportedDays}} days age)</h3>
 </div>
 
 <div id="mileageForm">
+    <h2>Report Mileage</h2>
+    <hr/>
     <form [formGroup]="mileageForm" (ngSubmit)="onSubmit()">
         <mat-form-field class="fw">
-        <input matInput #mileage name="mileage" placeholder="mileage" formControlName="mileage" type="number"/>
+        <input matInput #mileage name="mileage" placeholder="report mileage" formControlName="mileage" type="number"/>
         </mat-form-field>
-        <button mat-flat-button class="btn" color="primary" [disabled]="this.mileageForm.disabled">Submit</button>
+        <button mat-flat-button class="btn" color="primary">Submit</button>
     </form>
+</div>
+
+<div style="margin-top: 35px;">
+    <h2>Service Due</h2>
+    <hr/>
+    <div *ngFor="let serviceRecord of serviceDue">
+        <mat-card class="serviceDue">
+            <mat-card-header>
+            <mat-card-title>{{serviceRecord.description}}</mat-card-title>
+            <mat-card-subtitle [ngClass]="serviceRecord.dueIn < 0 ? 'overdue' : 'service_soon'">{{serviceRecord.dueIn}} miles ({{serviceRecord.dueDays}} days)</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <p style="opacity: 50%" *ngIf="!addNote" (click)="enableNote()">more...</p>
+                <p *ngIf="addNote">
+                    <mat-form-field class="fw">
+                        <input matInput name="serviceMileage" placeholder="mileage" type="number"/>
+                    </mat-form-field>
+                    <mat-form-field class="fw">
+                        <input matInput name="serviceCost" placeholder="cost" type="number"/>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Note</mat-label>
+                        <textarea matInput
+                                  cdkTextareaAutosize
+                                  #autosize="cdkTextareaAutosize"
+                                  cdkAutosizeMinRows="3"
+                                  cdkAutosizeMaxRows="5"></textarea>
+                      </mat-form-field>
+                    </p>
+              </mat-card-content>            
+            <mat-card-actions>
+            <button mat-flat-button class="btn" color="primary" (click)="serviceCompleted(serviceRecord)">Completed</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
 </div>
 

@@ -10,6 +10,27 @@ export interface Vehicle {
     mileageReportedDays: number;
 }
   
+export interface ServiceRecord {
+	id: number;
+	carId: number;
+	mileage: number;
+	serviceDate: Date;
+	description: string;
+	cost: number;
+	note: string;
+}
+
+export interface ServiceDueRecord {
+	carId: number;
+	description: string;
+	mileage: number;
+	month: number,
+	lastServiceDate: Date;
+	lastServiceMileage: number;
+	dueDays: number;
+	dueIn: number;
+}
+
 @Injectable({
     providedIn: 'root'
   })
@@ -44,7 +65,12 @@ export class MaintenanceService {
     return this.httpClient.get(`/api/sendAuth?email=${email}`);
   }
 
-  // public serviceDue(invitationToken: string) : Observable<ServiceRecord> {
-  //   return this.httpClient.get(`/vehicle/${invitationToken}/service`)
-  // }
+  public serviceDue(invitationToken: string) : Observable<ServiceDueRecord[]> {
+    return this.httpClient.get<ServiceDueRecord[]>(`/api/vehicle/${invitationToken}/service`)
+  }
+
+  public serviceCompleted(invitationToken: string, serviceDue: ServiceDueRecord) : Observable<any> {
+    return this.httpClient.post<ServiceDueRecord[]>(`/api/vehicle/${invitationToken}/service`, serviceDue)
+  }
+
 }
