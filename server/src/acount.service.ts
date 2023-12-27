@@ -35,7 +35,7 @@ class AccountService extends BaseService {
 				from: config.mail.username,
 				to: email,
 				subject: 'Vehicle Maintenance Log',
-				text: `Here is your login link:\n\nhttp://localhost:4200/login?email=${email}&authToken=${authToken}`
+				text: `Here is your login link:\n\n${config.host}/login?email=${email}&authToken=${authToken}`
 			  };
 			this.sendEmail(mailOptions);
 		}
