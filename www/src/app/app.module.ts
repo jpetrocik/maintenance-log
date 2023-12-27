@@ -21,6 +21,7 @@ import {MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule} from '@angular/mater
 import { Router } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { MatCardModule } from '@angular/material/card';
+import { VehicleRegistrationComponent } from './vehicle-registration/vehicle-registration.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { MatCardModule } from '@angular/material/card';
     MileageComponent,
     ServiceComponent,
     HomeComponent,
-    LoginComponent
+    LoginComponent,
+    VehicleRegistrationComponent
   ],
   imports: [
     BrowserModule,

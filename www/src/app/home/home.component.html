@@ -3,4 +3,11 @@
         <mat-button-toggle class="btn" *ngFor="let vehicle of _maintenanceService.myGarage$ | async" [routerLink]="['/mileage', vehicle.invitationToken]">{{vehicle.name}} <small>({{vehicle.mileageReportedDays}} days ago)</small></mat-button-toggle >
     </mat-button-toggle-group>
 </div>
+
+<div>
+    <a
+    [routerLink]="['/my-garage/register']">
+    Add Vehicle
+  </a>
+</div>
     

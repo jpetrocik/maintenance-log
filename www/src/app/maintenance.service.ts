@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, of } from "rxjs";
+import { BehaviorSubject, Observable, map, of } from "rxjs";
 
 export interface Vehicle {
     invitationToken: string;
@@ -44,13 +44,13 @@ export class MaintenanceService {
   ) {
     this.myGarage$ = this._myGarage.asObservable();
 
-    this.myGarage().subscribe((data) => {
-      this._myGarage.next(data);
-    });
+    this.loadMyGarage();
   }
 
-  private myGarage() : Observable<Vehicle[]> {
-    return this.httpClient.get<Vehicle[]>("/api/vehicle")
+  private loadMyGarage() {
+    this.httpClient.get<Vehicle[]>("/api/vehicle").subscribe((data) => {
+      this._myGarage.next(data);
+    });
   }
 
   public submitMileage(invitationToken: string, mileage: number) : Observable<any> {
@@ -71,6 +71,14 @@ export class MaintenanceService {
 
   public serviceCompleted(invitationToken: string, serviceDue: ServiceDueRecord) : Observable<any> {
     return this.httpClient.post<ServiceDueRecord[]>(`/api/vehicle/${invitationToken}/service`, serviceDue)
+  }
+
+  public registerVehicle(vehicle: any) : Observable<any> {
+    return this.httpClient.post<ServiceDueRecord[]>(`/api/vehicle`, vehicle).pipe(
+      map((data) => {
+        this.loadMyGarage();
+        return data;
+      }));
   }
 
 }

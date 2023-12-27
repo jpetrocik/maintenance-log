@@ -47,7 +47,7 @@ class GarageService extends BaseService {
 	public async addVehicle(params: any) : Promise<Vehicle> {
 		let token = tokenGenerator(25);
 		let inserviceDate = (params.inserviceDate)?params.inserviceDate:new Date();
-		let name = "'" + params.year.substring(2) + " " + params.make + " " + params.model;
+		let name = "'" + (params.year-2000) + " " + params.make + " " + params.model;
 		let vehicle  = {
 			token: token, 
 			name: name, 
@@ -101,8 +101,16 @@ class GarageService extends BaseService {
 			}
 		}
 
-		var sqlParams = {carId: vehicle.id, mileage: mileage};
+		let sqlParams = {carId: vehicle.id, mileage: mileage};
 		await this.executeQuery("INSERT INTO mileage_log SET ?", sqlParams);
+
+		let setParams = {
+			mileage: mileage
+		}
+		let whereParams = {
+			id: vehicle.id
+		}
+		await this.executeQuery("UPDATE my_garage SET ? WHERE ?", [ setParams, whereParams]);
 	};
 
 }

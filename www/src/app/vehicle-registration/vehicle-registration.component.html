@@ -1,0 +1,20 @@
+<p>Vehicle Registration</p>
+
+<form [formGroup]="registerForm" (ngSubmit)="register()">
+<mat-form-field class="fw">
+    <input matInput name="year" placeholder="year" formControlName="year" type="number"/>
+</mat-form-field>
+<mat-form-field class="fw">
+    <input matInput name="make" placeholder="make" formControlName="make"/>
+</mat-form-field>
+<mat-form-field class="fw">
+    <input matInput name="model" placeholder="model" formControlName="model"/>
+</mat-form-field>
+<mat-form-field class="fw">
+    <input matInput name="tirm" placeholder="trim" formControlName="trim"/>
+</mat-form-field>
+<mat-form-field class="fw">
+    <input matInput name="mileage" placeholder="mileage" formControlName="mileage"/>
+</mat-form-field>
+<button mat-flat-button class="btn" type="submit" color="primary">Register Vehicle</button>
+</form>

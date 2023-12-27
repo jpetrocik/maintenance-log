@@ -1,4 +1,5 @@
 <div>
+<div style="float:right"><mat-icon>share</mat-icon></div>
 <h1 style="margin-bottom: 0px;">{{vehicle?.name}}</h1>
 <h3>Mileage: {{vehicle?.mileage}} ({{vehicle?.mileageReportedDays}} days age)</h3>
 </div>
@@ -49,3 +50,14 @@
     </div>
 </div>
 
+<div style="margin-top: 35px;">
+    <h2 style="margin-bottom: 0px;">Service History</h2>
+    <hr style="margin-top: 0px;"/>
+    <div *ngFor="let serviceRecord of serviceDue"></div>
+</div>
+
+<div style="margin-top: 35px;">
+    <h2 style="margin-bottom: 0px;">Maintenance Schedule</h2>
+    <hr style="margin-top: 0px;"/>
+    <div *ngFor="let serviceRecord of serviceDue"></div>
+</div>

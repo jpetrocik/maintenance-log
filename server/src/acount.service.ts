@@ -37,7 +37,7 @@ class AccountService extends BaseService {
 				subject: 'Vehicle Maintenance Log',
 				text: `Here is your login link:\n\nhttp://localhost:4200/login?email=${email}&authToken=${authToken}`
 			  };
-			this.sednEmail(mailOptions);
+			this.sendEmail(mailOptions);
 		}
 	};
 
@@ -122,7 +122,7 @@ class AccountService extends BaseService {
 		return results[0] as Account;
 	}
 
-	async sednEmail(mailOptions) {
+	async sendEmail(mailOptions) {
 
 		var transporter = nodemailer.createTransport({
 			host: "hermes.petrocik.net",

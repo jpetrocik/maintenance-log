@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import {invitationService} from './invitation.service'
 import {accountService, Account} from './acount.service'
-import {garageService} from './garage.service'
+import {Vehicle, garageService} from './garage.service'
 import { maintenanceService, ServiceDueRecord, ServiceRecord  } from './maintenance.service';
 
 function Authorized(target: Function, context) {
@@ -121,7 +121,6 @@ class ApiHandler {
 
 
 	@Authorized
-	@ResolveInvitation
 	async vehicleAddHandler(request: Request, response: Response, next: Function, account: Account) {
 		let newvehicle = await garageService.addVehicle(request.body);
 		let invitationToken = await invitationService.createInvitation( account.userToken, newvehicle.token);
@@ -200,6 +199,7 @@ class ApiHandler {
 			response.sendStatus(400);
 		}
 	}
+
 }
 
 const apiRoutes = Router();

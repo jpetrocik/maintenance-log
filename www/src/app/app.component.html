@@ -3,7 +3,10 @@
 	<button mat-icon-button (click)="toogleMenu()">
 		<mat-icon>menu</mat-icon>
 	</button>
-	<span>Maintenance Log</span>
+	<span><a
+		[routerLink]="['/home']">
+		Maintenance Log
+	  </a></span>
 </mat-toolbar-row>
  </mat-toolbar>
  <mat-toolbar color="primary" *ngIf="showMenu">
