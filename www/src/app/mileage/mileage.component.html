@@ -59,13 +59,10 @@
         <div *ngFor="let serviceHistory of serviceHistoryAll">
             <mat-card class="serviceDue">
                 <mat-card-header>
+                <div style="float:right"><mat-icon>edit</mat-icon></div>
                 <mat-card-title>{{serviceHistory.description}}</mat-card-title>
                 <mat-card-subtitle>{{serviceHistory.mileage}} miles ({{serviceHistory.serviceDate | date:'shortDate'}})</mat-card-subtitle>
                 </mat-card-header>
-                <mat-card-content>
-                </mat-card-content>            
-                <mat-card-actions>
-                </mat-card-actions>
             </mat-card>
         </div>
     </ng-container>
@@ -81,10 +78,6 @@
                 <mat-card-title>{{scheduledMaintenance.description}}</mat-card-title>
                 <mat-card-subtitle>{{scheduledMaintenance.mileage}} miles ({{scheduledMaintenance.months}} months)</mat-card-subtitle>
                 </mat-card-header>
-                <mat-card-content>
-                </mat-card-content>            
-                <mat-card-actions>
-                </mat-card-actions>
             </mat-card>
         </div>
     </ng-container>
