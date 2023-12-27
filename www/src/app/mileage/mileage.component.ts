@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Vehicle, MaintenanceService, ServiceRecord, ServiceDueRecord } from '../maintenance.service';
+import { Vehicle, MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance } from '../maintenance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take, map} from 'rxjs';
@@ -17,8 +17,15 @@ export class MileageComponent implements OnInit, AfterViewInit {
   iToken!: string;
   vehicle!: Vehicle | undefined;
   mileageForm!: FormGroup; 
-  serviceDue!: ServiceDueRecord[];
+  serviceDueAll!: ServiceDueRecord[];
+  serviceHistoryAll!: ServiceRecord[];
+  scheduledMaintenanceAll!: ScheduledMaintenance[];
   addNote = false;
+  showServiceHistory = false
+  showServiceDue = false;
+  showScheduledMaintenance = false;
+  pastDueService = false;
+  upcomingService = false;
 
   constructor(public _maintenanceService: MaintenanceService,
     private _snackBar: MatSnackBar,
@@ -77,7 +84,21 @@ export class MileageComponent implements OnInit, AfterViewInit {
 
   loadServiceDue(iToken: string) {
     this._maintenanceService.serviceDue(iToken).subscribe((data) => {
-      this.serviceDue = data;
+      this.serviceDueAll = data;
+      this.pastDueService = this.serviceDueAll.filter(s => s.dueIn < 0).length > 0;
+      this.upcomingService = this.serviceDueAll.filter(s => s.dueIn >= 0).length > 0;
+    });
+  };
+
+  loadServiceHistory(iToken: string) {
+    this._maintenanceService.serviceHistory(iToken).subscribe((data) => {
+      this.serviceHistoryAll = data;
+    });
+  };
+
+  loadScheduledMaintenance(iToken: string) {
+    this._maintenanceService.scheduledMaintenace(iToken).subscribe((data) => {
+      this.scheduledMaintenanceAll = data;
     });
   };
 
@@ -89,5 +110,24 @@ export class MileageComponent implements OnInit, AfterViewInit {
 
   enableNote() {
     this.addNote = !this.addNote
+  }
+  toggleSeviceHistory() {
+    this.showServiceHistory = !this.showServiceHistory;
+
+    if (this.showServiceHistory) {
+      this.loadServiceHistory(this.iToken);
+    }
+  }
+
+  toggleSeviceDue() {
+    this.showServiceDue = !this.showServiceDue;
+  }
+
+  toggleScheduledMaintenance() {
+    this.showScheduledMaintenance = !this.showScheduledMaintenance;
+
+    if (this.showScheduledMaintenance) {
+      this.loadScheduledMaintenance(this.iToken);
+    }
   }
 }

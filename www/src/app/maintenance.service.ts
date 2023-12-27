@@ -31,6 +31,14 @@ export interface ServiceDueRecord {
 	dueIn: number;
 }
 
+export interface ScheduledMaintenance {
+	id: number;
+	carId: number;
+	mileage: number;
+	months: number;
+	description: string;
+}
+
 @Injectable({
     providedIn: 'root'
   })
@@ -83,6 +91,14 @@ export class MaintenanceService {
         this.loadMyGarage();
         return data;
       }));
+  }
+
+  public serviceHistory(invitationToken: string) : Observable<ServiceRecord[]> {
+    return this.httpClient.get<ServiceRecord[]>(`/api/vehicle/${invitationToken}/history`)
+  }
+
+  public scheduledMaintenace(invitationToken: string) : Observable<ScheduledMaintenance[]> {
+    return this.httpClient.get<ScheduledMaintenance[]>(`/api/vehicle/${invitationToken}/maintenance`)
   }
 
 }

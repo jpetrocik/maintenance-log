@@ -200,6 +200,18 @@ class ApiHandler {
 		}
 	}
 
+	@Authorized
+	@ResolveInvitation
+	async scheduledMaintenanceHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
+		try {
+			let scheduledMaintenance = await maintenanceService.scheduledMaintenance(objectToken);
+			response.json(scheduledMaintenance);
+		} catch (err) {
+			response.statusMessage = err.message;
+			response.sendStatus(400);
+		}
+	}
+
 }
 
 const apiRoutes = Router();
@@ -228,6 +240,8 @@ apiRoutes.put('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordUpd
 apiRoutes.delete('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordDeleteHandler);
 // @ts-ignore
 apiRoutes.put('/vehicle/:iToken/mileage/:mileage', apiHandler.reportMileageHandler);
+// @ts-ignore
+apiRoutes.get('/vehicle/:iToken/maintenance', apiHandler.scheduledMaintenanceHandler);
 
 
 export { apiRoutes }

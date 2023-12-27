@@ -23,19 +23,27 @@ export interface ServiceDueRecord {
 	dueIn: number;
 }
 
+export interface ScheduledMaintenance {
+	id: number;
+	carId: number;
+	mileage: number;
+	months: number;
+	description: string;
+}
+
 class MaintenanceService extends BaseService {
 
 	public serviceDue(objectToken: string) : Promise<ServiceDueRecord> {
 		return this.executeQuery(UPCOMING_SERVICE_SQL, [objectToken]);
 	};
 
-	public async serviceHistory(objectToken: string) : Promise<ServiceRecord|undefined> {
-		let results = await this.executeQuery("select * from service_history sh join my_garage g on sh.id=g.carId where g.token=?", [objectToken]);
+	public async serviceHistory(objectToken: string) : Promise<ServiceRecord[]|undefined> {
+		let results = await this.executeQuery("select sh.* from service_history sh join my_garage g on sh.carId=g.id where g.token=? order by sh.mileage desc", [objectToken]);
 
 		if (!results.length)
 			return undefined;
 
-		return results[0];
+		return results;
 
 	}
 
@@ -81,6 +89,15 @@ class MaintenanceService extends BaseService {
 	public async addScheduledService(objectToken, mileageInterval, monthsInterval, service) {
 		var scheduleLog  = {token: objectToken, mileage: mileageInterval, months: monthsInterval, service: service};
 		this.executeQuery("INSERT INTO scheduled_maintenance SET ?", scheduleLog);
+	};
+
+	public async scheduledMaintenance(objectToken) : Promise<ServiceRecord|undefined> {
+		let results = await this.executeQuery("SELECT sm.* FROM scheduled_maintenance sm JOIN my_garage g ON sm.carID=g.Id WHERE g.token=?", objectToken);
+
+		if (!results.length)
+			return undefined;
+
+		return results;
 	};
 
 }

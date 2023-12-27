@@ -16,48 +16,76 @@
 </div>
 
 <div style="margin-top: 35px;">
-    <h2 style="margin-bottom: 0px;">Service Due</h2>
+    <h2 style="margin-bottom: 0px;" (click)="toggleSeviceDue()">Service Due <mat-icon *ngIf="pastDueService" class="service_pastdue">warning</mat-icon> <mat-icon *ngIf="upcomingService" class="service_upcoming">warning</mat-icon> </h2>
     <hr style="margin-top: 0px;"/>
-    <div *ngFor="let serviceRecord of serviceDue">
-        <mat-card class="serviceDue">
-            <mat-card-header>
-            <mat-card-title>{{serviceRecord.description}}</mat-card-title>
-            <mat-card-subtitle [ngClass]="serviceRecord.dueIn < 0 ? 'overdue' : 'service_soon'">{{serviceRecord.dueIn}} miles ({{serviceRecord.dueDays}} days)</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-                <p style="opacity: 50%" *ngIf="!addNote" (click)="enableNote()">more...</p>
-                <p *ngIf="addNote">
-                    <mat-form-field class="fw">
-                        <input matInput name="serviceMileage" placeholder="mileage" type="number"/>
-                    </mat-form-field>
-                    <mat-form-field class="fw">
-                        <input matInput name="serviceCost" placeholder="cost" type="number"/>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Note</mat-label>
-                        <textarea matInput
-                                  cdkTextareaAutosize
-                                  #autosize="cdkTextareaAutosize"
-                                  cdkAutosizeMinRows="3"
-                                  cdkAutosizeMaxRows="5"></textarea>
-                      </mat-form-field>
-                    </p>
-              </mat-card-content>            
-            <mat-card-actions>
-            <button mat-flat-button class="btn" color="primary" (click)="serviceCompleted(serviceRecord)">Completed</button>
-            </mat-card-actions>
-        </mat-card>
-    </div>
+    <ng-container *ngIf="showServiceDue">
+        <div *ngFor="let serviceDue of serviceDueAll">
+            <mat-card class="serviceDue">
+                <mat-card-header>
+                <mat-card-title>{{serviceDue.description}}</mat-card-title>
+                <mat-card-subtitle [ngClass]="serviceDue.dueIn < 0 ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles ({{serviceDue.dueDays}} days)</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <p style="opacity: 50%" *ngIf="!addNote" (click)="enableNote()">more...</p>
+                    <p *ngIf="addNote">
+                        <mat-form-field class="fw">
+                            <input matInput name="serviceMileage" placeholder="mileage" type="number"/>
+                        </mat-form-field>
+                        <mat-form-field class="fw">
+                            <input matInput name="serviceCost" placeholder="cost" type="number"/>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Note</mat-label>
+                            <textarea matInput
+                                    cdkTextareaAutosize
+                                    #autosize="cdkTextareaAutosize"
+                                    cdkAutosizeMinRows="3"
+                                    cdkAutosizeMaxRows="5"></textarea>
+                        </mat-form-field>
+                        </p>
+                </mat-card-content>            
+                <mat-card-actions>
+                <button mat-flat-button class="btn" color="primary" (click)="serviceCompleted(serviceDue)">Completed</button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </ng-container>
 </div>
 
 <div style="margin-top: 35px;">
-    <h2 style="margin-bottom: 0px;">Service History</h2>
+    <h2 style="margin-bottom: 0px;" (click)="toggleSeviceHistory()">Service History</h2>
     <hr style="margin-top: 0px;"/>
-    <div *ngFor="let serviceRecord of serviceDue"></div>
+    <ng-container *ngIf="showServiceHistory">
+        <div *ngFor="let serviceHistory of serviceHistoryAll">
+            <mat-card class="serviceDue">
+                <mat-card-header>
+                <mat-card-title>{{serviceHistory.description}}</mat-card-title>
+                <mat-card-subtitle>{{serviceHistory.mileage}} miles ({{serviceHistory.serviceDate | date:'shortDate'}})</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                </mat-card-content>            
+                <mat-card-actions>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </ng-container>
 </div>
 
 <div style="margin-top: 35px;">
-    <h2 style="margin-bottom: 0px;">Maintenance Schedule</h2>
+    <h2 style="margin-bottom: 0px;"  (click)="toggleScheduledMaintenance()">Scheduled Maintenance</h2>
     <hr style="margin-top: 0px;"/>
-    <div *ngFor="let serviceRecord of serviceDue"></div>
+    <ng-container *ngIf="showScheduledMaintenance">
+        <div *ngFor="let scheduledMaintenance of scheduledMaintenanceAll">
+            <mat-card class="serviceDue">
+                <mat-card-header>
+                <mat-card-title>{{scheduledMaintenance.description}}</mat-card-title>
+                <mat-card-subtitle>{{scheduledMaintenance.mileage}} miles ({{scheduledMaintenance.months}} months)</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                </mat-card-content>            
+                <mat-card-actions>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </ng-container>
 </div>
