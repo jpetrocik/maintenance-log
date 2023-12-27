@@ -4,8 +4,8 @@
 </div>
 
 <div id="mileageForm">
-    <h2>Report Mileage</h2>
-    <hr/>
+    <h2 style="margin-bottom: 0px;">Report Mileage</h2>
+    <hr style="margin-top: 0px;"/>
     <form [formGroup]="mileageForm" (ngSubmit)="onSubmit()">
         <mat-form-field class="fw">
         <input matInput #mileage name="mileage" placeholder="report mileage" formControlName="mileage" type="number"/>
@@ -15,8 +15,8 @@
 </div>
 
 <div style="margin-top: 35px;">
-    <h2>Service Due</h2>
-    <hr/>
+    <h2 style="margin-bottom: 0px;">Service Due</h2>
+    <hr style="margin-top: 0px;"/>
     <div *ngFor="let serviceRecord of serviceDue">
         <mat-card class="serviceDue">
             <mat-card-header>

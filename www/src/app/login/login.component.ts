@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
         return;
 
       this.maintenanceService.login(params['email'], params['authToken']).subscribe(() => {
-        this.router.navigateByUrl(`/mileage`);
+        this.router.navigateByUrl(`/home`);
       })
     });
 
