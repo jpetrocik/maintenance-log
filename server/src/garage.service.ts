@@ -2,67 +2,31 @@ import {tokenGenerator} from './tokens';
 import {UPCOMING_SERVICE_SQL} from "./sql"
 import { BaseService } from './base.service';
 
-export class Garage {
-	// @ts-ignore: Object is possibly 'null'.
+export interface Garage {
 	invitationToken: string;
-	// @ts-ignore: Object is possibly 'null'.
 	name: string;
-	// @ts-ignore: Object is possibly 'null'.
 	mileage: string;
-	// @ts-ignore: Object is possibly 'null'.
 	mileageReportedDays: number;
 }
 
-export class Vehicle {
-	// @ts-ignore: Object is possibly 'null'.
+export interface Vehicle {
 	id: number;
-	// @ts-ignore: Object is possibly 'null'.
 	token: string;
-	// @ts-ignore: Object is possibly 'null'.
 	name: string;
-	// @ts-ignore: Object is possibly 'null'.
 	make: string;
-	// @ts-ignore: Object is possibly 'null'.
 	model: string;
-	// @ts-ignore: Object is possibly 'null'.
 	trim: string;
-	// @ts-ignore: Object is possibly 'null'.
 	year: number;
-	// @ts-ignore: Object is possibly 'null'.
 	inserviceDate: Date;
-	// @ts-ignore: Object is possibly 'null'.
 	status: string;
-	// @ts-ignore: Object is possibly 'null'.
 	mileage: number;
-	// @ts-ignore: Object is possibly 'null'.
 	mileageReportedDays: number;
 }
 
-export class ServiceRecord {
-	// @ts-ignore: Object is possibly 'null'.
+export interface MileageLog {
 	id: number;
-	// @ts-ignore: Object is possibly 'null'.
 	carId: number;
-	// @ts-ignore: Object is possibly 'null'.
-	mileage: number;
-	// @ts-ignore: Object is possibly 'null'.
-	serviceDate: Date;
-	// @ts-ignore: Object is possibly 'null'.
-	description: string;
-	// @ts-ignore: Object is possibly 'null'.
-	cost: number;
-	// @ts-ignore: Object is possibly 'null'.
-	note: string;
-}
-
-export class MileageLog {
-	// @ts-ignore: Object is possibly 'null'.
-	id: number;
-	// @ts-ignore: Object is possibly 'null'.
-	carId: number;
-	// @ts-ignore: Object is possibly 'null'.
 	createDate: Date;
-	// @ts-ignore: Object is possibly 'null'.
 	mileage: number;
 }
 
@@ -119,21 +83,6 @@ class GarageService extends BaseService {
 
 		return results[0];
 	};
-
-	public completeServiceLog(objectToken: string) : Promise<ServiceRecord[]> {
-		return this.executeQuery("select s.* from my_garage c join service_history s on c.id=s.carId where c.token=? \
-			order by mileage desc, serviceDate desc", [objectToken]);
-	}
-
-	public async serviceLog(objectToken: string, serviceId: number) : Promise<ServiceRecord|undefined> {
-		let results = await this.executeQuery("select * from service_history where id=? and carId=?", [serviceId, objectToken]);
-
-		if (!results.length)
-			return undefined;
-
-		return results[0];
-
-	}
 
 	public async reportMileage(objectToken: string, mileage: number) {
 		let vehicle = await this.vehicleDetails(objectToken);

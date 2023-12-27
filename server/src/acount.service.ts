@@ -3,14 +3,10 @@ import {tokenGenerator} from './tokens';
 import nodemailer from 'nodemailer';
 import config from './config.json';
 
-export class Account{
-	// @ts-ignore: Object is possibly 'null'.
+export interface Account{
     userToken: string;
-	// @ts-ignore: Object is possibly 'null'.
     authToken: string;
-	// @ts-ignore: Object is possibly 'null'.
     email: string;
-	// @ts-ignore: Object is possibly 'null'.
     phone: string;
 }
 

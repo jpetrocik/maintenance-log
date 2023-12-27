@@ -13,4 +13,5 @@ select i.invitationToken, name, max(m.mileage) as mileage, DATEDIFF(now(), max(m
 from my_garage c join invitation i ON c.token=i.objectToken
 left join  mileage_log m ON c.id=m.carId
 where c.status='ACTIVE' and i.userToken='tkeDjCaiHbxC3Ir4T8eLufyNi'
+group by i.invitationToken, name
 order by c.year desc, c.make asc, c.model asc, c.id desc

@@ -13,11 +13,10 @@ import { Router } from '@angular/router';
 export class MileageComponent implements OnInit, AfterViewInit {
   @ViewChild('mileage') mileageInput! : ElementRef;
 
-  garage: Vehicle[] = [];
   selectedVehicle!: Vehicle | undefined;
   mileageForm!: FormGroup; 
 
-  constructor(private _maintenanceService: MaintenanceService,
+  constructor(public _maintenanceService: MaintenanceService,
     private _snackBar: MatSnackBar,
     private _router: Router
     ) { 
@@ -29,7 +28,6 @@ export class MileageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this._maintenanceService.myGarage().subscribe(r => {this.garage = r}); 
   }
 
   ngAfterViewInit():void {

@@ -29,3 +29,41 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     padding: 0;
   }
   
+
+  @import "~@angular/material/theming";
+
+// Copy colour palettes individually
+$app-primary: mat-palette($mat-indigo);
+$app-accent: mat-palette($mat-pink);
+
+// Create variables to use in project
+$primary: mat-color($app-primary);
+$accent: mat-color($app-accent);
+
+.fw {
+    width:100%;
+}
+
+
+#carList {
+
+    .mat-button-toggle-checked {
+        background-color: $primary !important;
+    }
+    
+    .mat-button-toggle {
+        margin-bottom: 9px;
+        background-color: #555;
+        color: #fff; 
+    }
+
+    .mat-button-toggle-group {
+        border: none;
+    }
+
+}
+
+input[name="mileage"] {
+    text-align: center;
+}
+

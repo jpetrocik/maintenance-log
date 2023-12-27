@@ -1,9 +1,29 @@
 <mat-toolbar color="primary">
 	<mat-toolbar-row>
-	<button mat-icon-button>
+	<button mat-icon-button (click)="toogleMenu()">
 		<mat-icon>menu</mat-icon>
 	</button>
 	<span>Maintenance Log</span>
+</mat-toolbar-row>
+ </mat-toolbar>
+ <mat-toolbar color="primary" *ngIf="showMenu">
+	<mat-toolbar-row>
+	<button mat-icon-button [routerLink]="['mileage']">
+		<mat-icon>edit_square</mat-icon>
+		<span> Report Mileage</span>
+	</button>
+</mat-toolbar-row>
+<mat-toolbar-row>
+	<button mat-icon-button [routerLink]="['service']">
+		<mat-icon>build</mat-icon>
+		<span> Service Due</span>
+	</button>
+</mat-toolbar-row>
+<mat-toolbar-row>
+	<button mat-icon-button>
+		<mat-icon>directions_car</mat-icon>
+		<span> My Garage</span>
+	</button>
 </mat-toolbar-row>
  </mat-toolbar>
 
