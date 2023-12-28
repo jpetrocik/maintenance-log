@@ -1,8 +1,17 @@
-<p>Login</p>
+<div *ngIf="!authSent;else postLogin">
+    <p>Login</p>
+    <p>Enter your email to login  or created an account.  No passwords required, just an email.</p>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <mat-form-field class="fw">
+            <input matInput name="email" placeholder="email" formControlName="email"/>
+        </mat-form-field>
+        <button mat-flat-button class="btn" type="submit" color="primary">Login</button>
+    </form>
+</div>
 
-<form [formGroup]="loginForm" (ngSubmit)="login()">
-<mat-form-field class="fw">
-    <input matInput name="email" placeholder="email" formControlName="email"/>
-</mat-form-field>
-<button mat-flat-button class="btn" type="submit" color="primary">Login</button>
-</form>
+<ng-template #postLogin>
+    <div>
+        <h2>Email Sent!</h2>
+    <p>Check your email for an email containing a login link. The email was sent to {{loginForm.controls['email'].value}}.</p>
+    </div>
+</ng-template>

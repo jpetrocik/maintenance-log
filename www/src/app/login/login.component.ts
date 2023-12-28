@@ -11,7 +11,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
-  
+  authSent = false;
+
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
     private maintenanceService: MaintenanceService) {
@@ -36,7 +37,9 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.maintenanceService.sendAuth(this.loginForm.get('email')?.value).subscribe();
+    this.maintenanceService.sendAuth(this.loginForm.get('email')?.value).subscribe(() => {
+      this.authSent = true;
+    });
   }
 
 }

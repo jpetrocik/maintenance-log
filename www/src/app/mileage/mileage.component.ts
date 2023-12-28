@@ -34,7 +34,9 @@ export class MileageComponent implements OnInit, AfterViewInit {
     private _route: ActivatedRoute
     ) { 
     this.mileageForm = new FormGroup({
-      mileage: new FormControl('', [Validators.required]),
+      mileage: new FormControl('', [
+        Validators.required
+      ]),
     })
 
     this.serviceForm = new FormGroup({
@@ -75,10 +77,6 @@ export class MileageComponent implements OnInit, AfterViewInit {
     this.mileageInput.nativeElement.focus();
   }
 
-  resetForm() {
-    this.setMileage('');
-  }
-
   reportMileage() {
     if (!this.vehicle) {
       return
@@ -88,7 +86,7 @@ export class MileageComponent implements OnInit, AfterViewInit {
     this._maintenanceService.submitMileage(this.vehicle.invitationToken, this.mileageForm.controls['mileage'].value).subscribe({
       next: () => {
 
-      this.resetForm();
+      this.mileageForm.reset();
       this._snackBar.open("Service Due", undefined, {
         duration: 15000
       });
@@ -155,6 +153,9 @@ export class MileageComponent implements OnInit, AfterViewInit {
 
   addService() {
     this._maintenanceService.serviceCompleted(this.iToken, this.serviceForm.value).subscribe(() => {
+      // formDirective.resetForm();
+      this.serviceForm.reset();
+      
       // this.loadServiceDue(this.iToken);
       this.loadServiceHistory(this.iToken);
     });
@@ -162,6 +163,9 @@ export class MileageComponent implements OnInit, AfterViewInit {
 
   addScheduledMaintenance() {
     this._maintenanceService.adScheduledMaintenace(this.iToken, this.scheduleMaintenanceForm.value).subscribe(() => {
+      // formDirective.resetForm();
+      this.scheduleMaintenanceForm.reset();
+
       this.loadScheduledMaintenance(this.iToken);
       this.loadServiceDue(this.iToken);
     });

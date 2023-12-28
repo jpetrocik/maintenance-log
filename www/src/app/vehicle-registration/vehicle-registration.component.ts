@@ -24,9 +24,7 @@ export class VehicleRegistrationComponent implements OnInit {
       model: new FormControl("", [
         Validators.required,
       ]),
-      trim: new FormControl("", [
-        Validators.required,
-      ]),
+      trim: new FormControl("", []),
       mileage: new FormControl("", [
         Validators.required,
       ]),

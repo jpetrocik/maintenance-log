@@ -11,7 +11,7 @@
         <mat-form-field class="fw">
         <input matInput #mileage style="text-align: center;" name="mileage" placeholder="report mileage" formControlName="mileage" type="number"/>
         </mat-form-field>
-        <button mat-flat-button class="btn" color="primary">Submit</button>
+        <button mat-flat-button class="btn" [disabled]="!mileageForm.valid" color="primary">Submit</button>
     </form>
 </div>
 
@@ -59,7 +59,7 @@
                         <mat-form-field class="fw">
                             <input matInput name="description" placeholder="description" formControlName="description"/>
                         </mat-form-field>
-                        <button mat-flat-button class="btn" color="primary" type="submit">Add Service</button>
+                        <button mat-flat-button class="btn" color="primary" [disabled]="!serviceForm.valid" type="submit">Add Service</button>
                     </form>
                 </mat-card-content>
             </mat-card>
@@ -111,7 +111,7 @@
                         <mat-form-field class="fw">
                             <input matInput name="months" placeholder="months" formControlName="months"/>
                         </mat-form-field>
-                        <button mat-flat-button class="btn" color="primary" type="submit">Add Scheduled Maintenance</button>
+                        <button mat-flat-button class="btn" color="primary" [disabled]="!scheduleMaintenanceForm.valid" type="submit">Add Scheduled Maintenance</button>
                     </form>
                 </mat-card-content>
             </mat-card>
