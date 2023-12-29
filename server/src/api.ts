@@ -224,6 +224,29 @@ class ApiHandler {
 		}
 	}
 
+	@Authorized
+	@ResolveInvitation
+	async shareVehicleHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
+		try {
+			let shareWith = await accountService.lookupUserByEmail(request.body.email);
+			if (!shareWith) {
+				await accountService.register(request.body.email, null);
+				shareWith = await accountService.lookupUserByEmail(request.body.email);
+			}
+			
+			if (!shareWith) {
+				response.sendStatus(400);
+				return;
+			}
+
+			await invitationService.createInvitation(shareWith.userToken, objectToken);
+			response.sendStatus(204);
+		} catch (err) {
+			response.statusMessage = err.message;
+			response.sendStatus(400);
+		}
+	}
+
 }
 
 const apiRoutes = Router();
@@ -256,6 +279,8 @@ apiRoutes.put('/vehicle/:iToken/mileage/:mileage', apiHandler.reportMileageHandl
 apiRoutes.get('/vehicle/:iToken/maintenance', apiHandler.scheduledMaintenanceHandler);
 // @ts-ignore
 apiRoutes.post('/vehicle/:iToken/maintenance', apiHandler.addScheduledMaintenanceHandler);
+// @ts-ignore
+apiRoutes.put('/vehicle/:iToken/share/', apiHandler.shareVehicleHandler);
 
 
 export { apiRoutes }

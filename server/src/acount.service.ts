@@ -21,7 +21,7 @@ class AccountService extends BaseService {
 		if (!email)
 			email = null;
 
-		await this.executeQuery("insert into user_accounts (email, phone, uToken, aToken) values (?, ?, ?, ?)", [email, phone, userToken, authToken]);
+		await this.executeQuery("insert into user_accounts (email, phone, userToken, authToken) values (?, ?, ?, ?)", [email, phone, userToken, authToken]);
 		return authToken;
 	}
 
