@@ -6,7 +6,7 @@ SELECT sm.carId,
        max(sh.serviceDate) as lastServiceDate, 
        max(sh.mileage) as lastServiceMileage, 
        DATEDIFF(DATE_ADD(COALESCE(max(sh.serviceDate),c.inserviceDate), INTERVAL months  MONTH), now()) as dueDays, 
-       LEAST(DATEDIFF(DATE_ADD(COALESCE(max(sh.serviceDate),c.inserviceDate), INTERVAL months  MONTH), now()) * 34, COALESCE(max(sh.mileage),0)+sm.mileage-c.mileage) as dueIn 
+       COALESCE(max(sh.mileage),0)+sm.mileage-c.mileage as dueIn 
 FROM my_garage c 
     JOIN scheduled_maintenance sm on c.id=sm.carId 
     LEFT OUTER JOIN service_history sh on sh.description=sm.description and sh.carId=sm.carId 
