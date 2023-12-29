@@ -13,6 +13,6 @@ FROM my_garage c
 WHERE c.token=? 
 GROUP BY sm.id, sm.description, sm.mileage, sm.months`;
 
-const UPCOMING_SERVICE_SQL = `SELECT * FROM (${SERVICE_DUE_SQL}) as s WHERE dueIn<500 ORDER BY dueIn desc`;
+const UPCOMING_SERVICE_SQL = `SELECT * FROM (${SERVICE_DUE_SQL}) as s WHERE dueIn<500 OR dueDays<30 ORDER BY dueIn desc`;
 
 export { SERVICE_DUE_SQL, UPCOMING_SERVICE_SQL}
