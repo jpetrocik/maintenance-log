@@ -23,7 +23,7 @@
             <mat-card class="serviceDue">
                 <mat-card-header>
                 <mat-card-title>{{serviceDue.description}}</mat-card-title>
-                <mat-card-subtitle [ngClass]="serviceDue.dueIn < 0 ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles ({{serviceDue.dueDays}} days)</mat-card-subtitle>
+                <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles ({{serviceDue.dueDays}} days)</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                     <p style="opacity: 50%" *ngIf="!addNote" (click)="enableNote()">more...</p>

@@ -29,6 +29,7 @@ export interface ServiceDueRecord {
 	lastServiceMileage: number;
 	dueDays: number;
 	dueIn: number;
+  overdue: boolean;
 }
 
 export interface ScheduledMaintenance {

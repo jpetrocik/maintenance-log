@@ -107,7 +107,7 @@ export class MileageComponent implements OnInit, AfterViewInit {
   loadServiceDue(iToken: string) {
     this._maintenanceService.serviceDue(iToken).subscribe((data) => {
       this.serviceDueAll = data;
-      this.pastDueService = this.serviceDueAll.filter(s => s.dueIn < 0 || s.dueDays < 0).length > 0;
+      this.pastDueService = this.serviceDueAll.filter(s => s.dueIn < 0 || s.dueDays < 0).map(s => s.overdue = true).length > 0;
       this.upcomingService = this.serviceDueAll.filter(s => s.dueIn >= 0 || s.dueDays >= 0).length > 0;
     });
   };
