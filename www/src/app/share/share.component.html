@@ -1,0 +1,28 @@
+<div *ngIf="!emailSent;else postShare">
+    <h1 mat-dialog-title>Share Vehicle</h1>
+    <div mat-dialog-content>
+        <p>Add a co-pilot.  By sharing a vechile this person can report mileage and perform other Maintenance operations.</p>
+        <form [formGroup]="shareForm" (ngSubmit)="shareVehicle()">
+            <mat-form-field class="fw">
+                <input matInput name="email" placeholder="email" formControlName="email"/>
+            </mat-form-field>
+        </form>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-flat-button cdkFocusInitial (click)="closeDialog()">Cancel</button>
+        <button mat-flat-button color="primary" (click)="shareVehicle()">Share</button>
+      </div>
+</div>
+
+<ng-template #postShare>
+<div>
+    <h1 mat-dialog-title>Vehicle Shared</h1>
+    <div mat-dialog-content>
+        <p>An email was sent to {{shareForm.controls['email'].value}}.</p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-flat-button color="primary" (click)="closeDialog()">Ok</button>
+      </div>
+</div>
+</ng-template>
+

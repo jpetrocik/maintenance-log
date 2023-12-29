@@ -22,6 +22,8 @@ import { Router } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { MatCardModule } from '@angular/material/card';
 import { VehicleRegistrationComponent } from './vehicle-registration/vehicle-registration.component';
+import { ShareComponent } from './share/share.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { VehicleRegistrationComponent } from './vehicle-registration/vehicle-reg
     ServiceComponent,
     HomeComponent,
     LoginComponent,
-    VehicleRegistrationComponent
+    VehicleRegistrationComponent,
+    ShareComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +51,7 @@ import { VehicleRegistrationComponent } from './vehicle-registration/vehicle-reg
     MatInputModule,
     MatFormFieldModule,
     MatCardModule,
+    MatDialogModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable

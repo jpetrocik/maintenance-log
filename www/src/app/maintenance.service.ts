@@ -105,4 +105,8 @@ export class MaintenanceService {
     return this.httpClient.post<ScheduledMaintenance[]>(`/api/vehicle/${invitationToken}/maintenance`, scheduledMaintenace)
   }
 
+  public shareVehicle(invitationToken: string, email: string) : Observable<any> {
+    return this.httpClient.put<ScheduledMaintenance[]>(`/api/vehicle/${invitationToken}/share`, { email: email });
+  }
+
 }

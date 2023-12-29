@@ -4,7 +4,8 @@ import { Vehicle, MaintenanceService, ServiceRecord, ServiceDueRecord, Scheduled
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take, map} from 'rxjs';
-
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import { ShareComponent } from '../share/share.component';
 
 @Component({
   selector: 'app-mileage',
@@ -31,7 +32,8 @@ export class MileageComponent implements OnInit, AfterViewInit {
 
   constructor(public _maintenanceService: MaintenanceService,
     private _snackBar: MatSnackBar,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private dialog: MatDialog
     ) { 
     this.mileageForm = new FormGroup({
       mileage: new FormControl('', [
@@ -168,6 +170,16 @@ export class MileageComponent implements OnInit, AfterViewInit {
 
       this.loadScheduledMaintenance(this.iToken);
       this.loadServiceDue(this.iToken);
+    });
+  }
+
+  openShareDialog() {
+    const dialogRef = this.dialog.open(ShareComponent, {
+      data: {invitationToken: this.iToken},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
     });
   }
 
