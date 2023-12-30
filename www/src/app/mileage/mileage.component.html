@@ -26,7 +26,7 @@
                 <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles ({{serviceDue.dueDays}} days)</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    <p style="opacity: 50%" *ngIf="!addNote" (click)="enableNote()">more...</p>
+                    <p style="opacity: 50%" *ngIf="addNote" (click)="enableNote()">more</p>
                     <p *ngIf="addNote">
                         <mat-form-field class="fw">
                             <input matInput name="serviceMileage" placeholder="mileage" type="number"/>
@@ -59,6 +59,22 @@
                         <mat-form-field class="fw">
                             <input matInput name="description" placeholder="description" formControlName="description"/>
                         </mat-form-field>
+                        <div class="additionalFields" *ngIf="!additionalFields" (click)="showAdditionalFields()">Additional Fields</div>
+                        <div *ngIf="additionalFields">
+                            <mat-form-field class="fw">
+                                <input matInput name="cost" placeholder="cost" formControlName="cost" type="number"/>
+                            </mat-form-field>
+                            <mat-form-field class="fw">
+                                <mat-label>Note</mat-label>
+                                <textarea matInput
+                                    name="note"
+                                    formControlName="note"
+                                    cdkTextareaAutosize
+                                    #autosize="cdkTextareaAutosize"
+                                    cdkAutosizeMinRows="3"
+                                    cdkAutosizeMaxRows="5"></textarea>
+                            </mat-form-field>
+                        </div>
                         <button mat-flat-button class="btn" color="primary" [disabled]="!serviceForm.valid" type="submit">Add Service</button>
                     </form>
                 </mat-card-content>

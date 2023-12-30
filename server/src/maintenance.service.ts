@@ -57,17 +57,19 @@ class MaintenanceService extends BaseService {
 
 	}
 
-	public async addService(objectToken: string, serviceRecord: ServiceDueRecord) {
+	public async addService(objectToken: string, serviceRecord: ServiceRecord) {
 		let vehicle = await garageService.vehicleDetails(objectToken);
 		if (!vehicle)
 			return undefined;
 
-		const serviceHistory = {
-        	mileage: vehicle.mileage,
+		let serviceHistory = {
+			carId: vehicle.id,
+			serviceDate: new Date(),
+			mileage: vehicle.mileage,
 			description: serviceRecord.description,
-        	carId: vehicle.id,
-        	serviceDate: new Date(),
-		};
+			cost: serviceRecord.cost,
+			note: serviceRecord.note,
+		} as ServiceRecord;
 
 		await this.executeQuery("INSERT INTO service_history SET ?", serviceHistory);
 	};

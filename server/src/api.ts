@@ -167,7 +167,7 @@ class ApiHandler {
 	@Authorized
 	@ResolveInvitation
 	async serviceDueCompletedHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
-		await maintenanceService.addService(objectToken, request.body as ServiceDueRecord);
+		await maintenanceService.addService(objectToken, request.body as ServiceRecord);
 		response.sendStatus(204);
 	}
 

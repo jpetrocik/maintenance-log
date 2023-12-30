@@ -24,6 +24,7 @@ export class MileageComponent implements OnInit, AfterViewInit {
   serviceHistoryAll!: ServiceRecord[];
   scheduledMaintenanceAll!: ScheduledMaintenance[];
   addNote = false;
+  additionalFields = false;
   showServiceHistory = false
   showServiceDue = false;
   showScheduledMaintenance = false;
@@ -44,6 +45,10 @@ export class MileageComponent implements OnInit, AfterViewInit {
     this.serviceForm = new FormGroup({
       description: new FormControl("", [
         Validators.required,
+      ]),
+      cost: new FormControl("", [
+      ]),
+      note: new FormControl("", [
       ]),
     });
 
@@ -135,6 +140,7 @@ export class MileageComponent implements OnInit, AfterViewInit {
   enableNote() {
     this.addNote = !this.addNote
   }
+
   toggleSeviceHistory() {
     this.showServiceHistory = !this.showServiceHistory;
 
@@ -185,4 +191,7 @@ export class MileageComponent implements OnInit, AfterViewInit {
     });
   }
 
+  showAdditionalFields() {
+    this.additionalFields = !this.additionalFields
+  }
 }
