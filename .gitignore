@@ -76,4 +76,4 @@ testem.log
 Thumbs.db
 
 bin
-
+www/dist/*
