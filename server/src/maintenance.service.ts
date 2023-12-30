@@ -38,7 +38,7 @@ class MaintenanceService extends BaseService {
 	};
 
 	public async serviceHistory(objectToken: string) : Promise<ServiceRecord[]|undefined> {
-		let results = await this.executeQuery("select sh.* from service_history sh join my_garage g on sh.carId=g.id where g.token=? order by sh.mileage desc, sh.serviceDate desc", [objectToken]);
+		let results = await this.executeQuery("select sh.* from service_history sh join my_garage g on sh.carId=g.id where g.token=? order by sh.mileage desc, sh.serviceDate desc, sh.id desc", [objectToken]);
 
 		if (!results.length)
 			return undefined;
