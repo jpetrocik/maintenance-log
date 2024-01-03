@@ -21,6 +21,8 @@ export interface Vehicle {
 	status: string;
 	mileage: number;
 	mileageReportedDays: number;
+	vin: string;
+	license: string;
 }
 
 export interface MileageLog {
@@ -56,7 +58,9 @@ class GarageService extends BaseService {
 			trim: params.trim, 
 			year: params.year, 
 			inserviceDate: inserviceDate, 
-			status: "ACTIVE" } as Vehicle;
+			status: "ACTIVE",
+			vin: params.vin,
+			license: params.license } as Vehicle;
 
 		let results = await this.executeQuery("insert into my_garage set ?" , vehicle);
 

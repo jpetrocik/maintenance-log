@@ -5,11 +5,21 @@ import { BehaviorSubject, Observable, map, of } from "rxjs";
 export interface Vehicle {
     invitationToken: string;
     name: string;
-    token: string;
     mileage: number;
     mileageReportedDays: number;
 }
-  
+
+export interface VehicleDetails extends Vehicle {
+	make: string;
+	model: string;
+	trim: string;
+	year: number;
+	inserviceDate: Date;
+	status: string;
+	vin: string;
+	license: string;
+}
+
 export interface ServiceRecord {
 	id: number;
 	carId: number;
@@ -108,6 +118,10 @@ export class MaintenanceService {
 
   public shareVehicle(invitationToken: string, email: string) : Observable<any> {
     return this.httpClient.put<ScheduledMaintenance[]>(`/api/vehicle/${invitationToken}/share`, { email: email });
+  }
+
+  public vehicleDetails(invitationToken: string) : Observable<VehicleDetails> {
+    return this.httpClient.get<VehicleDetails>(`/api/vehicle/${invitationToken}`);
   }
 
 }

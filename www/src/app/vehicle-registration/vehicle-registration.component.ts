@@ -28,6 +28,8 @@ export class VehicleRegistrationComponent implements OnInit {
       mileage: new FormControl("", [
         Validators.required,
       ]),
+      license: new FormControl("", []),
+      vin: new FormControl("", []),
 
     });
   }

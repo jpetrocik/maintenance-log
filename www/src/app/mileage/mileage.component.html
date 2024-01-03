@@ -1,6 +1,7 @@
 <div>
 <div style="float:right"><mat-icon (click)="openShareDialog()">share</mat-icon></div>
 <h1 style="margin-bottom: 0px;">{{vehicle?.name}}</h1>
+<h3 style="margin-bottom: 0px;" *ngIf="vehicle?.vin">{{vehicle?.vin}} <span *ngIf="vehicle?.license">(Lic: {{vehicle?.license}})</span></h3>
 <h3>Mileage: {{vehicle?.mileage}} ({{vehicle?.mileageReportedDays}} days age)</h3>
 </div>
 

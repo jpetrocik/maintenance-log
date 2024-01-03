@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Vehicle, MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance } from '../maintenance.service';
+import { Vehicle, MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take, map} from 'rxjs';
@@ -16,7 +16,7 @@ export class MileageComponent implements OnInit, AfterViewInit {
   @ViewChild('mileage') mileageInput! : ElementRef;
 
   iToken!: string;
-  vehicle!: Vehicle | undefined;
+  vehicle!: VehicleDetails | undefined;
   mileageForm: FormGroup; 
   serviceForm: FormGroup
   scheduleMaintenanceForm: FormGroup
@@ -69,19 +69,14 @@ export class MileageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this._route.params.subscribe((params) => {
       this.iToken = params['iToken'];
-      this._maintenanceService.myGarage$.subscribe((data) =>{
-        this.vehicle = data.filter(d => d.invitationToken == this.iToken)[0];
+      this._maintenanceService.vehicleDetails(this.iToken).subscribe((data) =>{
+        this.vehicle = data;
       })
       this.loadServiceDue(this.iToken);
    });
   }
 
   ngAfterViewInit():void {
-  }
-
-  selectVehicle(vehicle: Vehicle) {
-    this.vehicle = vehicle;
-    this.mileageInput.nativeElement.focus();
   }
 
   reportMileage() {
