@@ -24,6 +24,7 @@ import { MatCardModule } from '@angular/material/card';
 import { VehicleRegistrationComponent } from './vehicle-registration/vehicle-registration.component';
 import { ShareComponent } from './share/share.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ServiceHistoryComponent } from './mileage/service-history/service-history.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     HomeComponent,
     LoginComponent,
     VehicleRegistrationComponent,
-    ShareComponent
+    ShareComponent,
+    ServiceHistoryComponent
   ],
   imports: [
     BrowserModule,

@@ -271,7 +271,7 @@ apiRoutes.get('/vehicle/:iToken/service', apiHandler.serviceDueHandler);
 // @ts-ignore
 apiRoutes.get('/vehicle/:iToken/history', apiHandler.serviceHistoryHandler);
 apiRoutes.get('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordHandler);
-apiRoutes.put('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordUpdateHandler);
+apiRoutes.put('/vehicle/:iToken/history', apiHandler.serviceRecordUpdateHandler);
 apiRoutes.delete('/vehicle/:iToken/history/:serviceId', apiHandler.serviceRecordDeleteHandler);
 // @ts-ignore
 apiRoutes.put('/vehicle/:iToken/mileage/:mileage', apiHandler.reportMileageHandler);

@@ -89,13 +89,7 @@
     <hr style="margin-top: 0px;"/>
     <ng-container *ngIf="showServiceHistory">
         <div *ngFor="let serviceHistory of serviceHistoryAll">
-            <mat-card class="serviceDue">
-                <mat-card-header>
-                <div style="float:right"><mat-icon>edit</mat-icon></div>
-                <mat-card-title>{{serviceHistory.description}}</mat-card-title>
-                <mat-card-subtitle>{{serviceHistory.mileage}} miles ({{serviceHistory.serviceDate | date:'shortDate'}})</mat-card-subtitle>
-                </mat-card-header>
-            </mat-card>
+            <ml-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken"></ml-service-history>
         </div>
     </ng-container>
 </div>

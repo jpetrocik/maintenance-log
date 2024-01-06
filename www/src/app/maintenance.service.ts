@@ -124,4 +124,8 @@ export class MaintenanceService {
     return this.httpClient.get<VehicleDetails>(`/api/vehicle/${invitationToken}`);
   }
 
+  public updateServiceRecord(invitationToken: string, serviceRecord: ServiceRecord) : Observable<any> {
+    return this.httpClient.put<VehicleDetails>(`/api/vehicle/${invitationToken}/history`, serviceRecord);
+  }
+
 }

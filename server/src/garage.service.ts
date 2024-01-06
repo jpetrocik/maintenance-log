@@ -99,7 +99,7 @@ class GarageService extends BaseService {
 		}
 
 		if (vehicle.mileage) {
-			let maxApproximateMileage = vehicle.mileage+(50 * vehicle.mileageReportedDays);
+			let maxApproximateMileage = vehicle.mileage+(60 * vehicle.mileageReportedDays);
 			if (maxApproximateMileage < mileage) {
 				throw new Error("Mileage too high");
 			}

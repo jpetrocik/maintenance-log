@@ -76,7 +76,7 @@ class MaintenanceService extends BaseService {
 
 	public async updateServiceLog(serviceRecord: ServiceRecord) {
 
-		await this.executeQuery("UPDATE service_history SET ? WHERE id=? AND carId=?", [serviceRecord]);
+		await this.executeQuery("UPDATE service_history SET ? WHERE ?", [serviceRecord, {id: serviceRecord.id} ]);
 
 		//add a scheduled maintenance
 		// if (regularService) {
