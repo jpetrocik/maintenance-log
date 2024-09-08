@@ -50,6 +50,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
 
   updateServiceRecord() {
     this.maintenanceService.updateServiceRecord(this.invitationToken, this.serviceRecordFormGroup.value ).subscribe(() => {
+      this.serviceRecord = this.serviceRecordFormGroup.value;
       this.showEditForm = false;
     })
   }

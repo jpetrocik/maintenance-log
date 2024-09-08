@@ -12,12 +12,14 @@ function Authorized(target: Function, context) {
 			authToken = args[0].cookies._authToken;
 			if (authToken === undefined) {
 				args[1].sendStatus(401);
+				return;
 			}
 		}
 	
 		const account = await accountService.lookupUserByAuthToken(authToken);
 		if (!account) {
 			args[1].sendStatus(401);
+			return;
 		}
 	
 		args[1].cookie('_authToken', authToken, { maxAge: (90 * 24 * 60 * 60 * 1000) });
