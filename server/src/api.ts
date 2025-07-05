@@ -4,7 +4,7 @@ import {accountService, Account} from './acount.service'
 import {Vehicle, garageService} from './garage.service'
 import { maintenanceService, ScheduledMaintenance, ServiceDueRecord, ServiceRecord  } from './maintenance.service';
 
-function Authorized(target: Function, context) {
+function Authorized(target: Function, context: ClassMethodDecoratorContext) {
 	if (context.kind === "method") {
 	  return async function (...args: any[]) {
 		let authToken = args[0].query.authToken;
@@ -25,12 +25,12 @@ function Authorized(target: Function, context) {
 		args[1].cookie('_authToken', authToken, { maxAge: (90 * 24 * 60 * 60 * 1000) });
 		args.push(account);
 		// @ts-ignore
-		return target.apply(this, args)
+		await target.apply(this, args);
 	  }
 	}
   }
 
-  function ResolveInvitation(target: Function, context) {
+  function ResolveInvitation(target: Function, context: ClassMethodDecoratorContext) {
 	if (context.kind === "method") {
 	  return async function (...args: any[]) {
 		let objectToken = await invitationService.resolveInvitation(args[0].params.iToken);
@@ -41,11 +41,23 @@ function Authorized(target: Function, context) {
 			
 		args.push(objectToken);
 		// @ts-ignore
-		return target.apply(this, args)
+		await target.apply(this, args)
 	  }
 	}
   }
 
+  function AsyncErrorHandler(target: Function, context: ClassMethodDecoratorContext) {
+	if (context.kind === "method") {
+	  return async function (...args: any[]) {
+		try {			
+			// @ts-ignore
+			await target.apply(this, args);
+		} catch (error) {
+			args[2](error);
+		}
+	  }
+	}
+  }
 
 class ApiHandler { 
 
@@ -54,9 +66,9 @@ class ApiHandler {
 		response.sendStatus(200);
 	}
 
-
+	@AsyncErrorHandler
 	async registerHandler(request: Request, response: Response) {
-		const authToken = accountService.register(request.body.email, request.body.phone);
+		const authToken = await accountService.register(request.body.email, request.body.phone);
 		if (!authToken) {
 			response.sendStatus(400);
 			return;
@@ -66,6 +78,7 @@ class ApiHandler {
 		response.sendStatus(200);
 	}
 
+	@AsyncErrorHandler
 	async loginHandler(request: Request, response: Response) {
 		let email = request.query.email as string;
 		let authToken = request.query.authToken as string;
@@ -83,12 +96,14 @@ class ApiHandler {
 		response.sendStatus(204);
 	}
 
+	@AsyncErrorHandler
 	async sendAuthHandler(request: Request, response: Response) {
 		await accountService.sendAuthToken(request.query.email);
 		response.sendStatus(204);
 	}
 
 
+	@AsyncErrorHandler
 	async mfaHandler(request: Request, response: Response) {
 		let account: Account|undefined;
 		if (request.query.phone) {
@@ -105,6 +120,7 @@ class ApiHandler {
 		response.json(token);
 	}
 
+	@AsyncErrorHandler
 	async mfaValidateHandler (request: Request, response: Response) {
 		let userToken = await accountService.validateValidationCode(request.body.token, request.body.code);
 		if (!userToken) {
@@ -123,6 +139,7 @@ class ApiHandler {
 
 
 	@Authorized
+	@AsyncErrorHandler
 	async vehicleAddHandler(request: Request, response: Response, next: Function, account: Account) {
 		let newvehicle = await garageService.addVehicle(request.body);
 		let invitationToken = await invitationService.createInvitation( account.userToken, newvehicle.token);
@@ -130,6 +147,7 @@ class ApiHandler {
 	}
 
 	@Authorized
+	@AsyncErrorHandler
 	async vehicleHandler(request: Request, response: Response, next: Function, account: Account) {
 		let garage = await garageService.myGarage(account.userToken);
 		response.json(garage);
@@ -138,6 +156,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async vehicleDetailHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		let vehicle = await garageService.vehicleDetails(objectToken);
 		response.json(vehicle);
@@ -145,6 +164,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async serviceDueHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		let allServiceRecords = await maintenanceService.serviceDue(objectToken);
 		response.json(allServiceRecords);
@@ -152,6 +172,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async serviceHistoryHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		let allServiceRecords = await maintenanceService.serviceHistory(objectToken);
 		response.json(allServiceRecords);
@@ -160,6 +181,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async serviceRecordHandler(request: Request, response: Response) {
 		let serviceRecord = await maintenanceService.serviceRecord(+request.params.serviceId);
 		response.json(serviceRecord);
@@ -168,6 +190,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async serviceDueCompletedHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		await maintenanceService.addService(objectToken, request.body as ServiceRecord);
 		response.sendStatus(204);
@@ -176,6 +199,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async serviceRecordUpdateHandler(request: Request, response: Response) {
 		await maintenanceService.updateServiceLog(request.body as ServiceRecord);
 		response.sendStatus(204);
@@ -184,6 +208,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async serviceRecordDeleteHandler(request: Request, response: Response) {
 		await maintenanceService.deleteServiceLog(+request.params.serviceId);
 		response.sendStatus(204);
@@ -192,6 +217,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async reportMileageHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		try {
 			await garageService.reportMileage(objectToken, +request.params.mileage);
@@ -216,6 +242,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async addScheduledMaintenanceHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		try {
 			let scheduledMaintenance = await maintenanceService.addScheduledService(objectToken, request.body as ScheduledMaintenance);
@@ -228,6 +255,7 @@ class ApiHandler {
 
 	@Authorized
 	@ResolveInvitation
+	@AsyncErrorHandler
 	async shareVehicleHandler(request: Request, response: Response, next: NextFunction, account: Account, objectToken: string) {
 		try {
 			let shareWith = await accountService.lookupUserByEmail(request.body.email);

@@ -67,8 +67,8 @@ class MaintenanceService extends BaseService {
 			serviceDate: new Date(),
 			mileage: vehicle.mileage,
 			description: serviceRecord.description,
-			cost: serviceRecord.cost,
-			note: serviceRecord.note,
+			cost: serviceRecord.cost || null,
+			note: serviceRecord.note || null,
 		} as ServiceRecord;
 
 		await this.executeQuery("INSERT INTO service_history SET ?", serviceHistory);
