@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent, AuthInterceptor } from './app.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MileageComponent } from './mileage/mileage.component';
 import { ServiceComponent } from './service/service.component';
 import { HomeComponent } from './home/home.component';
@@ -26,52 +26,46 @@ import { ShareComponent } from './share/share.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ServiceHistoryComponent } from './mileage/service-history/service-history.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    MileageComponent,
-    ServiceComponent,
-    HomeComponent,
-    LoginComponent,
-    VehicleRegistrationComponent,
-    ShareComponent,
-    ServiceHistoryComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    AppRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    MatSnackBarModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatCardModule,
-    MatDialogModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
-      // Register the ServiceWorker as soon as the application is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
-    })
-  ],
-  providers: [
-    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}},
-    {
-      provide: HTTP_INTERCEPTORS,
-      useFactory: function(router: Router) {
-        return new AuthInterceptor(router);
-      },
-      multi: true,
-      deps: [Router]
-   },
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        MileageComponent,
+        ServiceComponent,
+        HomeComponent,
+        LoginComponent,
+        VehicleRegistrationComponent,
+        ShareComponent,
+        ServiceHistoryComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        AppRoutingModule,
+        FormsModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MatSnackBarModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatCardModule,
+        MatDialogModule,
+        ServiceWorkerModule.register('ngsw-worker.js', {
+            enabled: environment.production,
+            // Register the ServiceWorker as soon as the application is stable
+            // or after 30 seconds (whichever comes first).
+            registrationStrategy: 'registerWhenStable:30000'
+        })], providers: [
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useFactory: function (router: Router) {
+                return new AuthInterceptor(router);
+            },
+            multi: true,
+            deps: [Router]
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }
