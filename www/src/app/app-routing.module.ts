@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full'},
-  { path: 'service', loadChildren: () => import('./service/service.module').then(m => m.ServiceModule) },
-  { path: 'mileage/:iToken', loadChildren: () => import('./mileage/mileage.module').then(m => m.MileageModule) },
-  { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
+  { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
-  { path: 'my-garage/register', loadChildren: () => import('./vehicle-registration/vehicle-registration.module').then(m => m.VehicleRegistrationModule) },
+  { path: 'service', loadChildren: () => import('./service/service.module').then(m => m.ServiceModule), canActivate: [AuthGuard] },
+  { path: 'mileage/:iToken', loadChildren: () => import('./mileage/mileage.module').then(m => m.MileageModule), canActivate: [AuthGuard] },
+  { path: 'my-garage/register', loadChildren: () => import('./vehicle-registration/vehicle-registration.module').then(m => m.VehicleRegistrationModule), canActivate: [AuthGuard] },
 ];
 
 @NgModule({

@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent, AuthInterceptor } from './app.component';
+import { AppComponent } from './app.component';
 import { ShareComponent } from './share/share.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
@@ -28,6 +28,13 @@ import { MileageModule } from './mileage/mileage.module';
 import { HomeModule } from './home/home.module';
 import { LoginModule } from './login/login.module';
 import { VehicleRegistrationModule } from './vehicle-registration/vehicle-registration.module';
+import { AuthInterceptor } from './auth.interceptor';
+import { AuthService } from './auth.service';
+import { Observable } from 'rxjs';
+
+function initializeAppFactory(authService: AuthService): () => Observable<any> {
+  return () => authService.verifySession();
+}
 
 @NgModule({
     declarations: [
@@ -63,6 +70,12 @@ import { VehicleRegistrationModule } from './vehicle-registration/vehicle-regist
         VehicleRegistrationModule], providers: [
             { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
             { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+            {
+                provide: APP_INITIALIZER,
+                useFactory: initializeAppFactory,
+                deps: [AuthService],
+                multi: true
+            }
         ]
 })
 export class AppModule { }

@@ -4,13 +4,12 @@ import {tokenGenerator} from './tokens';
 class InvitationService extends BaseService {
 
 	async userInvitations(userToken) : Promise<string[]> {
-		let results = await this.executeQuery("select objectToken from invitation where user_token=?", [userToken]);
-		return results.map(x => x.oToken);
+		let results = await this.executeQuery("select invitationToken from invitation where userToken=?", [userToken]);
+		return results.map(x => x.invitationToken);
 	}
 
 	async resolveInvitation(invitationToken: string) : Promise<string|undefined> {
 		let results = await this.executeQuery("select objectToken from invitation where invitationToken=?", [invitationToken]);
-		// carId = results.length ? results[0].carId : undefined
 		return results.length ? results[0].objectToken : undefined
 	}
 

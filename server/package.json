@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.4",
+    "jsonwebtoken": "^9.0.3",
     "moment": "^2.22.2",
     "mysql2": "^3.6.5",
     "nodemailer": "^6.9.7",

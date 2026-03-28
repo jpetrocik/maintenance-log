@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface Vehicle {
     invitationToken: string;
@@ -60,9 +61,16 @@ export class MaintenanceService {
   myGarage$: Observable<Vehicle[]> = this._myGarage.asObservable();
 
   private httpClient = inject(HttpClient);
+  private authService = inject(AuthService);
 
   constructor() {
-    this.loadMyGarage();
+    this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
+      if (isAuthenticated) {
+        this.loadMyGarage();
+      } else {
+        this._myGarage.next([]);
+      }
+    });
   }
 
   private loadMyGarage() {
@@ -73,18 +81,6 @@ export class MaintenanceService {
 
   public submitMileage(invitationToken: string, mileage: number) : Observable<Vehicle[]> {
     return this.httpClient.put<Vehicle[]>(`/api/vehicle/${invitationToken}/mileage/${mileage}`, '');
-  }
-
-  public login(email: string, authToken: string) : Observable<Vehicle[]> {
-    return this.httpClient.get<Vehicle[]>(`/api/login?email=${email}&authToken=${authToken}`).pipe(
-      map((data) => {
-        this.loadMyGarage();
-        return data;
-      }));;
-  }
-
-  public sendAuth(email: string) : Observable<unknown> {
-    return this.httpClient.get<unknown>(`/api/sendAuth?email=${email}`);
   }
 
   public serviceDue(invitationToken: string) : Observable<ServiceDueRecord[]> {
