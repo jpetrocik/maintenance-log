@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';\nimport { FormGroup, FormControl, Validators } from '@angular/forms'\nimport { MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';\nimport { MatSnackBar } from '@angular/material/snack-bar';\nimport { ActivatedRoute } from '@angular/router';\nimport {MatDialog} from '@angular/material/dialog';\nimport { ShareComponent } from '../share/share.component';\n
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ShareComponent } from '../share/share.component';
+
 @Component({
     selector: 'app-mileage',
     templateUrl: './mileage.component.html',

@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent, AuthInterceptor } from './app.component';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MileageComponent } from './mileage/mileage.component';
 import { ServiceComponent } from './service/service.component';
 import { HomeComponent } from './home/home.component';
@@ -34,10 +34,9 @@ import { ServiceHistoryComponent } from './mileage/service-history/service-histo
         LoginComponent,
         VehicleRegistrationComponent,
         ShareComponent,
-        ServiceHistoryComponent
+
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule,
         AppRoutingModule,
         FormsModule,
         ReactiveFormsModule,
@@ -51,10 +50,9 @@ import { ServiceHistoryComponent } from './mileage/service-history/service-histo
         MatFormFieldModule,
         MatCardModule,
         MatDialogModule,
+        HttpClientModule,
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: environment.production,
-            // Register the ServiceWorker as soon as the application is stable
-            // or after 30 seconds (whichever comes first).
             registrationStrategy: 'registerWhenStable:30000'
         })], providers: [
         { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
@@ -66,6 +64,6 @@ import { ServiceHistoryComponent } from './mileage/service-history/service-histo
             multi: true,
             deps: [Router]
         },
-        provideHttpClient(withInterceptorsFromDi()),
+
     ] })
 export class AppModule { }

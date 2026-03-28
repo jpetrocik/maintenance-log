@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';\nimport { MaintenanceService } from '../maintenance.service';\n
+import { Component, OnInit } from '@angular/core';
+import { MaintenanceService } from '../maintenance.service';
+
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
