@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';\nimport { FormGroup, FormControl, Validators } from '@angular/forms'\nimport { MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';\nimport { MatSnackBar } from '@angular/material/snack-bar';\nimport { ActivatedRoute } from '@angular/router';\nimport {MatDialog} from '@angular/material/dialog';\nimport { ShareComponent } from '../share/share.component';\n
 @Component({
-  selector: 'app-mileage',
-  templateUrl: './mileage.component.html',
-  styleUrls: ['./mileage.component.scss']
+    selector: 'app-mileage',
+    templateUrl: './mileage.component.html',
+    styleUrls: ['./mileage.component.scss'],
+    standalone: false
 })
 export class MileageComponent implements OnInit, AfterViewInit {
   @ViewChild('mileage') mileageInput! : ElementRef;

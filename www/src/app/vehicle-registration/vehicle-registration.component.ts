@@ -4,9 +4,10 @@ import { MaintenanceService } from '../maintenance.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-vehicle-registration',
-  templateUrl: './vehicle-registration.component.html',
-  styleUrls: ['./vehicle-registration.component.scss']
+    selector: 'app-vehicle-registration',
+    templateUrl: './vehicle-registration.component.html',
+    styleUrls: ['./vehicle-registration.component.scss'],
+    standalone: false
 })
 export class VehicleRegistrationComponent implements OnInit {
 

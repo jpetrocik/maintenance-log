@@ -2,9 +2,10 @@ import { Component } from '@angular/core';\nimport { MatSnackBar } from '@angula
 import { Router } from '@angular/router';
 import { MaintenanceService, ServiceDueRecord, Vehicle } from '../maintenance.service';\n
 @Component({
-  selector: 'app-service',
-  templateUrl: './service.component.html',
-  styleUrls: ['./service.component.scss']
+    selector: 'app-service',
+    templateUrl: './service.component.html',
+    styleUrls: ['./service.component.scss'],
+    standalone: false
 })
 export class ServiceComponent {
 
