@@ -3,8 +3,7 @@ import { MaintenanceService, ServiceRecord } from '../../maintenance.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'ml-service-history',
-  templateUrl: './service-history.component.html',
+  selector: 'app-service-history',\n  templateUrl: './service-history.component.html',
   styleUrls: ['./service-history.component.scss']
 })
 export class ServiceHistoryComponent implements OnInit, OnChanges {

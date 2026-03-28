@@ -1,7 +1,4 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, map, of } from "rxjs";
-
+import { HttpClient } from \"@angular/common/http\";\nimport { Injectable } from \"@angular/core\";\nimport { BehaviorSubject, Observable, map } from \"rxjs\";\n
 export interface Vehicle {
     invitationToken: string;
     name: string;

@@ -1,7 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { MaintenanceService } from '../maintenance.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-
+import { Component, OnInit } from '@angular/core';\nimport { MaintenanceService } from '../maintenance.service';\n
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -14,7 +11,5 @@ export class HomeComponent implements OnInit {
   
   }
 
-  ngOnInit(): void {
-  }
-
+  // ngOnInit(): void {}\n
 }

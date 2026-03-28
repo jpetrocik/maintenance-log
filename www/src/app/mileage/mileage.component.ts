@@ -1,12 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Vehicle, MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
-import { take, map} from 'rxjs';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import { ShareComponent } from '../share/share.component';
-
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';\nimport { FormGroup, FormControl, Validators } from '@angular/forms'\nimport { MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';\nimport { MatSnackBar } from '@angular/material/snack-bar';\nimport { ActivatedRoute } from '@angular/router';\nimport {MatDialog} from '@angular/material/dialog';\nimport { ShareComponent } from '../share/share.component';\n
 @Component({
   selector: 'app-mileage',
   templateUrl: './mileage.component.html',
@@ -76,9 +68,7 @@ export class MileageComponent implements OnInit, AfterViewInit {
    });
   }
 
-  ngAfterViewInit():void {
-  }
-
+  // ngAfterViewInit():void {}\n
   reportMileage() {
     if (!this.vehicle) {
       return

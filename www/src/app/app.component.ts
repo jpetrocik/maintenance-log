@@ -1,17 +1,10 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Component, Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { NavigationStart, Router } from '@angular/router';
-import { Observable, of, throwError, catchError } from 'rxjs';
-import { MaintenanceService } from './maintenance.service';
-import { _resolveDirectionality } from '@angular/cdk/bidi/directionality';
-
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';\nimport { Component, Injectable, OnInit } from '@angular/core';\nimport { MatSnackBar } from '@angular/material/snack-bar';\nimport { NavigationStart, Router } from '@angular/router';\nimport { Observable, of, throwError, catchError } from 'rxjs';\nimport { MaintenanceService } from './maintenance.service';\n
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'MaintenanceLog';
 
   showMenu = false;

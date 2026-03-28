@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component } from '@angular/core';\nimport { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { MaintenanceService, ServiceDueRecord, ServiceRecord, Vehicle } from '../maintenance.service';
-
+import { MaintenanceService, ServiceDueRecord, Vehicle } from '../maintenance.service';\n
 @Component({
   selector: 'app-service',
   templateUrl: './service.component.html',
