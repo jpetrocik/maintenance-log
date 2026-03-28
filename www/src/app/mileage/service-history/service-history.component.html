@@ -1,35 +1,41 @@
 <mat-card class="serviceDue">
-    <mat-card-header *ngIf="!showEditForm">
-    <div style="float:right"><mat-icon (click)="showEditForm=true">edit</mat-icon></div>
-    <mat-card-title>{{serviceRecord.description}}</mat-card-title>
-    <mat-card-subtitle>{{serviceRecord.mileage}} miles ({{serviceRecord.serviceDate | date:'shortDate'}})</mat-card-subtitle>
+  @if (!showEditForm) {
+    <mat-card-header>
+      <div style="float:right"><mat-icon (click)="showEditForm=true">edit</mat-icon></div>
+      <mat-card-title>{{serviceRecord.description}}</mat-card-title>
+      <mat-card-subtitle>{{serviceRecord.mileage}} miles ({{serviceRecord.serviceDate | date:'shortDate'}})</mat-card-subtitle>
     </mat-card-header>
-    <form [formGroup]="serviceRecordFormGroup" (ngSubmit)="updateServiceRecord()">
-        <mat-card-content *ngIf="showEditForm">
+  }
+  <form [formGroup]="serviceRecordFormGroup" (ngSubmit)="updateServiceRecord()">
+    @if (showEditForm) {
+      <mat-card-content>
         <mat-form-field class="fw">
-            <input matInput name="description" placeholder="description" formControlName="description" />
+          <input matInput name="description" placeholder="description" formControlName="description" />
         </mat-form-field>
         <mat-form-field class="fw">
-            <input matInput name="serviceDate" placeholder="service date" formControlName="serviceDate" type="date"/>
+          <input matInput name="serviceDate" placeholder="service date" formControlName="serviceDate" type="date"/>
         </mat-form-field>
         <mat-form-field class="fw">
-            <input matInput name="mileage" placeholder="mileage" formControlName="mileage" type="number"/>
+          <input matInput name="mileage" placeholder="mileage" formControlName="mileage" type="number"/>
         </mat-form-field>
         <mat-form-field class="fw">
-            <input matInput name="cost" placeholder="cost" formControlName="cost" type="number"/>
+          <input matInput name="cost" placeholder="cost" formControlName="cost" type="number"/>
         </mat-form-field>
         <mat-form-field class="fw">
-            <mat-label>note</mat-label>
-            <textarea matInput
-                    cdkTextareaAutosize
-                    formControlName="note"
-                    #autosize="cdkTextareaAutosize"
-                    cdkAutosizeMinRows="3"
-                    cdkAutosizeMaxRows="5"></textarea>
+          <mat-label>note</mat-label>
+          <textarea matInput
+            cdkTextareaAutosize
+            formControlName="note"
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="3"
+          cdkAutosizeMaxRows="5"></textarea>
         </mat-form-field>
-    </mat-card-content>            
-    <mat-card-actions *ngIf="showEditForm">
+      </mat-card-content>
+    }
+    @if (showEditForm) {
+      <mat-card-actions>
         <button mat-flat-button class="btn" color="primary" (click)="updateServiceRecord()">Update</button>
-    </mat-card-actions>
-    </form>
+      </mat-card-actions>
+    }
+  </form>
 </mat-card>

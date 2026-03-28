@@ -1,21 +1,23 @@
 <mat-toolbar color="primary">
-	<mat-toolbar-row>
-	<button mat-icon-button (click)="toogleMenu()">
-		<mat-icon>menu</mat-icon>
-	</button>
-	<span><a
-		[routerLink]="['/home']">
-		Maintenance Log
-	  </a></span>
-</mat-toolbar-row>
- </mat-toolbar>
- <mat-toolbar color="primary" *ngIf="showMenu">
-	<mat-toolbar-row>
-	<button mat-icon-button [routerLink]="['/home']">
-		<mat-icon>garage</mat-icon> <span>My Garage</span>
-	</button>
-</mat-toolbar-row>
- </mat-toolbar>
+  <mat-toolbar-row>
+    <button mat-icon-button (click)="toogleMenu()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span><a
+      [routerLink]="['/home']">
+      Maintenance Log
+    </a></span>
+  </mat-toolbar-row>
+</mat-toolbar>
+@if (showMenu) {
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <button mat-icon-button [routerLink]="['/home']">
+        <mat-icon>garage</mat-icon> <span>My Garage</span>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+}
 
 <div id="mainContent" class="container mt-4">
   <router-outlet></router-outlet>
