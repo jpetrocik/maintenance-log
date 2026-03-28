@@ -8,7 +8,8 @@ import { MaintenanceService } from './maintenance.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 export class AppComponent implements OnInit {
   title = 'MaintenanceLog';
@@ -32,7 +33,6 @@ export class AppComponent implements OnInit {
     this.showMenu = !this.showMenu;
   }
 }
-
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

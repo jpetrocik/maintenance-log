@@ -8,11 +8,8 @@ import { MaintenanceService } from '../maintenance.service';
     standalone: false
 })
 export class HomeComponent implements OnInit {
+  constructor(public _maintenanceService: MaintenanceService) { }
 
-  constructor(public _maintenanceService: MaintenanceService,
-    ) { 
-  
-  }
-
-  // ngOnInit(): void {}\n
+  ngOnInit(): void {}
 }
+

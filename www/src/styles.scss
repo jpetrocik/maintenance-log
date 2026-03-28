@@ -28,22 +28,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     line-height: inherit;
     padding: 0;
   }
-  
-
-
-
-// Copy colour palettes individually
-$app-primary: mat-palette($mat-indigo);
-$app-accent: mat-palette($mat-pink);
-
-// Create variables to use in project
-$primary: mat-color($app-primary);
-$accent: mat-color($app-accent);
 
 .fw {
     width:100%;
 }
-
-
-
-

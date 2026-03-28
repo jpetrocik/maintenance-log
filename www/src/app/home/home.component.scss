@@ -1,27 +1,15 @@
-
-
-// Copy colour palettes individually
-$app-primary: mat-palette($mat-indigo);
-$app-accent: mat-palette($mat-pink);
-
-// Create variables to use in project
-$primary: mat-color($app-primary);
-$accent: mat-color($app-accent);
-
 #carList {
+  .mat-button-toggle-checked {
+    background-color: #3f51b5 !important;
+  }
+  
+  .mat-button-toggle {
+    margin-bottom: 9px;
+    background-color: #555;
+    color: #fff; 
+  }
 
-    .mat-button-toggle-checked {
-        background-color: $primary !important;
-    }
-    
-    .mat-button-toggle {
-        margin-bottom: 9px;
-        background-color: #555;
-        color: #fff; 
-    }
-
-    .mat-button-toggle-group {
-        border: none;
-    }
-
+  .mat-button-toggle-group {
+    border: none;
+  }
 }

@@ -108,7 +108,7 @@
   @if (showServiceHistory) {
     @for (serviceHistory of serviceHistoryAll; track serviceHistory) {
       <div>
-        <ml-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken"></ml-service-history>
+        <app-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken"></app-service-history>
       </div>
     }
   }

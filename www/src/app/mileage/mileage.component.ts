@@ -13,6 +13,7 @@ import { ShareComponent } from '../share/share.component';
     standalone: false
 })
 export class MileageComponent implements OnInit, AfterViewInit {
+  ngAfterViewInit(): void {}
   @ViewChild('mileage') mileageInput! : ElementRef;
 
   iToken!: string;

@@ -18,13 +18,16 @@ import { MatButtonModule } from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatInputModule} from '@angular/material/input';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule} from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-import { MatCardModule } from '@angular/material/card';
 import { VehicleRegistrationComponent } from './vehicle-registration/vehicle-registration.component';
 import { ShareComponent } from './share/share.component';
-import { MatDialogModule } from '@angular/material/dialog';
 import { ServiceHistoryComponent } from './mileage/service-history/service-history.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { CommonModule } from '@angular/common';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -34,10 +37,11 @@ import { ServiceHistoryComponent } from './mileage/service-history/service-histo
         LoginComponent,
         VehicleRegistrationComponent,
         ShareComponent,
-
+        ServiceHistoryComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
+        HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
@@ -50,7 +54,9 @@ import { ServiceHistoryComponent } from './mileage/service-history/service-histo
         MatFormFieldModule,
         MatCardModule,
         MatDialogModule,
-        HttpClientModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        CommonModule,
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: environment.production,
             registrationStrategy: 'registerWhenStable:30000'
@@ -64,6 +70,5 @@ import { ServiceHistoryComponent } from './mileage/service-history/service-histo
             multi: true,
             deps: [Router]
         },
-
     ] })
 export class AppModule { }
