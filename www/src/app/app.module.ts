@@ -28,16 +28,15 @@ import { ServiceHistoryComponent } from './mileage/service-history/service-histo
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
+import { ServiceModule } from './service/service.module';
+import { MileageModule } from './mileage/mileage.module';
+import { HomeModule } from './home/home.module';
+import { LoginModule } from './login/login.module';
+import { VehicleRegistrationModule } from './vehicle-registration/vehicle-registration.module';
 
 @NgModule({ declarations: [
         AppComponent,
-        MileageComponent,
-        ServiceComponent,
-        HomeComponent,
-        LoginComponent,
-        VehicleRegistrationComponent,
-        ShareComponent,
-        ServiceHistoryComponent
+        ShareComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
@@ -60,7 +59,12 @@ import { CommonModule } from '@angular/common';
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: environment.production,
             registrationStrategy: 'registerWhenStable:30000'
-        })], providers: [
+        }),
+        ServiceModule,
+        MileageModule,
+        HomeModule,
+        LoginModule,
+        VehicleRegistrationModule], providers: [
         { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
         {
             provide: HTTP_INTERCEPTORS,

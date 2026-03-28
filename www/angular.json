@@ -44,6 +44,7 @@
           },
           "configurations": {
             "production": {
+              "sourceMap": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -126,10 +127,7 @@
     }
   },
   "cli": {
-    "analytics": "52115726-d619-48ba-ac38-5760f358f3bc",
-    "schematicCollections": [
-      "angular-eslint"
-    ]
+    "analytics": "52115726-d619-48ba-ac38-5760f358f3bc"
   },
   "schematics": {
     "@schematics/angular:component": {
