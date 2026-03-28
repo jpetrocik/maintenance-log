@@ -1,7 +1,7 @@
 # AGENTS.md - Guidelines for Agentic Coding in Maintenance Log Repo
 
 This file provides essential commands and code conventions for AI coding agents working in this repository. The project consists of two main parts:
-- **Frontend (www/)**: Angular 13 application
+- **Frontend (www/)**: Angular 17 application
 - **Backend (server/)**: Node.js/Express/TypeScript API server with MySQL
 
 Always work in the appropriate subdirectory (cd www or cd server). Use `workdir` in Bash tool for commands.
