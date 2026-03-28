@@ -1,0 +1,16 @@
+{
+  "host": "https://cars.petrocik.net",
+  "database": {
+    "connectionLimit": 10,
+    "host": "database_hostname",
+    "user": "database_user",
+    "password": "database_password",
+    "database": "maintenance",
+    "debug": false,
+    "insecureAuth": true,
+    "dateStrings": true
+  },
+  "mail": {
+    "username": "no-reply@petrocik.net"
+  }
+}
