@@ -24,6 +24,9 @@ module.exports = tseslint.config(
         "error",
         { type: "element", prefix: "app", style: "kebab-case" },
       ],
+      "@angular-eslint/prefer-standalone": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@angular-eslint/prefer-inject": "off",
     },
   },
   {

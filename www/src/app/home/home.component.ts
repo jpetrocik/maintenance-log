@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MaintenanceService } from '../maintenance.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { MaintenanceService } from '../maintenance.service';
     styleUrls: ['./home.component.scss'],
     standalone: false
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   public _maintenanceService = inject(MaintenanceService);
 
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,7 +12,7 @@ import { ShareComponent } from '../share/share.component';
     styleUrls: ['./mileage.component.scss'],
     standalone: false
 })
-export class MileageComponent implements OnInit, AfterViewInit {
+export class MileageComponent implements OnInit {
 
   @ViewChild('mileage') mileageInput! : ElementRef;
 
@@ -70,7 +70,6 @@ export class MileageComponent implements OnInit, AfterViewInit {
    });
   }
 
-  // ngAfterViewInit():void {}\n
   reportMileage() {
     if (!this.vehicle) {
       return

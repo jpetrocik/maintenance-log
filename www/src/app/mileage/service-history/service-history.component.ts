@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { MaintenanceService, ServiceRecord } from '../../maintenance.service';
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 
@@ -8,7 +8,7 @@ import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms
   styleUrls: ['./service-history.component.scss'],
   standalone: false
 })
-export class ServiceHistoryComponent implements OnInit, OnChanges {
+export class ServiceHistoryComponent implements OnChanges {
 
   @Input() serviceRecord!: ServiceRecord;
   @Input() invitationToken!: string;
@@ -37,7 +37,6 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
   });
 
   private maintenanceService = inject(MaintenanceService);
-
 
 
   ngOnChanges(changes: SimpleChanges): void {

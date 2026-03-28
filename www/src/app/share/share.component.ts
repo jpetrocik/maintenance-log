@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MaintenanceService } from '../maintenance.service';
 
 
@@ -14,7 +14,7 @@ export interface ShareData {
     styleUrls: ['./share.component.scss'],
     standalone: false
 })
-export class ShareComponent implements OnInit {
+export class ShareComponent {
 
   shareForm: UntypedFormGroup = new UntypedFormGroup({
     email: new UntypedFormControl('', [
@@ -23,6 +23,7 @@ export class ShareComponent implements OnInit {
   });
   emailSent = false;
 
+  public data = inject<ShareData>(MAT_DIALOG_DATA);
   private dialogRef = inject(MatDialogRef<ShareComponent>);
   private maintenanceService = inject(MaintenanceService);
   

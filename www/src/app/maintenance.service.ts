@@ -76,15 +76,15 @@ export class MaintenanceService {
   }
 
   public login(email: string, authToken: string) : Observable<Vehicle[]> {
-    return this.httpClient.get(`/api/login?email=${email}&authToken=${authToken}`).pipe(
+    return this.httpClient.get<Vehicle[]>(`/api/login?email=${email}&authToken=${authToken}`).pipe(
       map((data) => {
         this.loadMyGarage();
         return data;
       }));;
   }
 
-  public sendAuth(email: string) : Observable<void> {
-    return this.httpClient.get(`/api/sendAuth?email=${email}`);
+  public sendAuth(email: string) : Observable<unknown> {
+    return this.httpClient.get<unknown>(`/api/sendAuth?email=${email}`);
   }
 
   public serviceDue(invitationToken: string) : Observable<ServiceDueRecord[]> {

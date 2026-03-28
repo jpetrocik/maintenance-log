@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MaintenanceService } from '../maintenance.service';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./vehicle-registration.component.scss'],
     standalone: false
 })
-export class VehicleRegistrationComponent implements OnInit {
+export class VehicleRegistrationComponent {
 
   registerForm: UntypedFormGroup = new UntypedFormGroup({
     year: new UntypedFormControl("", [
