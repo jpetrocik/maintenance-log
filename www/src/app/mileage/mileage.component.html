@@ -1,5 +1,5 @@
 <div>
-  <div style="float:right"><mat-icon (click)="openShareDialog()">share</mat-icon></div>
+  <div style="float:right"><mat-icon (click)="openShareDialog()" (keyup.enter)="openShareDialog()" tabindex="0" role="button">share</mat-icon></div>
   <h1 style="margin-bottom: 0px;">{{vehicle?.name}}</h1>
   @if (vehicle?.vin) {
     <h3 style="margin-bottom: 0px;">{{vehicle?.vin}} @if (vehicle?.license) {
@@ -21,7 +21,7 @@
 </div>
 
 <div style="margin-top: 35px;">
-  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceDue()">Service Due @if (pastDueService) {
+  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceDue()" (keyup.enter)="toggleSeviceDue()" tabindex="0" role="button">Service Due @if (pastDueService) {
     <mat-icon class="service_pastdue">warning</mat-icon>
     } @if (upcomingService) {
     <mat-icon class="service_upcoming">warning</mat-icon>
@@ -37,7 +37,7 @@
           </mat-card-header>
           <mat-card-content>
             @if (addNote) {
-              <p style="opacity: 50%" (click)="enableNote()">more</p>
+              <p style="opacity: 50%" (click)="enableNote()" (keyup.enter)="enableNote()" tabindex="0" role="button">more</p>
             }
             @if (addNote) {
               <p>
@@ -75,7 +75,7 @@
               <input matInput name="description" placeholder="description" formControlName="description"/>
             </mat-form-field>
             @if (!additionalFields) {
-              <div class="additionalFields" (click)="showAdditionalFields()">Additional Fields</div>
+              <div class="additionalFields" (click)="showAdditionalFields()" (keyup.enter)="showAdditionalFields()" tabindex="0" role="button">Additional Fields</div>
             }
             @if (additionalFields) {
               <div>
@@ -103,7 +103,7 @@
 </div>
 
 <div style="margin-top: 35px;">
-  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceHistory()">Service History</h2>
+  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceHistory()" (keyup.enter)="toggleSeviceHistory()" tabindex="0" role="button">Service History</h2>
   <hr style="margin-top: 0px;"/>
   @if (showServiceHistory) {
     @for (serviceHistory of serviceHistoryAll; track serviceHistory) {
@@ -115,7 +115,7 @@
 </div>
 
 <div style="margin-top: 35px;">
-  <h2 style="margin-bottom: 0px;"  (click)="toggleScheduledMaintenance()">Scheduled Maintenance</h2>
+  <h2 style="margin-bottom: 0px;"  (click)="toggleScheduledMaintenance()" (keyup.enter)="toggleScheduledMaintenance()" tabindex="0" role="button">Scheduled Maintenance</h2>
   <hr style="margin-top: 0px;"/>
   @if (showScheduledMaintenance) {
     @for (scheduledMaintenance of scheduledMaintenanceAll; track scheduledMaintenance) {

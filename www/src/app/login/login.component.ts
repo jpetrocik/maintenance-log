@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaintenanceService } from '../maintenance.service';
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
@@ -11,18 +11,17 @@ import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms
 })
 export class LoginComponent implements OnInit {
 
-  loginForm: UntypedFormGroup;
+  loginForm: UntypedFormGroup = new UntypedFormGroup({
+    email: new UntypedFormControl("", [
+      Validators.required,
+    ]),
+  });
   authSent = false;
 
-  constructor(private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private maintenanceService: MaintenanceService) {
-      this.loginForm = new UntypedFormGroup({
-        email: new UntypedFormControl("", [
-          Validators.required,
-        ]),
-      });
-     }
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private maintenanceService = inject(MaintenanceService);
+
 
   ngOnInit(): void {
 

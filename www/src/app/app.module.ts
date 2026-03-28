@@ -4,9 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent, AuthInterceptor } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { MileageComponent } from './mileage/mileage.component';
-import { ServiceComponent } from './service/service.component';
-import { HomeComponent } from './home/home.component';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -21,10 +19,7 @@ import {MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule} from '@angular/mater
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { VehicleRegistrationComponent } from './vehicle-registration/vehicle-registration.component';
-import { ShareComponent } from './share/share.component';
-import { ServiceHistoryComponent } from './mileage/service-history/service-history.component';
+
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { MaintenanceService, ServiceDueRecord, Vehicle } from '../maintenance.service';
@@ -14,12 +14,9 @@ export class ServiceComponent {
   selectedVehicle?: Vehicle;
   serviceRecords?: ServiceDueRecord[];
   
-  constructor(public _maintenanceService: MaintenanceService,
-    private _snackBar: MatSnackBar,
-    private _router: Router
-    ) { 
-  }
-
+  public _maintenanceService = inject(MaintenanceService);
+  private _snackBar = inject(MatSnackBar);
+  private _router = inject(Router);
   selectVehicle(vehicle: Vehicle) {
     this.selectedVehicle = vehicle;
 

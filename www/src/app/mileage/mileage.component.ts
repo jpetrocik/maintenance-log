@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,59 +13,52 @@ import { ShareComponent } from '../share/share.component';
     standalone: false
 })
 export class MileageComponent implements OnInit, AfterViewInit {
-  ngAfterViewInit(): void {}
+
   @ViewChild('mileage') mileageInput! : ElementRef;
 
   iToken!: string;
   vehicle!: VehicleDetails | undefined;
-  mileageForm: FormGroup; 
-  serviceForm: FormGroup
-  scheduleMaintenanceForm: FormGroup
+  mileageForm: FormGroup = new FormGroup({
+    mileage: new FormControl('', [
+      Validators.required
+    ]),
+  });
+  serviceForm: FormGroup = new FormGroup({
+    description: new FormControl("", [
+      Validators.required,
+    ]),
+    cost: new FormControl("", [
+    ]),
+    note: new FormControl("", [
+    ]),
+  });
+  scheduleMaintenanceForm: FormGroup = new FormGroup({
+    mileage: new FormControl("", [
+      Validators.required,
+    ]),
+    months: new FormControl("", [
+      Validators.required,
+    ]),
+    description: new FormControl("", [
+      Validators.required,
+    ]),
+  });
   serviceDueAll!: ServiceDueRecord[];
   serviceHistoryAll!: ServiceRecord[];
   scheduledMaintenanceAll!: ScheduledMaintenance[];
   addNote = false;
   additionalFields = false;
-  showServiceHistory = false
+  showServiceHistory = false;
   showServiceDue = false;
   showScheduledMaintenance = false;
   pastDueService = false;
   upcomingService = false;
 
-  constructor(public _maintenanceService: MaintenanceService,
-    private _snackBar: MatSnackBar,
-    private _route: ActivatedRoute,
-    private dialog: MatDialog
-    ) { 
-    this.mileageForm = new FormGroup({
-      mileage: new FormControl('', [
-        Validators.required
-      ]),
-    })
+  public _maintenanceService = inject(MaintenanceService);
+  private _snackBar = inject(MatSnackBar);
+  private _route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
 
-    this.serviceForm = new FormGroup({
-      description: new FormControl("", [
-        Validators.required,
-      ]),
-      cost: new FormControl("", [
-      ]),
-      note: new FormControl("", [
-      ]),
-    });
-
-    this.scheduleMaintenanceForm = new FormGroup({
-      mileage: new FormControl("", [
-        Validators.required,
-      ]),
-      months: new FormControl("", [
-        Validators.required,
-      ]),
-      description: new FormControl("", [
-        Validators.required,
-      ]),
-    });
-
-  }
 
   ngOnInit(): void {
     this._route.params.subscribe((params) => {

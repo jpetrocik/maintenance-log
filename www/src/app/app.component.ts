@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationStart, Router } from '@angular/router';
 import { Observable, of, throwError, catchError } from 'rxjs';
@@ -16,11 +16,10 @@ export class AppComponent implements OnInit {
 
   showMenu = false;
 
-  constructor(public _maintenanceService: MaintenanceService,
-    private _snackBar: MatSnackBar,
-    private _router: Router
-    ) { 
-  }
+  public _maintenanceService = inject(MaintenanceService);
+  private _snackBar = inject(MatSnackBar);
+  private _router = inject(Router);
+
 
   public ngOnInit() {
     this._router.events.subscribe((event) => {
@@ -36,9 +35,11 @@ export class AppComponent implements OnInit {
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-    constructor(private router: Router) { }
+    private router = inject(Router);
 
-    private handleAuthError(err: HttpErrorResponse): Observable<any> {
+
+
+    private handleAuthError(err: HttpErrorResponse): Observable<never> {
         if (err.status === 401 || err.status === 403) {
             this.router.navigateByUrl(`/login`);
             return of();

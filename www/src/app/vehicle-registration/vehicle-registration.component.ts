@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MaintenanceService } from '../maintenance.service';
 import { Router } from '@angular/router';
@@ -11,32 +11,29 @@ import { Router } from '@angular/router';
 })
 export class VehicleRegistrationComponent implements OnInit {
 
-  registerForm: UntypedFormGroup;
+  registerForm: UntypedFormGroup = new UntypedFormGroup({
+    year: new UntypedFormControl("", [
+      Validators.required,
+    ]),
+    make: new UntypedFormControl("", [
+      Validators.required,
+    ]),
+    model: new UntypedFormControl("", [
+      Validators.required,
+    ]),
+    trim: new UntypedFormControl("", []),
+    mileage: new UntypedFormControl("", [
+      Validators.required,
+    ]),
+    license: new UntypedFormControl("", []),
+    vin: new UntypedFormControl("", []),
 
-  constructor(public _maintenanceService: MaintenanceService,
-    private _router: Router) { 
-    this.registerForm = new UntypedFormGroup({
-      year: new UntypedFormControl("", [
-        Validators.required,
-      ]),
-      make: new UntypedFormControl("", [
-        Validators.required,
-      ]),
-      model: new UntypedFormControl("", [
-        Validators.required,
-      ]),
-      trim: new UntypedFormControl("", []),
-      mileage: new UntypedFormControl("", [
-        Validators.required,
-      ]),
-      license: new UntypedFormControl("", []),
-      vin: new UntypedFormControl("", []),
+  });
 
-    });
-  }
+  public _maintenanceService = inject(MaintenanceService);
+  private _router = inject(Router);
 
-  ngOnInit(): void {
-  }
+
 
   register() {
     this._maintenanceService.registerVehicle(this.registerForm.value).subscribe(() => {

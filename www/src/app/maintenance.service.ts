@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 
 export interface Vehicle {
@@ -57,12 +57,11 @@ export class MaintenanceService {
 
   private _myGarage = new BehaviorSubject<Vehicle[]>([]);
 
-  myGarage$: Observable<Vehicle[]>;
+  myGarage$: Observable<Vehicle[]> = this._myGarage.asObservable();
 
-  constructor(private httpClient: HttpClient
-  ) {
-    this.myGarage$ = this._myGarage.asObservable();
+  private httpClient = inject(HttpClient);
 
+  constructor() {
     this.loadMyGarage();
   }
 
@@ -72,11 +71,11 @@ export class MaintenanceService {
     });
   }
 
-  public submitMileage(invitationToken: string, mileage: number) : Observable<any> {
+  public submitMileage(invitationToken: string, mileage: number) : Observable<Vehicle[]> {
     return this.httpClient.put<Vehicle[]>(`/api/vehicle/${invitationToken}/mileage/${mileage}`, '');
   }
 
-  public login(email: string, authToken: string) : Observable<any> {
+  public login(email: string, authToken: string) : Observable<Vehicle[]> {
     return this.httpClient.get(`/api/login?email=${email}&authToken=${authToken}`).pipe(
       map((data) => {
         this.loadMyGarage();
@@ -84,7 +83,7 @@ export class MaintenanceService {
       }));;
   }
 
-  public sendAuth(email: string) : Observable<any> {
+  public sendAuth(email: string) : Observable<void> {
     return this.httpClient.get(`/api/sendAuth?email=${email}`);
   }
 
@@ -92,11 +91,11 @@ export class MaintenanceService {
     return this.httpClient.get<ServiceDueRecord[]>(`/api/vehicle/${invitationToken}/service`)
   }
 
-  public serviceCompleted(invitationToken: string, serviceDue: ServiceDueRecord) : Observable<any> {
+  public serviceCompleted(invitationToken: string, serviceDue: ServiceDueRecord) : Observable<ServiceDueRecord[]> {
     return this.httpClient.post<ServiceDueRecord[]>(`/api/vehicle/${invitationToken}/service`, serviceDue)
   }
 
-  public registerVehicle(vehicle: any) : Observable<any> {
+  public registerVehicle(vehicle: VehicleDetails) : Observable<ServiceDueRecord[]> {
     return this.httpClient.post<ServiceDueRecord[]>(`/api/vehicle`, vehicle).pipe(
       map((data) => {
         this.loadMyGarage();
@@ -112,11 +111,11 @@ export class MaintenanceService {
     return this.httpClient.get<ScheduledMaintenance[]>(`/api/vehicle/${invitationToken}/maintenance`)
   }
 
-  public adScheduledMaintenace(invitationToken: string, scheduledMaintenace: any) : Observable<any> {
+  public adScheduledMaintenace(invitationToken: string, scheduledMaintenace: ScheduledMaintenance) : Observable<ScheduledMaintenance[]> {
     return this.httpClient.post<ScheduledMaintenance[]>(`/api/vehicle/${invitationToken}/maintenance`, scheduledMaintenace)
   }
 
-  public shareVehicle(invitationToken: string, email: string) : Observable<any> {
+  public shareVehicle(invitationToken: string, email: string) : Observable<ScheduledMaintenance[]> {
     return this.httpClient.put<ScheduledMaintenance[]>(`/api/vehicle/${invitationToken}/share`, { email: email });
   }
 
@@ -124,7 +123,7 @@ export class MaintenanceService {
     return this.httpClient.get<VehicleDetails>(`/api/vehicle/${invitationToken}`);
   }
 
-  public updateServiceRecord(invitationToken: string, serviceRecord: ServiceRecord) : Observable<any> {
+  public updateServiceRecord(invitationToken: string, serviceRecord: ServiceRecord) : Observable<VehicleDetails> {
     return this.httpClient.put<VehicleDetails>(`/api/vehicle/${invitationToken}/history`, serviceRecord);
   }
 

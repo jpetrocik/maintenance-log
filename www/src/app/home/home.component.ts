@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MaintenanceService } from '../maintenance.service';
 
 @Component({
@@ -8,8 +8,8 @@ import { MaintenanceService } from '../maintenance.service';
     standalone: false
 })
 export class HomeComponent implements OnInit {
-  constructor(public _maintenanceService: MaintenanceService) { }
+  public _maintenanceService = inject(MaintenanceService);
 
-  ngOnInit(): void {}
+
 }
 
