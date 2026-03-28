@@ -124,7 +124,6 @@
       }
     }
   },
-  "defaultProject": "MaintenanceLog",
   "cli": {
     "analytics": "52115726-d619-48ba-ac38-5760f358f3bc",
     "schematicCollections": [

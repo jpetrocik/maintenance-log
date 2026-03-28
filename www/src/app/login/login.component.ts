@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MaintenanceService } from '../maintenance.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -10,14 +10,14 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
 
-  loginForm: FormGroup;
+  loginForm: UntypedFormGroup;
   authSent = false;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
     private maintenanceService: MaintenanceService) {
-      this.loginForm = new FormGroup({
-        email: new FormControl("", [
+      this.loginForm = new UntypedFormGroup({
+        email: new UntypedFormControl("", [
           Validators.required,
         ]),
       });

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MaintenanceService, ServiceRecord } from '../../maintenance.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-service-history',\n  templateUrl: './service-history.component.html',
@@ -12,28 +12,28 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
   @Input() invitationToken!: string;
 
   showEditForm = false;
-  serviceRecordFormGroup: FormGroup;
+  serviceRecordFormGroup: UntypedFormGroup;
 
   constructor(private maintenanceService: MaintenanceService) {
-    this.serviceRecordFormGroup = new FormGroup({
-      id: new FormControl("", [
+    this.serviceRecordFormGroup = new UntypedFormGroup({
+      id: new UntypedFormControl("", [
         Validators.required,
       ]),
-      carId: new FormControl("", [
+      carId: new UntypedFormControl("", [
         Validators.required,
       ]),
-      description: new FormControl("", [
+      description: new UntypedFormControl("", [
         Validators.required,
       ]),
-      mileage: new FormControl("", [
+      mileage: new UntypedFormControl("", [
         Validators.required,
       ]),
-      serviceDate: new FormControl("", [
+      serviceDate: new UntypedFormControl("", [
         Validators.required,
       ]),
-      cost: new FormControl("", [
+      cost: new UntypedFormControl("", [
       ]),
-      note: new FormControl("", [
+      note: new UntypedFormControl("", [
       ]),
     });
   }

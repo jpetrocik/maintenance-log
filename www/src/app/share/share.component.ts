@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\nimport { MaintenanceService } from '../maintenance.service';
 
 export interface ShareData {
@@ -13,15 +13,15 @@ export interface ShareData {
 })
 export class ShareComponent implements OnInit {
 
-  shareForm: FormGroup;
+  shareForm: UntypedFormGroup;
   emailSent = false;
 
   constructor(private dialogRef: MatDialogRef<ShareComponent>,
     private maintenanceService: MaintenanceService,
     @Inject(MAT_DIALOG_DATA) public data: ShareData,) { 
 
-    this.shareForm = new FormGroup({
-      email: new FormControl('', [
+    this.shareForm = new UntypedFormGroup({
+      email: new UntypedFormControl('', [
         Validators.required
       ]),
     })

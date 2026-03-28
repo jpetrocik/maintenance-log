@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MaintenanceService } from '../maintenance.service';
 import { Router } from '@angular/router';
 
@@ -10,26 +10,26 @@ import { Router } from '@angular/router';
 })
 export class VehicleRegistrationComponent implements OnInit {
 
-  registerForm: FormGroup;
+  registerForm: UntypedFormGroup;
 
   constructor(public _maintenanceService: MaintenanceService,
     private _router: Router) { 
-    this.registerForm = new FormGroup({
-      year: new FormControl("", [
+    this.registerForm = new UntypedFormGroup({
+      year: new UntypedFormControl("", [
         Validators.required,
       ]),
-      make: new FormControl("", [
+      make: new UntypedFormControl("", [
         Validators.required,
       ]),
-      model: new FormControl("", [
+      model: new UntypedFormControl("", [
         Validators.required,
       ]),
-      trim: new FormControl("", []),
-      mileage: new FormControl("", [
+      trim: new UntypedFormControl("", []),
+      mileage: new UntypedFormControl("", [
         Validators.required,
       ]),
-      license: new FormControl("", []),
-      vin: new FormControl("", []),
+      license: new UntypedFormControl("", []),
+      vin: new UntypedFormControl("", []),
 
     });
   }
