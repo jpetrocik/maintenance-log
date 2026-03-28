@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import {MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef} from '@angular/material/legacy-dialog';\nimport { MaintenanceService } from '../maintenance.service';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\nimport { MaintenanceService } from '../maintenance.service';
 
 export interface ShareData {
   invitationToken: string;
