@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -30,11 +30,9 @@ import { LoginModule } from './login/login.module';
 import { VehicleRegistrationModule } from './vehicle-registration/vehicle-registration.module';
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthService } from './auth.service';
-import { Observable } from 'rxjs';
 
-function initializeAppFactory(authService: AuthService): () => Observable<any> {
-  return () => authService.verifySession();
-}
+
+
 
 @NgModule({
     declarations: [
@@ -69,13 +67,7 @@ function initializeAppFactory(authService: AuthService): () => Observable<any> {
         LoginModule,
         VehicleRegistrationModule], providers: [
             { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
-            { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-            {
-                provide: APP_INITIALIZER,
-                useFactory: initializeAppFactory,
-                deps: [AuthService],
-                multi: true
-            }
+            { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
         ]
 })
 export class AppModule { }
