@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Serve static files from the Angular app
-app.use(express.static(path.join(__dirname, '../../www/dist/maintenance-log')));
+app.use(express.static(path.join(__dirname, '../../www/dist/maintenance-log/browser')));
 
 //Import api routes under /api
 app.use('/api', apiRoutes);
@@ -35,7 +35,7 @@ app.use('/api', apiRoutes);
 
 // For all other routes, serve the Angular app's index.html
 app.get('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../../www/dist/maintenance-log/index.html'));
+  res.sendFile(path.join(__dirname, '../../www/dist/maintenance-log/browser/index.html'));
 });
 
 app.listen(3000, function () {
