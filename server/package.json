@@ -15,8 +15,7 @@
     "jsonwebtoken": "^9.0.3",
     "moment": "^2.22.2",
     "mysql2": "^3.6.5",
-    "nodemailer": "^6.9.7",
-    "plivo": "^4.1.2"
+    "nodemailer": "^6.9.7"
   },
   "author": "John Petrocik",
   "license": "ISC",
