@@ -5,6 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ShareComponent } from '../share/share.component';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-mileage',
@@ -17,7 +19,7 @@ export class MileageComponent implements OnInit {
   @ViewChild('mileage') mileageInput! : ElementRef;
 
   iToken!: string;
-  vehicle!: VehicleDetails | undefined;
+  vehicle$!: Observable<VehicleDetails | undefined>;
   mileageForm: FormGroup = new FormGroup({
     mileage: new FormControl('', [
       Validators.required
@@ -61,21 +63,20 @@ export class MileageComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this._route.params.subscribe((params) => {
-      this.iToken = params['iToken'];
-      this._maintenanceService.vehicleDetails(this.iToken).subscribe((data) =>{
-        this.vehicle = data;
+    this.vehicle$ = this._route.params.pipe(
+      switchMap(params => {
+        const iToken = params['iToken'];
+        if (iToken) {
+          this.iToken = iToken; // Keep iToken if needed elsewhere
+          this.loadServiceDue(iToken);
+          return this._maintenanceService.vehicleDetails(iToken);
+        }
+        return of(undefined); // Return an observable of undefined if no token
       })
-      this.loadServiceDue(this.iToken);
-   });
-  }
+    );
+   }
 
   reportMileage() {
-    if (!this.vehicle) {
-      return
-    }
-
-    //TODO Car description does not refersh
     this._maintenanceService.submitMileage(this.iToken, this.mileageForm.controls['mileage'].value).subscribe({
       next: () => {
 

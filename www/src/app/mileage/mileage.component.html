@@ -1,13 +1,24 @@
-<div>
-  <div style="float:right"><mat-icon (click)="openShareDialog()" (keyup.enter)="openShareDialog()" tabindex="0" role="button">share</mat-icon></div>
-  <h1 style="margin-bottom: 0px;">{{vehicle?.name}}</h1>
-  @if (vehicle?.vin) {
-    <h3 style="margin-bottom: 0px;">{{vehicle?.vin}} @if (vehicle?.license) {
-      <span>(Lic: {{vehicle?.license}})</span>
-    }</h3>
-  }
-  <h3>Mileage: {{vehicle?.mileage}} ({{vehicle?.mileageReportedDays}} days age)</h3>
-</div>
+@if (vehicle$ | async; as vehicle) {
+  <div>
+    <div style="float:right"><mat-icon (click)="openShareDialog()" (keyup.enter)="openShareDialog()" tabindex="0" role="button">share</mat-icon></div>
+    <h1 style="margin-bottom: 0px;">{{vehicle.name}}</h1>
+    @if (vehicle.vin) {
+      <h3 style="margin-bottom: 0px;">
+        <span>Vin: {{vehicle.vin}}</span>
+      </h3>
+    }
+    @if (vehicle.license) {
+      <h3 style="margin-bottom: 0px;">
+        <span>Lic: {{vehicle.license}}</span>
+      </h3>
+    }
+    <h3>Mileage: {{vehicle.mileage}} ({{vehicle.mileageReportedDays}} days age)</h3>
+  </div>
+} @else {
+  <div>
+    <p>Loading vehicle details...</p>
+  </div>
+}
 
 <div id="mileageForm">
   <h2 style="margin-bottom: 0px;">Report Mileage</h2>
