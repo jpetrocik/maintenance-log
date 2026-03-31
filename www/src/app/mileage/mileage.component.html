@@ -1,171 +1,177 @@
 @if (vehicle$ | async; as vehicle) {
-  <div>
-    <div style="float:right"><mat-icon (click)="openShareDialog()" (keyup.enter)="openShareDialog()" tabindex="0" role="button">share</mat-icon></div>
-    <h1 style="margin-bottom: 0px;">{{vehicle.name}} <a class="edit-link" [routerLink]="['/my-garage/register', iToken]"><mat-icon class="edit-icon">edit</mat-icon></a></h1>
-    @if (vehicle.vin) {
-      <h3 style="margin-bottom: 0px;">
-        <span>Vin: {{vehicle.vin}}</span>
-      </h3>
-    }
-    @if (vehicle.license) {
-      <h3 style="margin-bottom: 0px;">
-        <span>Lic: {{vehicle.license}}</span>
-      </h3>
-    }
-    <h3>Mileage: {{vehicle.mileage}} ({{vehicle.mileageReportedDays}} days age)</h3>
-  </div>
+<div>
+  <div style="float:right"><mat-icon (click)="openShareDialog()" (keyup.enter)="openShareDialog()" tabindex="0"
+      role="button">share</mat-icon></div>
+  <h1 style="margin-bottom: 0px;">{{vehicle.name}} <a class="edit-link"
+      [routerLink]="['/my-garage/register', iToken]"><mat-icon class="edit-icon">edit</mat-icon></a></h1>
+  @if (vehicle.vin) {
+  <h3 style="margin-bottom: 0px;">
+    <span>Vin: {{vehicle.vin}}</span>
+  </h3>
+  }
+  @if (vehicle.license) {
+  <h3 style="margin-bottom: 0px;">
+    <span>Lic: {{vehicle.license}}</span>
+  </h3>
+  }
+  <h3>Mileage: {{vehicle.mileage}} ({{vehicle.mileageReportedDays}} days age)</h3>
+</div>
 } @else {
-  <div>
-    <p>Loading vehicle details...</p>
-  </div>
+<div>
+  <p>Loading vehicle details...</p>
+</div>
 }
 
 <div id="mileageForm">
   <h2 style="margin-bottom: 0px;">Report Mileage</h2>
-  <hr style="margin-top: 0px;"/>
+  <hr style="margin-top: 0px;" />
   <form [formGroup]="mileageForm" (ngSubmit)="reportMileage()">
     <mat-form-field class="fw">
-      <input matInput #mileage style="text-align: center;" name="mileage" placeholder="report mileage" formControlName="mileage" type="number"/>
+      <input matInput #mileage style="text-align: center;" name="mileage" placeholder="report mileage"
+        formControlName="mileage" type="number" />
     </mat-form-field>
     <button mat-flat-button class="btn" [disabled]="!mileageForm.valid" color="primary">Submit</button>
   </form>
 </div>
 
 <div style="margin-top: 35px;">
-  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceDue()" (keyup.enter)="toggleSeviceDue()" tabindex="0" role="button">
+  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceDue()" (keyup.enter)="toggleSeviceDue()" tabindex="0"
+    role="button">
     @if (pastDueService || upcomingService) {
     <mat-icon [ngClass]="pastDueService ? 'service_pastdue' : 'service_upcoming'">warning</mat-icon>
-    } 
-    Service Due 
-    <mat-icon>{{showServiceDue ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon> 
+    }
+    Service Due
+    <mat-icon>{{showServiceDue ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
   </h2>
-  <hr style="margin-top: 0px;"/>
+  <hr style="margin-top: 0px;" />
   @if (showServiceDue) {
-    @for (serviceDue of serviceDueAll; track serviceDue) {
-      <div>
-        <mat-card class="serviceDue">
-          <mat-card-header>
-            <mat-card-title>{{serviceDue.description}}</mat-card-title>
-            <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles ({{serviceDue.dueDays}} days)</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            @if (addNote) {
-              <p style="opacity: 50%" (click)="enableNote()" (keyup.enter)="enableNote()" tabindex="0" role="button">more</p>
-            }
-            @if (addNote) {
-              <p>
-                <mat-form-field class="fw">
-                  <input matInput name="serviceMileage" placeholder="mileage" type="number"/>
-                </mat-form-field>
-                <mat-form-field class="fw">
-                  <input matInput name="serviceCost" placeholder="cost" type="number"/>
-                </mat-form-field>
-                <mat-form-field>
-                  <mat-label>Note</mat-label>
-                  <textarea matInput
-                    cdkTextareaAutosize
-                    #autosize="cdkTextareaAutosize"
-                    cdkAutosizeMinRows="3"
-                  cdkAutosizeMaxRows="5"></textarea>
-                </mat-form-field>
-              </p>
-            }
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-flat-button class="btn" color="primary" (click)="serviceCompleted(serviceDue)">Completed</button>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    }
-    <div>
-      <mat-card class="serviceDue">
-        <mat-card-header>
-          <mat-card-title>Add Service</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="serviceForm" (ngSubmit)="addService()">
+  @for (serviceDue of serviceDueAll; track serviceDue) {
+  <div>
+    <mat-card class="serviceDue">
+      <mat-card-header>
+        <mat-card-title>{{serviceDue.description}}</mat-card-title>
+        <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles
+          ({{serviceDue.dueDays}} days)</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (addNote) {
+        <p style="opacity: 50%" (click)="enableNote()" (keyup.enter)="enableNote()" tabindex="0" role="button">more</p>
+        }
+        @if (addNote) {
+        <p>
+          <mat-form-field class="fw">
+            <input matInput name="serviceMileage" placeholder="mileage" type="number" />
+          </mat-form-field>
+          <mat-form-field class="fw">
+            <input matInput name="serviceCost" placeholder="cost" type="number" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Note</mat-label>
+            <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="3"
+              cdkAutosizeMaxRows="5"></textarea>
+          </mat-form-field>
+        </p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button class="btn" color="primary" (click)="serviceCompleted(serviceDue)">Completed</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+  }
+  <div>
+    <mat-card class="serviceDue">
+      <mat-card-header>
+        <mat-card-title>Add Service</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="serviceForm" (ngSubmit)="addService()">
+          <mat-form-field class="fw">
+            <input matInput name="description" placeholder="description" formControlName="description"
+              [matAutocomplete]="auto" />
+            <mat-autocomplete #auto="matAutocomplete">
+              @for (option of filteredServiceDescriptions$ | async; track option) {
+              <mat-option [value]="option">{{option}}</mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+          @if (!additionalFields) {
+          <div class="additionalFields" (click)="showAdditionalFields()" (keyup.enter)="showAdditionalFields()"
+            tabindex="0" role="button">Additional Fields</div>
+          }
+          @if (additionalFields) {
+          <div>
             <mat-form-field class="fw">
-              <input matInput name="description" placeholder="description" formControlName="description" [matAutocomplete]="auto"/>
-              <mat-autocomplete #auto="matAutocomplete">
-                @for (option of filteredServiceDescriptions$ | async; track option) {
-                  <mat-option [value]="option">{{option}}</mat-option>
-                }
-              </mat-autocomplete>
+              <input matInput name="cost" placeholder="cost" formControlName="cost" type="number" />
             </mat-form-field>
-            @if (!additionalFields) {
-              <div class="additionalFields" (click)="showAdditionalFields()" (keyup.enter)="showAdditionalFields()" tabindex="0" role="button">Additional Fields</div>
-            }
-            @if (additionalFields) {
-              <div>
-                <mat-form-field class="fw">
-                  <input matInput name="cost" placeholder="cost" formControlName="cost" type="number"/>
-                </mat-form-field>
-                <mat-form-field class="fw">
-                  <mat-label>Note</mat-label>
-                  <textarea matInput
-                    name="note"
-                    formControlName="note"
-                    cdkTextareaAutosize
-                    #autosize="cdkTextareaAutosize"
-                    cdkAutosizeMinRows="3"
-                  cdkAutosizeMaxRows="5"></textarea>
-                </mat-form-field>
-              </div>
-            }
-            <button mat-flat-button class="btn" color="primary" [disabled]="!serviceForm.valid" type="submit">Add Service</button>
-          </form>
-        </mat-card-content>
-      </mat-card>
-    </div>
+            <mat-form-field class="fw">
+              <mat-label>Note</mat-label>
+              <textarea matInput name="note" formControlName="note" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"></textarea>
+            </mat-form-field>
+          </div>
+          }
+          <button mat-flat-button class="btn" color="primary" [disabled]="!serviceForm.valid" type="submit">Add
+            Service</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
   }
 </div>
 
 <div style="margin-top: 35px;">
-  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceHistory()" (keyup.enter)="toggleSeviceHistory()" tabindex="0" role="button">Service History <mat-icon>{{showServiceHistory ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon></h2>
-  <hr style="margin-top: 0px;"/>
+  <h2 style="margin-bottom: 0px;" (click)="toggleSeviceHistory()" (keyup.enter)="toggleSeviceHistory()" tabindex="0"
+    role="button">Service History <mat-icon>{{showServiceHistory ? 'keyboard_arrow_up' :
+      'keyboard_arrow_down'}}</mat-icon></h2>
+  <hr style="margin-top: 0px;" />
   @if (showServiceHistory) {
-    @for (serviceHistory of serviceHistoryAll; track serviceHistory) {
-      <div>
-        <app-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken"></app-service-history>
-      </div>
-    }
+  @for (serviceHistory of serviceHistoryAll; track serviceHistory) {
+  <div>
+    <app-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken"></app-service-history>
+  </div>
+  }
   }
 </div>
 
 <div style="margin-top: 35px;">
-  <h2 style="margin-bottom: 0px;"  (click)="toggleScheduledMaintenance()" (keyup.enter)="toggleScheduledMaintenance()" tabindex="0" role="button">Scheduled Maintenance <mat-icon>{{showScheduledMaintenance ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon></h2>
-  <hr style="margin-top: 0px;"/>
+  <h2 style="margin-bottom: 0px;" (click)="toggleScheduledMaintenance()" (keyup.enter)="toggleScheduledMaintenance()"
+    tabindex="0" role="button">Scheduled Maintenance <mat-icon>{{showScheduledMaintenance ? 'keyboard_arrow_up' :
+      'keyboard_arrow_down'}}</mat-icon></h2>
+  <hr style="margin-top: 0px;" />
   @if (showScheduledMaintenance) {
-    @for (scheduledMaintenance of scheduledMaintenanceAll; track scheduledMaintenance) {
-      <div>
-        <mat-card class="serviceDue">
-          <mat-card-header>
-            <mat-card-title>{{scheduledMaintenance.description}}</mat-card-title>
-            <mat-card-subtitle>{{scheduledMaintenance.mileage}} miles ({{scheduledMaintenance.months}} months)</mat-card-subtitle>
-          </mat-card-header>
-        </mat-card>
-      </div>
-    }
-    <div>
-      <mat-card class="serviceDue">
-        <mat-card-header>
-          <mat-card-title>Add Scheduled Maintenance</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="scheduleMaintenanceForm" (ngSubmit)="addScheduledMaintenance()">
-            <mat-form-field class="fw">
-              <input matInput name="description" placeholder="description" formControlName="description"/>
-            </mat-form-field>
-            <mat-form-field class="fw">
-              <input matInput name="mileage" placeholder="mileage" formControlName="mileage"/>
-            </mat-form-field>
-            <mat-form-field class="fw">
-              <input matInput name="months" placeholder="months" formControlName="months"/>
-            </mat-form-field>
-            <button mat-flat-button class="btn" color="primary" [disabled]="!scheduleMaintenanceForm.valid" type="submit">Add Scheduled Maintenance</button>
-          </form>
-        </mat-card-content>
-      </mat-card>
-    </div>
+  @for (scheduledMaintenance of scheduledMaintenanceAll; track scheduledMaintenance) {
+  <div>
+    <mat-card class="serviceDue">
+      <mat-card-header>
+        <mat-card-title>{{scheduledMaintenance.description}}</mat-card-title>
+        <mat-card-subtitle>{{scheduledMaintenance.mileage}} miles ({{scheduledMaintenance.months}}
+          months)</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+  }
+  <div>
+    <mat-card class="serviceDue">
+      <mat-card-header>
+        <mat-card-title>Add Scheduled Maintenance</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="scheduleMaintenanceForm" (ngSubmit)="addScheduledMaintenance()">
+          <mat-form-field class="fw">
+            <input matInput name="description" placeholder="description" formControlName="description" />
+          </mat-form-field>
+          <mat-form-field class="fw">
+            <input matInput name="mileage" placeholder="mileage" formControlName="mileage" />
+          </mat-form-field>
+          <mat-form-field class="fw">
+            <input matInput name="months" placeholder="months" formControlName="months" />
+          </mat-form-field>
+          <button mat-flat-button class="btn" color="primary" [disabled]="!scheduleMaintenanceForm.valid"
+            type="submit">Add Scheduled Maintenance</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
   }
 </div>
