@@ -76,7 +76,7 @@ class MaintenanceService extends BaseService {
 
 	public async updateServiceLog(serviceRecord: ServiceRecord) {
 
-		await this.executeQuery("UPDATE service_history SET ? WHERE ?", [serviceRecord, {id: serviceRecord.id} ]);
+		await this.executeQuery("UPDATE service_history SET ? WHERE id=?", [serviceRecord, serviceRecord.id]);
 
 		//add a scheduled maintenance
 		// if (regularService) {
@@ -86,7 +86,7 @@ class MaintenanceService extends BaseService {
 	};
 
 	public async deleteServiceLog(serviceId: number) {
-		await this.executeQuery("DELETE FROM service_history WHERE id = ?", [serviceId]);
+		await this.executeQuery("DELETE FROM service_history WHERE id=?", [serviceId]);
 	};
 
 	public async addScheduledService(objectToken, scheduledMaintenance: ScheduledMaintenance) {
@@ -116,14 +116,12 @@ class MaintenanceService extends BaseService {
             JOIN my_garage 
                 ON carId=my_garage.id 
             WHERE token=? 
-
             UNION 
-
             SELECT description 
             FROM scheduled_maintenance 
             JOIN my_garage 
                 ON carId=my_garage.id 
-            WHERE token=?;`;
+            WHERE token=?`;
 		const results = await this.executeQuery(sql, [objectToken, objectToken]);
 		return results.map((row: any) => row.description);
 	}

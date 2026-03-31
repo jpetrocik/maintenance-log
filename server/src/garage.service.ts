@@ -111,10 +111,7 @@ class GarageService extends BaseService {
 		let setParams = {
 			mileage: mileage
 		}
-		let whereParams = {
-			id: vehicle.id
-		}
-		await this.executeQuery("UPDATE my_garage SET ? WHERE ?", [ setParams, whereParams]);
+		await this.executeQuery("UPDATE my_garage SET ? WHERE id=?", [ setParams, vehicle.id]);
 	};
 
 	public async updateVehicle(objectToken: string, params: any) {
