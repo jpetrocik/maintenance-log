@@ -128,7 +128,8 @@
   @if (showServiceHistory) {
   @for (serviceHistory of serviceHistoryAll; track serviceHistory) {
   <div>
-    <app-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken"></app-service-history>
+    <app-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken" (serviceRecordDeleted)="onServiceRecordDeleted($event)"></app-service-history>
+
   </div>
   }
   }

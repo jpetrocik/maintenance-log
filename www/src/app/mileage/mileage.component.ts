@@ -187,6 +187,11 @@ export class MileageComponent implements OnInit {
     });
   }
 
+
+  onServiceRecordDeleted(serviceRecordId: number): void {
+    this.serviceHistoryAll = this.serviceHistoryAll.filter(record => record.id !== serviceRecordId);
+  }
+
   showAdditionalFields() {
     this.additionalFields = !this.additionalFields
   }

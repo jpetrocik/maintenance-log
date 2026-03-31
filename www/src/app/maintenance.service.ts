@@ -127,6 +127,11 @@ export class MaintenanceService {
     return this.httpClient.get<string[]>(`/api/vehicle/${invitationToken}/maintenance/list`);
   }
 
+
+  public deleteServiceRecord(invitationToken: string, serviceId: number) : Observable<any> {
+    return this.httpClient.delete(`/api/vehicle/${invitationToken}/history/${serviceId}`);
+  }
+
   public updateVehicle(invitationToken: string, vehicle: VehicleDetails) : Observable<any> {
     return this.httpClient.put(`/api/vehicle/${invitationToken}`, vehicle);
   }

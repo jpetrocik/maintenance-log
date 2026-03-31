@@ -1,6 +1,9 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, inject, Output, EventEmitter } from '@angular/core';
 import { MaintenanceService, ServiceRecord } from '../../maintenance.service';
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
+
 
 @Component({
   selector: 'app-service-history',
@@ -12,6 +15,8 @@ export class ServiceHistoryComponent implements OnChanges {
 
   @Input() serviceRecord!: ServiceRecord;
   @Input() invitationToken!: string;
+  @Output() serviceRecordDeleted = new EventEmitter<number>();
+
 
   showEditForm = false;
   serviceRecordFormGroup: UntypedFormGroup = new UntypedFormGroup({
@@ -37,6 +42,8 @@ export class ServiceHistoryComponent implements OnChanges {
   });
 
   private maintenanceService = inject(MaintenanceService);
+  private dialog = inject(MatDialog);
+
 
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -51,5 +58,21 @@ export class ServiceHistoryComponent implements OnChanges {
       this.showEditForm = false;
     })
   }
+
+  deleteServiceRecord(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '250px',
+      data: { title: 'Confirm Delete', message: 'Are you sure you want to delete this service record?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.maintenanceService.deleteServiceRecord(this.invitationToken, this.serviceRecord.id).subscribe(() => {
+          this.serviceRecordDeleted.emit(this.serviceRecord.id);
+        });
+      }
+    });
+  }
+
 
 }
