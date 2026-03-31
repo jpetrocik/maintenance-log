@@ -25,7 +25,7 @@
 <div id="mileageForm">
   <h2 style="margin-bottom: 0px;">Report Mileage</h2>
   <hr style="margin-top: 0px;" />
-  <form [formGroup]="mileageForm" (ngSubmit)="reportMileage()">
+  <form [formGroup]="mileageForm" (ngSubmit)="reportMileage()" #mileageFormDirective="ngForm">
     <mat-form-field class="fw">
       <input matInput #mileage style="text-align: center;" name="mileage" placeholder="report mileage"
         formControlName="mileage" type="number" />
@@ -85,7 +85,7 @@
         <mat-card-title>Add Service</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form [formGroup]="serviceForm" (ngSubmit)="addService()">
+        <form [formGroup]="serviceForm" (ngSubmit)="addService()" #serviceFormDirective="ngForm">
           <mat-form-field class="fw">
             <input matInput name="description" placeholder="description" formControlName="description"
               [matAutocomplete]="auto" />
@@ -157,7 +157,7 @@
         <mat-card-title>Add Scheduled Maintenance</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form [formGroup]="scheduleMaintenanceForm" (ngSubmit)="addScheduledMaintenance()">
+        <form [formGroup]="scheduleMaintenanceForm" (ngSubmit)="addScheduledMaintenance()" #scheduleMaintenanceFormDirective="ngForm">
           <mat-form-field class="fw">
             <input matInput name="description" placeholder="description" formControlName="description" />
           </mat-form-field>

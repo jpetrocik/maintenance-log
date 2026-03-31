@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormGroupDirective } from '@angular/forms';
 import { MaintenanceService, ServiceRecord, ServiceDueRecord, ScheduledMaintenance, VehicleDetails } from '../maintenance.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -17,6 +17,9 @@ import { switchMap, startWith, map } from 'rxjs/operators';
 export class MileageComponent implements OnInit {
 
   @ViewChild('mileage') mileageInput! : ElementRef;
+  @ViewChild('mileageFormDirective') mileageFormDirective!: FormGroupDirective;
+  @ViewChild('serviceFormDirective') serviceFormDirective!: FormGroupDirective;
+  @ViewChild('scheduleMaintenanceFormDirective') scheduleMaintenanceFormDirective!: FormGroupDirective;
 
   iToken!: string;
   vehicle$!: Observable<VehicleDetails | undefined>;
@@ -69,7 +72,7 @@ export class MileageComponent implements OnInit {
       switchMap(params => {
         const iToken = params['iToken'];
         if (iToken) {
-          this.iToken = iToken; // Keep iToken if needed elsewhere
+          this.iToken = iToken;
           this.loadServiceDue(iToken);
           this._maintenanceService.getServiceDescriptions(iToken).subscribe(descriptions => {
             this.serviceDescriptions = descriptions;
@@ -89,10 +92,9 @@ export class MileageComponent implements OnInit {
     this._maintenanceService.submitMileage(this.iToken, this.mileageForm.controls['mileage'].value).subscribe({
       next: () => {
 
-      this.mileageForm.reset();
-      this._snackBar.open("Service Due", undefined, {
-        duration: 15000
-      });
+      this.mileageFormDirective.resetForm();
+      this.loadServiceHistory(this.iToken);
+      this.loadServiceDue(this.iToken);
     },
     error: (message) => {
       this._snackBar.open(message.statusText, "Ok").onAction().subscribe();
@@ -159,8 +161,7 @@ export class MileageComponent implements OnInit {
 
   addService() {
     this._maintenanceService.serviceCompleted(this.iToken, this.serviceForm.value).subscribe(() => {
-      // formDirective.resetForm();
-      this.serviceForm.reset();
+      this.serviceFormDirective.resetForm();
       
       // this.loadServiceDue(this.iToken);
       this.loadServiceHistory(this.iToken);
@@ -169,8 +170,7 @@ export class MileageComponent implements OnInit {
 
   addScheduledMaintenance() {
     this._maintenanceService.adScheduledMaintenace(this.iToken, this.scheduleMaintenanceForm.value).subscribe(() => {
-      // formDirective.resetForm();
-      this.scheduleMaintenanceForm.reset();
+      this.scheduleMaintenanceFormDirective.resetForm();
 
       this.loadScheduledMaintenance(this.iToken);
       this.loadServiceDue(this.iToken);
