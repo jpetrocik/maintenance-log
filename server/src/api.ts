@@ -274,6 +274,14 @@ class ApiHandler {
     @Authorized
     @ResolveInvitation
     @AsyncErrorHandler
+    async serviceDescriptionListHandler(request: RequestWithAuth, response: Response, next: NextFunction, account: Account, objectToken: string) {
+        let descriptions = await maintenanceService.getServiceDescriptions(objectToken);
+        response.json(descriptions);
+    }
+
+    @Authorized
+    @ResolveInvitation
+    @AsyncErrorHandler
     async shareVehicleHandler(request: RequestWithAuth, response: Response, next: NextFunction, account: Account, objectToken: string) {
         try {
             let shareWith = await accountService.lookupUserByEmail(request.body.email);
@@ -327,6 +335,8 @@ apiRoutes.put('/vehicle/:iToken/mileage/:mileage', apiHandler.reportMileageHandl
 apiRoutes.get('/vehicle/:iToken/maintenance', apiHandler.scheduledMaintenanceHandler);
 // @ts-ignore
 apiRoutes.post('/vehicle/:iToken/maintenance', apiHandler.addScheduledMaintenanceHandler);
+// @ts-ignore
+apiRoutes.get('/vehicle/:iToken/maintenance/list', apiHandler.serviceDescriptionListHandler);
 // @ts-ignore
 apiRoutes.put('/vehicle/:iToken/share/', apiHandler.shareVehicleHandler);
 

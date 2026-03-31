@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { ServiceHistoryComponent } from './service-history/service-history.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { ServiceHistoryComponent } from './service-history/service-history.compo
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    MatAutocompleteModule
   ],
   exports: [
     ServiceHistoryComponent

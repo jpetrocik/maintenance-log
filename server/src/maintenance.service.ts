@@ -109,6 +109,25 @@ class MaintenanceService extends BaseService {
 		return results;
 	};
 
+	public async getServiceDescriptions(objectToken: string): Promise<string[]> {
+		const sql = `
+            SELECT description 
+            FROM service_history 
+            JOIN my_garage 
+                ON carId=my_garage.id 
+            WHERE token=? 
+
+            UNION 
+
+            SELECT description 
+            FROM scheduled_maintenance 
+            JOIN my_garage 
+                ON carId=my_garage.id 
+            WHERE token=?;`;
+		const results = await this.executeQuery(sql, [objectToken, objectToken]);
+		return results.map((row: any) => row.description);
+	}
+
 }
 
 const maintenanceService = new MaintenanceService();

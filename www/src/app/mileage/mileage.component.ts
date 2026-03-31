@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ShareComponent } from '../share/share.component';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, startWith, map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-mileage',
@@ -55,6 +55,8 @@ export class MileageComponent implements OnInit {
   showScheduledMaintenance = false;
   pastDueService = false;
   upcomingService = false;
+  serviceDescriptions: string[] = [];
+  filteredServiceDescriptions$!: Observable<string[]>;
 
   public _maintenanceService = inject(MaintenanceService);
   private _snackBar = inject(MatSnackBar);
@@ -69,6 +71,13 @@ export class MileageComponent implements OnInit {
         if (iToken) {
           this.iToken = iToken; // Keep iToken if needed elsewhere
           this.loadServiceDue(iToken);
+          this._maintenanceService.getServiceDescriptions(iToken).subscribe(descriptions => {
+            this.serviceDescriptions = descriptions;
+          });
+          this.filteredServiceDescriptions$ = this.serviceForm.controls['description'].valueChanges.pipe(
+            startWith(''),
+            map(value => this._filter(value || '')),
+          );
           return this._maintenanceService.vehicleDetails(iToken);
         }
         return of(undefined); // Return an observable of undefined if no token
@@ -180,5 +189,10 @@ export class MileageComponent implements OnInit {
 
   showAdditionalFields() {
     this.additionalFields = !this.additionalFields
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.serviceDescriptions.filter(option => option.toLowerCase().includes(filterValue));
   }
 }
