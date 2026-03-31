@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: 'service', loadChildren: () => import('./service/service.module').then(m => m.ServiceModule), canActivate: [AuthGuard] },
   { path: 'mileage/:iToken', loadChildren: () => import('./mileage/mileage.module').then(m => m.MileageModule), canActivate: [AuthGuard] },
   { path: 'my-garage/register', loadChildren: () => import('./vehicle-registration/vehicle-registration.module').then(m => m.VehicleRegistrationModule), canActivate: [AuthGuard] },
+  { path: 'my-garage/register/:iToken', loadChildren: () => import('./vehicle-registration/vehicle-registration.module').then(m => m.VehicleRegistrationModule), canActivate: [AuthGuard] },
 ];
 
 @NgModule({

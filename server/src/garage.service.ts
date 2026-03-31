@@ -49,10 +49,10 @@ class GarageService extends BaseService {
 	public async addVehicle(params: any) : Promise<Vehicle> {
 		let token = tokenGenerator(25);
 		let inserviceDate = (params.inserviceDate)?params.inserviceDate:new Date();
-		let name = "'" + (params.year-2000) + " " + params.make + " " + params.model;
+
 		let vehicle  = {
 			token: token, 
-			name: name, 
+			name: this.vehicleName(params), 
 			make: params.make, 
 			model: params.model, 
 			trim: params.trim, 
@@ -117,6 +117,33 @@ class GarageService extends BaseService {
 		await this.executeQuery("UPDATE my_garage SET ? WHERE ?", [ setParams, whereParams]);
 	};
 
+	public async updateVehicle(objectToken: string, params: any) {
+		let vehicle = await this.vehicleDetails(objectToken);
+		if (!vehicle) {
+			return;
+		}
+
+		let setParams = {
+			name: this.vehicleName(params),
+			make: params.make,
+			model: params.model,
+			trim: params.trim,
+			year: params.year,
+			vin: params.vin,
+			license: params.license
+		}
+		let whereParams = {
+			id: vehicle.id
+		}
+		await this.executeQuery("UPDATE my_garage SET ? WHERE ?", [ setParams, whereParams]);
+	};
+
+	private vehicleName(params: any) {
+		// Format year as two digits with leading zero if needed, and handle pre-2000 years
+		let yearStr = (params.year % 100).toString().padStart(2, '0');
+
+		return "'" + yearStr + " " + params.make + " " + params.model;	
+	}
 }
 
 const garageService = new GarageService();

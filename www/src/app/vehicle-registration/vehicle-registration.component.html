@@ -1,6 +1,6 @@
 <p>Vehicle Registration</p>
 
-<form [formGroup]="registerForm" (ngSubmit)="register()">
+<form [formGroup]="registerForm" (ngSubmit)="save()">
 <mat-form-field class="fw">
     <input matInput name="year" placeholder="year" formControlName="year" type="number"/>
 </mat-form-field>
@@ -19,8 +19,10 @@
 <mat-form-field class="fw">
     <input matInput name="vin" placeholder="vin" formControlName="vin"/>
 </mat-form-field>
+@if (!isEditMode) {
 <mat-form-field class="fw">
     <input matInput name="mileage" placeholder="mileage" formControlName="mileage"/>
 </mat-form-field>
-<button mat-flat-button class="btn" type="submit" [disabled]="!registerForm.valid" color="primary">Register Vehicle</button>
+}
+<button mat-flat-button class="btn" type="submit" [disabled]="!registerForm.valid" color="primary">{{buttonLabel}}</button>
 </form>

@@ -1,7 +1,7 @@
 @if (vehicle$ | async; as vehicle) {
   <div>
     <div style="float:right"><mat-icon (click)="openShareDialog()" (keyup.enter)="openShareDialog()" tabindex="0" role="button">share</mat-icon></div>
-    <h1 style="margin-bottom: 0px;">{{vehicle.name}}</h1>
+    <h1 style="margin-bottom: 0px;">{{vehicle.name}} <a class="edit-link" [routerLink]="['/my-garage/register', iToken]"><mat-icon class="edit-icon">edit</mat-icon></a></h1>
     @if (vehicle.vin) {
       <h3 style="margin-bottom: 0px;">
         <span>Vin: {{vehicle.vin}}</span>

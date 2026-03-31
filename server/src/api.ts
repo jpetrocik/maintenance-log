@@ -183,6 +183,14 @@ class ApiHandler {
     @Authorized
     @ResolveInvitation
     @AsyncErrorHandler
+    async vehicleUpdateHandler(request: RequestWithAuth, response: Response, next: NextFunction, account: Account, objectToken: string) {
+    	await garageService.updateVehicle(objectToken, request.body);
+    	response.sendStatus(204);
+    }
+
+    @Authorized
+    @ResolveInvitation
+    @AsyncErrorHandler
     async serviceDueHandler(request: RequestWithAuth, response: Response, next: NextFunction, account: Account, objectToken: string) {
         let allServiceRecords = await maintenanceService.serviceDue(objectToken);
         response.json(allServiceRecords);
@@ -320,6 +328,8 @@ apiRoutes.post('/vehicle', apiHandler.vehicleAddHandler);
 apiRoutes.get('/vehicle', apiHandler.vehicleHandler);
 // @ts-ignore
 apiRoutes.get('/vehicle/:iToken', apiHandler.vehicleDetailHandler);
+// @ts-ignore
+apiRoutes.put('/vehicle/:iToken', apiHandler.vehicleUpdateHandler);
 // @ts-ignore
 apiRoutes.post('/vehicle/:iToken/service', apiHandler.serviceDueCompletedHandler);
 // @ts-ignore

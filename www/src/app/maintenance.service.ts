@@ -126,4 +126,8 @@ export class MaintenanceService {
   public getServiceDescriptions(invitationToken: string): Observable<string[]> {
     return this.httpClient.get<string[]>(`/api/vehicle/${invitationToken}/maintenance/list`);
   }
+
+  public updateVehicle(invitationToken: string, vehicle: VehicleDetails) : Observable<any> {
+    return this.httpClient.put(`/api/vehicle/${invitationToken}`, vehicle);
+  }
 }
