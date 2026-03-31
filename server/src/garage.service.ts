@@ -132,10 +132,7 @@ class GarageService extends BaseService {
 			vin: params.vin,
 			license: params.license
 		}
-		let whereParams = {
-			id: vehicle.id
-		}
-		await this.executeQuery("UPDATE my_garage SET ? WHERE ?", [ setParams, whereParams]);
+		await this.executeQuery("UPDATE my_garage SET ? WHERE id=?", [ setParams, vehicle.id]);
 	};
 
 	private vehicleName(params: any) {
