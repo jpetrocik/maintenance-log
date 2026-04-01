@@ -32,8 +32,6 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
-config.json
-
 # Compiled output
 /dist
 /tmp
@@ -75,7 +73,3 @@ testem.log
 .DS_Store
 Thumbs.db
 
-bin
-www/dist/*
-server/src/firebase-admin-sdk-config.json
-server/.env
