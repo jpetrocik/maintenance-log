@@ -77,8 +77,6 @@ class CronService extends BaseService {
                 } catch (error) {
                     console.error(`Error sending message to user ${record.userToken}:`, error);
                 }
-            } else {
-                console.log(`No FCM token found for user ${record.userToken}.`);
             }
         }
     }
