@@ -77,3 +77,5 @@ Thumbs.db
 
 bin
 www/dist/*
+server/src/firebase-admin-sdk-config.json
+server/.env

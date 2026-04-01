@@ -3,6 +3,11 @@ import bodyParser  from 'body-parser';
 import { apiRoutes } from './api';
 import cookieParser  from 'cookie-parser';
 import path from 'path';
+import dotenv from 'dotenv';
+import { cronService } from './cron';
+
+// Load environment variables from .env file
+dotenv.config();
 // import cronRoutes from './cron';
 
 // var moment = require('moment'),
@@ -41,3 +46,12 @@ app.get('*', (req: Request, res: Response) => {
 app.listen(3000, function () {
   console.log('Service Log listening on port 3000!');
 });
+
+// Start the scheduler
+// cronService.startCronJobs();
+
+//run on startup
+setTimeout(() => {
+	console.log('Running initial unreported mileage check on startup.');
+	cronService.unreportedMileage();
+}, 5000); // Delay initial run by 5 seconds to allow server to start up	

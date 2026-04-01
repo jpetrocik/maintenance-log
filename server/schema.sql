@@ -31,3 +31,12 @@ alter table user_accounts drop column authToken;
 
 alter table invitation drop column rToken;
 alter table invitation drop column carId;
+
+CREATE TABLE `fcm_tokens` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `userToken` VARCHAR(50) NOT NULL,
+  `fcmToken` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userToken_UNIQUE` (`userToken`)
+);
+

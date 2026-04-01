@@ -4,6 +4,7 @@ import { accountService, Account } from './acount.service'
 import { Vehicle, garageService } from './garage.service'
 import { maintenanceService, ScheduledMaintenance, ServiceDueRecord, ServiceRecord } from './maintenance.service';
 import { jwtService } from './jwt.service';
+import { fcmService } from './fcm.service';
 
 interface RequestWithAuth extends Request {
     userToken: string;
@@ -311,6 +312,26 @@ class ApiHandler {
         }
     }
 
+    firebaseConfigHandler(request: Request, response: Response) {
+        response.json({
+            apiKey: process.env.FIREBASE_API_KEY,
+            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+            appId: process.env.FIREBASE_APP_ID,
+            measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+            vapidKey: process.env.VAPID_KEY
+        });
+    }
+
+    @Authorized
+    @AsyncErrorHandler
+    async saveFcmTokenHandler(request: RequestWithAuth, response: Response, next: NextFunction, account: Account) {
+        await fcmService.saveToken(account.userToken, request.body.token);
+        response.sendStatus(204);
+    }
+
 }
 
 const apiRoutes = Router();
@@ -349,6 +370,9 @@ apiRoutes.post('/vehicle/:iToken/maintenance', apiHandler.addScheduledMaintenanc
 apiRoutes.get('/vehicle/:iToken/maintenance/list', apiHandler.serviceDescriptionListHandler);
 // @ts-ignore
 apiRoutes.put('/vehicle/:iToken/share/', apiHandler.shareVehicleHandler);
+// @ts-ignore
+apiRoutes.post('/fcm/token', apiHandler.saveFcmTokenHandler);
+apiRoutes.get('/firebase-config', apiHandler.firebaseConfigHandler);
 
 
 export { apiRoutes }

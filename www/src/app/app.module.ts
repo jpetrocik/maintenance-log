@@ -10,18 +10,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatInputModule } from '@angular/material/input';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
-
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MaterialModule } from './material.module';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
 import { ServiceModule } from './service/service.module';
 import { MileageModule } from './mileage/mileage.module';
@@ -47,17 +37,7 @@ function initializeAppFactory(authService: AuthService): () => Observable<any> {
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
-        MatSnackBarModule,
-        MatIconModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatCardModule,
-        MatDialogModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
+        MaterialModule,
         CommonModule,
         ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: environment.production,

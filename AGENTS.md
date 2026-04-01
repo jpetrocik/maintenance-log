@@ -11,27 +11,30 @@ Always work in the appropriate subdirectory (cd www or cd server). Use `workdir`
 ### Frontend (www/)
 ```
 # Development server
-cd www &amp;&amp; npm start  # or npm run ng serve
+cd www && npm start  # or npm run ng serve
 
 # Production build
-cd www &amp;&amp; npm run build
+cd www && npm run build
 
 # Development build (watch mode)
-cd www &amp;&amp; npm run watch
+cd www && npm run watch
 
 # Run all tests (Karma + Jasmine)
-cd www &amp;&amp; npm run test  # Runs `ng test`
+cd www && npm run test  # Runs `ng test`
 
 # Run a single test file
-cd www &amp;&amp; ng test --include=src/app/**/some.component.spec.ts
+cd www && ng test --include=src/app/**/some.component.spec.ts
 
 # Run tests with code coverage
-cd www &amp;&amp; ng test --code-coverage
+cd www && ng test --code-coverage
 
 # Typecheck (Angular CLI handles it)
-cd www &amp;&amp; ng build --prod=false  # Fails on TS errors
+cd www && ng build --prod=false  # Fails on TS errors
 
-# Lint\ncd www &amp;&amp; npm run lint\n# Lint fix\ncd www &amp;&amp; npm run lint -- --fix
+# Lint
+cd www && npm run lint
+# Lint fix
+cd www && npm run lint -- --fix
 ```
 
 **Notes**:
@@ -42,22 +45,22 @@ cd www &amp;&amp; ng build --prod=false  # Fails on TS errors
 ### Backend (server/)
 ```
 # Development server (with hot reload)
-cd server &amp;&amp; npx ts-node-dev --respawn src/index.ts
+cd server && npx ts-node-dev --respawn src/index.ts
 
 # Typecheck only (noEmit)
-cd server &amp;&amp; npx tsc --noEmit
+cd server && npx tsc --noEmit
 
 # Build to JS
-cd server &amp;&amp; npx tsc
+cd server && npx tsc
 
 # Run built JS
-cd server &amp;&amp; node bin/index.js
+cd server && node bin/index.js
 
 # Tests (Placeholder; add Jest)
-cd server &amp;&amp; npm test  # Currently echoes error
+cd server && npm test  # Currently echoes error
 
 # Run single test (once Jest added)
-cd server &amp;&amp; npx jest src/some.test.ts
+cd server && npx jest src/some.test.ts
 ```
 
 **Notes**:
@@ -71,8 +74,8 @@ cd server &amp;&amp; npx jest src/some.test.ts
 git status
 
 # Install deps (run in both subdirs)
-cd www &amp;&amp; npm ci
-cd server &amp;&amp; npm ci
+cd www && npm ci
+cd server && npm ci
 
 # Pre-commit: Run typecheck + tests in both
 # (Add to .git/hooks/pre-commit)
@@ -108,7 +111,7 @@ interface User {
 ```
 const UserRole = {
   ADMIN: 'admin' as const,
-} satisfies Record&lt;string, string&gt;;
+} satisfies Record<string, string>;
 ```
 
 ### Naming Conventions
@@ -118,7 +121,7 @@ const UserRole = {
 - **Files**:
   - Frontend: `*.component.ts`, `*.service.ts`, `*.spec.ts`
   - Backend: `*.ts` (e.g., `routes/users.ts`, `services/email.ts`)
-- **Imports**: Relative paths; group &amp; sort:
+- **Imports**: Relative paths; group & sort:
 ```
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -148,7 +151,7 @@ import { dbConfig } from '../config/db';
 - **No semicolons**? Match existing (check files).
 - **Async/Await**: Prefer over promises.
 ```
-async function fetchUser(id: number): Promise&lt;User | null&gt; {
+async function fetchUser(id: number): Promise<User | null> {
   try {
     const [rows] = await pool.execute('SELECT * FROM users WHERE id = ?', [id]);
     return rows[0] as User | null;
@@ -165,7 +168,7 @@ async function fetchUser(id: number): Promise&lt;User | null&gt; {
   - RxJS `catchError`.
   - User-friendly messages (no stack traces).
 ```
-catchError((err) =&gt; {
+catchError((err) => {
   console.error('API Error:', err);
   return of(null);
 })
@@ -176,7 +179,7 @@ catchError((err) =&gt; {
   - HTTP status: 400 bad req, 404 not found, 500 server err.
   - Log with `console.error`; no sensitive data.
 ```
-app.use((err: Error, req: Request, res: Response, next: NextFunction) =&gt; {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });
@@ -203,7 +206,7 @@ export class UserComponent {
 ```
 
 ### Backend-Specific (server/src)
-- **Express**: Router modular (`routes/`). Middleware order: bodyParser &gt; auth &gt; routes &gt; error.
+- **Express**: Router modular (`routes/`). Middleware order: bodyParser > auth > routes > error.
 - **DB**: Connection pool (mysql2/promise).
 - **Auth**: JWT? None yet; add sessions/cookies.
 - **Emails/SMS**: Nodemailer/Plivo; env vars for creds.
@@ -219,7 +222,7 @@ export class UserComponent {
 ### Testing Guidelines
 - **Frontend**: ComponentHarness for e2e; Jasmine describe/it/expect.
 ```
-it('should create', () =&gt; {
+it('should create', () => {
   expect(component).toBeTruthy();
 });
 ```
