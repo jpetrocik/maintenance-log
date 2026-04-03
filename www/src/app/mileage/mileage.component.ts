@@ -132,6 +132,7 @@ export class MileageComponent implements OnInit {
   serviceCompleted(serviceDue: ServiceDueRecord) {
     this._maintenanceService.serviceCompleted(this.iToken, serviceDue).subscribe(() => {
       this.loadServiceDue(this.iToken);
+      this.loadServiceHistory(this.iToken);
     });
   }
 
