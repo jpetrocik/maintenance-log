@@ -47,8 +47,18 @@ export class ServiceHistoryComponent implements OnChanges {
 
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['serviceRecord'].currentValue) {
-      this.serviceRecordFormGroup.patchValue(changes['serviceRecord'].currentValue);
+    if (changes['serviceRecord']?.currentValue) {
+      const serviceRecord = changes['serviceRecord'].currentValue;
+      if (serviceRecord.serviceDate) {
+        const serviceDate = new Date(serviceRecord.serviceDate);
+        const formattedDate = serviceDate.toISOString().split('T')[0];
+        this.serviceRecordFormGroup.patchValue({
+          ...serviceRecord,
+          serviceDate: formattedDate
+        });
+      } else {
+        this.serviceRecordFormGroup.patchValue(serviceRecord);
+      }
     }
   }
 

@@ -67,7 +67,7 @@ export class PushNotificationService {
 
   private sendTokenToServer(token: string) {
     this.http.post('/api/fcm/token', { token }).subscribe(
-      response => console.log('Token sent to server successfully.'),
+      () => console.log('Token sent to server successfully.'),
       error => console.error('Error sending token to server:', error)
     );
   }
