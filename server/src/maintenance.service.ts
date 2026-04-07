@@ -57,6 +57,8 @@ class MaintenanceService extends BaseService {
 
 	}
 
+	//TODO Confirm blank serviceDate and mileage the defaults are used
+	//TODO Confirm json serviceDate is properly converted to date
 	public async addService(objectToken: string, serviceRecord: ServiceRecord) {
 		let vehicle = await garageService.vehicleDetails(objectToken);
 		if (!vehicle)
@@ -64,8 +66,8 @@ class MaintenanceService extends BaseService {
 
 		let serviceHistory = {
 			carId: vehicle.id,
-			serviceDate: new Date(),
-			mileage: vehicle.mileage,
+			serviceDate: serviceRecord.serviceDate || new Date(),
+			mileage: serviceRecord.mileage || vehicle.mileage,
 			description: serviceRecord.description,
 			cost: serviceRecord.cost || null,
 			note: serviceRecord.note || null,

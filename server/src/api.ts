@@ -218,7 +218,7 @@ class ApiHandler {
     @Authorized
     @ResolveInvitation
     @AsyncErrorHandler
-    async serviceDueCompletedHandler(request: RequestWithAuth, response: Response, next: NextFunction, account: Account, objectToken: string) {
+    async serviceCompletedHandler(request: RequestWithAuth, response: Response, next: NextFunction, account: Account, objectToken: string) {
         await maintenanceService.addService(objectToken, request.body as ServiceRecord);
         response.sendStatus(204);
     }
@@ -352,7 +352,7 @@ apiRoutes.get('/vehicle/:iToken', apiHandler.vehicleDetailHandler);
 // @ts-ignore
 apiRoutes.put('/vehicle/:iToken', apiHandler.vehicleUpdateHandler);
 // @ts-ignore
-apiRoutes.post('/vehicle/:iToken/service', apiHandler.serviceDueCompletedHandler);
+apiRoutes.post('/vehicle/:iToken/service', apiHandler.serviceCompletedHandler);
 // @ts-ignore
 apiRoutes.get('/vehicle/:iToken/service', apiHandler.serviceDueHandler);
 // @ts-ignore

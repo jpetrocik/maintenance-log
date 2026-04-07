@@ -220,6 +220,7 @@ export class UserComponent {
 - **HTTPS**: In prod.
 
 ### Testing Guidelines
+**Note**: Per user instruction, no tests are required for this project. Do not create or run tests.
 - **Frontend**: ComponentHarness for e2e; Jasmine describe/it/expect.
 ```
 it('should create', () => {
