@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges, inject, Output, EventEmitter } from '@angular/core';
-import { MaintenanceService, ServiceRecord } from '../../maintenance.service';
+import { ServiceRecord } from '../../maintenance.service';
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
@@ -43,8 +43,6 @@ export class ServiceHistoryComponent implements OnChanges {
   });
 
   private dialog = inject(MatDialog);
-
-
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['serviceRecord']?.currentValue) {

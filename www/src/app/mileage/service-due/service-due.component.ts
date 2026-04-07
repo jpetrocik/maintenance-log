@@ -1,6 +1,6 @@
-import { Component, Input, inject, Output, EventEmitter } from '@angular/core';
-import { MaintenanceService, ServiceDueRecord, ServiceRecord } from '../../maintenance.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ServiceDueRecord, ServiceRecord } from '../../maintenance.service';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-service-due',
