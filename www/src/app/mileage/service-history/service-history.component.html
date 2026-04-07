@@ -1,8 +1,10 @@
 <mat-card class="serviceDue">
   @if (!showEditForm) {
     <mat-card-header>
-      <div style="float:right"><mat-icon (click)="showEditForm=true">edit</mat-icon></div>
-      <mat-card-title>{{serviceRecord.description}}</mat-card-title>
+      <mat-card-title class="card-title-with-icon">
+        <span>{{serviceRecord.description}}</span>
+        <mat-icon (click)="showEditForm=true" class="edit-icon">edit</mat-icon>
+      </mat-card-title>
       <mat-card-subtitle>{{serviceRecord.mileage}} miles ({{serviceRecord.serviceDate | date:'shortDate'}})</mat-card-subtitle>
     </mat-card-header>
   }

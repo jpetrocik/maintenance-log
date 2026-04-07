@@ -16,6 +16,7 @@ export class ServiceHistoryComponent implements OnChanges {
   @Input() serviceRecord!: ServiceRecord;
   @Input() invitationToken!: string;
   @Output() serviceRecordDeleted = new EventEmitter<number>();
+  @Output() serviceRecordUpdated = new EventEmitter<ServiceRecord>();
 
 
   showEditForm = false;
@@ -41,7 +42,6 @@ export class ServiceHistoryComponent implements OnChanges {
     ]),
   });
 
-  private maintenanceService = inject(MaintenanceService);
   private dialog = inject(MatDialog);
 
 
@@ -63,10 +63,8 @@ export class ServiceHistoryComponent implements OnChanges {
   }
 
   updateServiceRecord() {
-    this.maintenanceService.updateServiceRecord(this.invitationToken, this.serviceRecordFormGroup.value ).subscribe(() => {
-      this.serviceRecord = this.serviceRecordFormGroup.value;
-      this.showEditForm = false;
-    })
+    this.serviceRecordUpdated.emit(this.serviceRecordFormGroup.value);
+    this.showEditForm = false;
   }
 
   deleteServiceRecord(): void {
@@ -77,9 +75,7 @@ export class ServiceHistoryComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.maintenanceService.deleteServiceRecord(this.invitationToken, this.serviceRecord.id).subscribe(() => {
-          this.serviceRecordDeleted.emit(this.serviceRecord.id);
-        });
+        this.serviceRecordDeleted.emit(this.serviceRecord.id);
       }
     });
   }

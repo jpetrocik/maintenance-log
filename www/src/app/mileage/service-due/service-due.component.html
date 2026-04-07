@@ -1,0 +1,29 @@
+    <mat-card class="serviceDue">
+    <form [formGroup]="serviceCompleteFormGroup" (ngSubmit)="onServiceCompleted()">
+      <mat-card-header>
+        <mat-card-title class="card-title-with-icon">
+          <span>{{serviceDue.description}}</span>
+          <mat-icon (click)="toggleShowAdditionalFields()" (keyup.enter)="toggleShowAdditionalFields()" tabindex="0" role="button" class="edit-icon">edit</mat-icon>
+        </mat-card-title>
+        <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles
+          ({{serviceDue.dueDays}} days)</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (showAdditionalFields) {
+        <p>
+          <mat-form-field class="fw">
+            <input matInput name="cost" placeholder="cost" type="number" formControlName="cost" />
+          </mat-form-field>
+          <mat-form-field class="fw">
+            <mat-label>Note</mat-label>
+            <textarea matInput name="note" cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="3"
+              cdkAutosizeMaxRows="5" formControlName="note"></textarea>
+          </mat-form-field>
+        </p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button class="btn" color="primary" [disabled]="!serviceCompleteFormGroup.valid" type="submit">Complete</button>
+      </mat-card-actions>
+    </form>
+    </mat-card>

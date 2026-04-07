@@ -22,7 +22,7 @@
 </div>
 }
 
-<-- Report Mileage -->
+<!-- Report Mileage -->
 <div id="mileageForm">
   <h2 style="margin-bottom: 0px;">Report Mileage</h2>
   <hr style="margin-top: 0px;" />
@@ -35,7 +35,7 @@
   </form>
 </div>
 
-<-- Service Due -->
+<!-- Service Due -->
 <div style="margin-top: 35px;">
   <h2 style="margin-bottom: 0px;" (click)="toggleSeviceDue()" (keyup.enter)="toggleSeviceDue()" tabindex="0"
     role="button">
@@ -49,36 +49,7 @@
   @if (showServiceDue) {
   @for (serviceDue of serviceDueAll; track serviceDue) {
   <div>
-    <mat-card class="serviceDue">
-      <mat-card-header>
-        <mat-card-title>{{serviceDue.description}}</mat-card-title>
-        <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles
-          ({{serviceDue.dueDays}} days)</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        @if (addNote) {
-        <p style="opacity: 50%" (click)="enableNote()" (keyup.enter)="enableNote()" tabindex="0" role="button">more</p>
-        }
-        @if (addNote) {
-        <p>
-          <mat-form-field class="fw">
-            <input matInput name="serviceMileage" placeholder="mileage" type="number" />
-          </mat-form-field>
-          <mat-form-field class="fw">
-            <input matInput name="serviceCost" placeholder="cost" type="number" />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Note</mat-label>
-            <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="3"
-              cdkAutosizeMaxRows="5"></textarea>
-          </mat-form-field>
-        </p>
-        }
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-flat-button class="btn" color="primary" (click)="serviceCompleted(serviceDue)">Completed</button>
-      </mat-card-actions>
-    </mat-card>
+    <app-service-due [serviceDue]="serviceDue" [invitationToken]="iToken" (serviceCompleted)="onServiceCompleted($event)"></app-service-due>
   </div>
   }
   <div>
@@ -87,7 +58,7 @@
         <mat-card-title>Add Service</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form [formGroup]="serviceForm" (ngSubmit)="addService()" #serviceFormDirective="ngForm">
+        <form [formGroup]="addServiceForm" (ngSubmit)="addService()" #serviceFormDirective="ngForm">
           <mat-form-field class="fw">
             <input matInput name="description" placeholder="description" formControlName="description"
               [matAutocomplete]="auto" />
@@ -113,7 +84,7 @@
             </mat-form-field>
           </div>
           }
-          <button mat-flat-button class="btn" color="primary" [disabled]="!serviceForm.valid" type="submit">Add
+          <button mat-flat-button class="btn" color="primary" [disabled]="!addServiceForm.valid" type="submit">Add
             Service</button>
         </form>
       </mat-card-content>
@@ -131,8 +102,7 @@
   @if (showServiceHistory) {
   @for (serviceHistory of serviceHistoryAll; track serviceHistory) {
   <div>
-    <app-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken" (serviceRecordDeleted)="onServiceRecordDeleted($event)"></app-service-history>
-
+    <app-service-history [serviceRecord]="serviceHistory" [invitationToken]="iToken" (serviceRecordDeleted)="onServiceRecordDeleted($event)" (serviceRecordUpdated)="onServiceRecordUpdated($event)"></app-service-history>
   </div>
   }
   }

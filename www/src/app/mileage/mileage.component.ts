@@ -18,7 +18,7 @@ export class MileageComponent implements OnInit {
 
   @ViewChild('mileage') mileageInput! : ElementRef;
   @ViewChild('mileageFormDirective') mileageFormDirective!: FormGroupDirective;
-  @ViewChild('serviceFormDirective') serviceFormDirective!: FormGroupDirective;
+  @ViewChild('addServiceFormDirective') addServiceFormDirective!: FormGroupDirective;
   @ViewChild('scheduleMaintenanceFormDirective') scheduleMaintenanceFormDirective!: FormGroupDirective;
 
   iToken!: string;
@@ -28,7 +28,7 @@ export class MileageComponent implements OnInit {
       Validators.required
     ]),
   });
-  serviceForm: FormGroup = new FormGroup({
+  addServiceForm: FormGroup = new FormGroup({
     description: new FormControl("", [
       Validators.required,
     ]),
@@ -51,7 +51,6 @@ export class MileageComponent implements OnInit {
   serviceDueAll!: ServiceDueRecord[];
   serviceHistoryAll!: ServiceRecord[];
   scheduledMaintenanceAll!: ScheduledMaintenance[];
-  addNote = false;
   additionalFields = false;
   showServiceHistory = false;
   showServiceDue = false;
@@ -77,7 +76,7 @@ export class MileageComponent implements OnInit {
           this._maintenanceService.getServiceDescriptions(iToken).subscribe(descriptions => {
             this.serviceDescriptions = descriptions;
           });
-          this.filteredServiceDescriptions$ = this.serviceForm.controls['description'].valueChanges.pipe(
+          this.filteredServiceDescriptions$ = this.addServiceForm.controls['description'].valueChanges.pipe(
             startWith(''),
             map(value => this._filter(value || '')),
           );
@@ -129,17 +128,6 @@ export class MileageComponent implements OnInit {
     });
   };
 
-  serviceCompleted(serviceDue: ServiceDueRecord) {
-    this._maintenanceService.serviceCompleted(this.iToken, serviceDue).subscribe(() => {
-      this.loadServiceDue(this.iToken);
-      this.loadServiceHistory(this.iToken);
-    });
-  }
-
-  enableNote() {
-    this.addNote = !this.addNote
-  }
-
   toggleSeviceHistory() {
     this.showServiceHistory = !this.showServiceHistory;
 
@@ -161,20 +149,20 @@ export class MileageComponent implements OnInit {
   }
 
   addService() {
-    this._maintenanceService.serviceCompleted(this.iToken, this.serviceForm.value).subscribe(() => {
-      this.serviceFormDirective.resetForm();
+    this._maintenanceService.addService(this.iToken, this.addServiceForm.value).subscribe(() => {
+      this.addServiceFormDirective.resetForm();
+      this.additionalFields = false;
       
-      // this.loadServiceDue(this.iToken);
-      this.loadServiceHistory(this.iToken);
+      this.serviceHistoryChanged();
     });
   }
 
   addScheduledMaintenance() {
     this._maintenanceService.adScheduledMaintenace(this.iToken, this.scheduleMaintenanceForm.value).subscribe(() => {
       this.scheduleMaintenanceFormDirective.resetForm();
-
       this.loadScheduledMaintenance(this.iToken);
-      this.loadServiceDue(this.iToken);
+      
+      this.serviceHistoryChanged();
     });
   }
 
@@ -189,9 +177,28 @@ export class MileageComponent implements OnInit {
   }
 
 
-  onServiceRecordDeleted(serviceRecordId: number): void {
-    this.serviceHistoryAll = this.serviceHistoryAll.filter(record => record.id !== serviceRecordId);
+  onServiceCompleted(serviceRecord: ServiceRecord): void {
+    this._maintenanceService.addService(this.iToken, serviceRecord).subscribe(() => {
+      this.serviceHistoryChanged();
+    });
   }
+
+  onServiceRecordUpdated(serviceRecord: ServiceRecord): void {
+    this._maintenanceService.updateServiceRecord(this.iToken, serviceRecord).subscribe(() => {
+      this.serviceHistoryChanged();
+    });
+  }
+
+  onServiceRecordDeleted(serviceRecordId: number): void {
+    this._maintenanceService.deleteServiceRecord(this.iToken, serviceRecordId).subscribe(() => {
+      this.serviceHistoryChanged();
+    });
+  }
+
+  serviceHistoryChanged(): void {
+      this.loadServiceDue(this.iToken);
+      this.loadServiceHistory(this.iToken);
+  } 
 
   showAdditionalFields() {
     this.additionalFields = !this.additionalFields

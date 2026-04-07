@@ -11,12 +11,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { ServiceHistoryComponent } from './service-history/service-history.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ServiceDueComponent } from './service-due/service-due.component';
 
 
 @NgModule({
   declarations: [
     MileageComponent,
-    ServiceHistoryComponent
+    ServiceHistoryComponent,
+    ServiceDueComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +33,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatAutocompleteModule
   ],
   exports: [
-    ServiceHistoryComponent
+    ServiceHistoryComponent,
+    ServiceDueComponent
   ]
 })
 export class MileageModule { }

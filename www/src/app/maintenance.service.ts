@@ -51,6 +51,7 @@ export interface ScheduledMaintenance {
 	description: string;
 }
 
+
 @Injectable({
     providedIn: 'root'
   })
@@ -87,8 +88,8 @@ export class MaintenanceService {
     return this.httpClient.get<ServiceDueRecord[]>(`/api/vehicle/${invitationToken}/service`)
   }
 
-  public serviceCompleted(invitationToken: string, serviceDue: ServiceDueRecord) : Observable<ServiceDueRecord[]> {
-    return this.httpClient.post<ServiceDueRecord[]>(`/api/vehicle/${invitationToken}/service`, serviceDue)
+  public addService(invitationToken: string, serviceRecord: ServiceRecord) : Observable<ServiceRecord[]> {
+    return this.httpClient.post<ServiceRecord[]>(`/api/vehicle/${invitationToken}/service`, serviceRecord)
   }
 
   public registerVehicle(vehicle: VehicleDetails) : Observable<ServiceDueRecord[]> {
