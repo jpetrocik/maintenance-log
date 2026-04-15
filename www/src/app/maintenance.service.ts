@@ -61,6 +61,9 @@ export class MaintenanceService {
 
   myGarage$: Observable<Vehicle[]> = this._myGarage.asObservable();
 
+  private verbMap$ = new BehaviorSubject<Record<string, string> | null>(null);
+  private readonly VERB_MAP_URL = 'assets/verb-map.json';
+
   private httpClient = inject(HttpClient);
   private authService = inject(AuthService);
 
@@ -68,6 +71,7 @@ export class MaintenanceService {
     this.authService.isAuthenticated$.subscribe((isAuthenticated) => {
       if (isAuthenticated) {
         this.loadMyGarage();
+        this.loadVerbMap();
       } else {
         this._myGarage.next([]);
       }
@@ -78,6 +82,30 @@ export class MaintenanceService {
     this.httpClient.get<Vehicle[]>("/api/vehicle").subscribe((data) => {
       this._myGarage.next(data);
     });
+  }
+
+  private loadVerbMap(): void {
+    this.httpClient.get<Record<string, string>>(this.VERB_MAP_URL).subscribe(map => {
+      this.verbMap$.next(map);
+    });
+  }
+
+  public transformDescription(description: string): string {
+    const map = this.verbMap$.value;
+    if (!map) return description;
+
+    const words = description.trim().split(/\s+/).map(word => {
+      const pastTense = map[word.toLowerCase()];
+      if (pastTense) {
+        const isCapitalized = word[0] === word[0].toUpperCase();
+        return isCapitalized
+          ? pastTense[0].toUpperCase() + pastTense.slice(1)
+          : pastTense[0].toLowerCase() + pastTense.slice(1);
+      }
+      return word;
+    });
+    
+    return words.join(' ');
   }
 
   public submitMileage(invitationToken: string, mileage: number) : Observable<Vehicle[]> {
@@ -101,7 +129,9 @@ export class MaintenanceService {
   }
 
   public serviceHistory(invitationToken: string) : Observable<ServiceRecord[]> {
-    return this.httpClient.get<ServiceRecord[]>(`/api/vehicle/${invitationToken}/history`)
+    return this.httpClient.get<ServiceRecord[]>(`/api/vehicle/${invitationToken}/history`).pipe(
+      map(records => records.map(r => ({ ...r, description: this.transformDescription(r.description) })))
+    );
   }
 
   public scheduledMaintenace(invitationToken: string) : Observable<ScheduledMaintenance[]> {

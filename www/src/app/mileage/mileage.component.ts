@@ -73,7 +73,10 @@ export class MileageComponent implements OnInit {
         if (iToken) {
           this.iToken = iToken;
           this.loadServiceDue(iToken);
-          this._maintenanceService.getServiceDescriptions(iToken).subscribe(descriptions => {
+          this._maintenanceService.getServiceDescriptions(iToken).pipe(
+            map(descriptions => descriptions.map(v => this._maintenanceService.transformDescription(v)))
+          )
+          .subscribe(descriptions => {
             this.serviceDescriptions = descriptions;
           });
           this.filteredServiceDescriptions$ = this.addServiceForm.controls['description'].valueChanges.pipe(

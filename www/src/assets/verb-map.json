@@ -1,0 +1,10 @@
+{
+  "adjust": "adjusted",
+  "change": "changed",
+  "drain": "drained",
+  "flush": "flushed",
+  "inspect": "inspected",
+  "replace": "replaced",
+  "rotate": "rotated",
+  "fill": "filled"
+}

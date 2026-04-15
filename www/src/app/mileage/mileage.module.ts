@@ -12,13 +12,15 @@ import { MatCardModule } from '@angular/material/card';
 import { ServiceHistoryComponent } from './service-history/service-history.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ServiceDueComponent } from './service-due/service-due.component';
+import { MileagePipe } from './mileage.pipe';
 
 
 @NgModule({
   declarations: [
     MileageComponent,
     ServiceHistoryComponent,
-    ServiceDueComponent
+    ServiceDueComponent,
+    MileagePipe
   ],
   imports: [
     CommonModule,

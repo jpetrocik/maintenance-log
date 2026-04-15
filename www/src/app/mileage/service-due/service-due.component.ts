@@ -24,7 +24,7 @@ export class ServiceDueComponent {
   public showAdditionalFields = false;
 
   onServiceCompleted() {
-    let serviceRecord: ServiceRecord = {
+    const serviceRecord: ServiceRecord = {
       description: this.serviceDue.description,
       ...this.serviceCompleteFormGroup.value
     }

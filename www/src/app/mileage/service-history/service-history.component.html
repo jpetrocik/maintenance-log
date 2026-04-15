@@ -5,7 +5,7 @@
         <span>{{serviceRecord.description}}</span>
         <mat-icon (click)="showEditForm=true" class="edit-icon">edit</mat-icon>
       </mat-card-title>
-      <mat-card-subtitle>{{serviceRecord.mileage}} miles ({{serviceRecord.serviceDate | date:'shortDate'}})</mat-card-subtitle>
+      <mat-card-subtitle>{{serviceRecord.mileage | mileage}} miles ({{serviceRecord.serviceDate | date:'shortDate'}})</mat-card-subtitle>
     </mat-card-header>
   }
   <form [formGroup]="serviceRecordFormGroup" (ngSubmit)="updateServiceRecord()">

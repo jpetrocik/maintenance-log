@@ -14,7 +14,7 @@
     <span>Lic: {{vehicle.license}}</span>
   </h3>
   }
-  <h3>Mileage: {{vehicle.mileage}} ({{vehicle.mileageReportedDays}} days age)</h3>
+  <h3>Mileage: {{vehicle.mileage | mileage}} ({{vehicle.mileageReportedDays}} days age)</h3>
 </div>
 } @else {
 <div>
@@ -120,7 +120,7 @@
     <mat-card class="serviceDue">
       <mat-card-header>
         <mat-card-title>{{scheduledMaintenance.description}}</mat-card-title>
-        <mat-card-subtitle>{{scheduledMaintenance.mileage}} miles ({{scheduledMaintenance.months}}
+        <mat-card-subtitle>{{scheduledMaintenance.mileage | mileage}} miles ({{scheduledMaintenance.months}}
           months)</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
