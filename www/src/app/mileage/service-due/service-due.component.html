@@ -5,7 +5,7 @@
           <span>{{serviceDue.description}}</span>
           <mat-icon (click)="toggleShowAdditionalFields()" (keyup.enter)="toggleShowAdditionalFields()" tabindex="0" role="button" class="edit-icon">edit</mat-icon>
         </mat-card-title>
-        <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn}} miles
+        <mat-card-subtitle [ngClass]="serviceDue.overdue ? 'overdue' : 'service_soon'">{{serviceDue.dueIn | mileage}} miles
           ({{serviceDue.dueDays}} days)</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
