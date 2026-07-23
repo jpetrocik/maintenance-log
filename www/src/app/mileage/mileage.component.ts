@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ShareComponent } from '../share/share.component';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { switchMap, startWith, map } from 'rxjs/operators';
 
 @Component({
@@ -22,7 +22,7 @@ export class MileageComponent implements OnInit {
   @ViewChild('scheduleMaintenanceFormDirective') scheduleMaintenanceFormDirective!: FormGroupDirective;
 
   iToken!: string;
-  vehicle$!: Observable<VehicleDetails | undefined>;
+  vehicle$ = new BehaviorSubject<VehicleDetails | undefined>(undefined);
   mileageForm: FormGroup = new FormGroup({
     mileage: new FormControl('', [
       Validators.required
@@ -67,46 +67,49 @@ export class MileageComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.vehicle$ = this._route.params.pipe(
-      switchMap(params => {
-        const iToken = params['iToken'];
-        if (iToken) {
-          this.iToken = iToken;
-          this.loadServiceDue(iToken);
-          this._maintenanceService.getServiceDescriptions(iToken).pipe(
-            map(descriptions => descriptions.map(v => this._maintenanceService.transformDescription(v)))
-          )
-          .subscribe(descriptions => {
-            this.serviceDescriptions = descriptions;
-          });
-          this.filteredServiceDescriptions$ = this.addServiceForm.controls['description'].valueChanges.pipe(
-            startWith(''),
-            map(value => this._filter(value || '')),
-          );
-          return this._maintenanceService.vehicleDetails(iToken);
-        }
-        return of(undefined); // Return an observable of undefined if no token
-      })
-    );
-   }
+    this._route.params.subscribe(params => {
+      const iToken = params['iToken'];
+      if (iToken) {
+        this.iToken = iToken;
+        this.loadVehicleDetails(iToken);
+        this.loadServiceDue(iToken);
+        this._maintenanceService.getServiceDescriptions(iToken).pipe(
+          map(descriptions => descriptions.map(v => this._maintenanceService.transformDescription(v)))
+        )
+        .subscribe(descriptions => {
+          this.serviceDescriptions = descriptions;
+        });
+        this.filteredServiceDescriptions$ = this.addServiceForm.controls['description'].valueChanges.pipe(
+          startWith(''),
+          map(value => this._filter(value || '')),
+        );
+      }
+    });
+  }
 
   reportMileage() {
     this._maintenanceService.submitMileage(this.iToken, this.mileageForm.controls['mileage'].value).subscribe({
       next: () => {
-
-      this.mileageFormDirective.resetForm();
-      this.loadServiceHistory(this.iToken);
-      this.loadServiceDue(this.iToken);
-    },
-    error: (message) => {
-      this._snackBar.open(message.statusText, "Ok").onAction().subscribe();
-    }});
+        this.mileageFormDirective.resetForm();
+        this.loadVehicleDetails(this.iToken);
+        this.loadServiceHistory(this.iToken);
+        this.loadServiceDue(this.iToken);
+      },
+      error: (message) => {
+        this._snackBar.open(message.statusText, "Ok").onAction().subscribe();
+      }});
   };
 
   setMileage(value : string) {
     this.mileageForm.patchValue({
       mileage: value
-    }); 
+    });
+  }
+
+  loadVehicleDetails(iToken: string) {
+    this._maintenanceService.vehicleDetails(iToken).subscribe((data) => {
+      this.vehicle$.next(data);
+    });
   }
 
   loadServiceDue(iToken: string) {
