@@ -57,11 +57,9 @@ class CronService extends BaseService {
 
             if (fcmToken) {
                 const message = {
-                    notification: {
-                        title: 'Maintenance Log',
-                        body: `No mileage reported for ${record.vehicle} in over ${record.daysSinceLastMileageReport} days.`
-                    },
                     data: {
+                        title: 'Maintenance Log',
+                        body: `No mileage reported for ${record.vehicle} in over ${record.daysSinceLastMileageReport} days.`,
                         invitationToken: record.invitationToken,
                         url: `/mileage/${record.invitationToken}`
                     },
