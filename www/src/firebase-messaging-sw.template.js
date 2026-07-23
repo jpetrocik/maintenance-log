@@ -15,12 +15,33 @@ messaging.onBackgroundMessage((payload) => {
     '[firebase-messaging-sw.js] Received background message ',
     payload
   );
-  // Customize notification here
-  const notificationTitle = payload.notification.title;
+  const notificationTitle = payload.data.title;
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/favicon.ico'
+    body: payload.data.body,
+    icon: '/favicon.ico',
+    data: payload.data
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const urlToOpen = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+        if (client.url === self.registration.scope && 'focus' in client) {
+          client.focus();
+          if ('navigate' in client) {
+            return client.navigate(urlToOpen);
+          }
+          return;
+        }
+      }
+      return clients.openWindow(urlToOpen);
+    })
+  );
 });

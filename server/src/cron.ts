@@ -72,7 +72,7 @@ class CronService extends BaseService {
                     const messaging = fcmAdminService.getMessaging();
                     if (messaging) {
                         const response = await messaging.send(message);
-                        console.log(`Successfully sent message to user ${record.userToken} for vehicle ${record.vehicle}:`, response);
+                        console.log(`Successfully sent message to user ${record.userToken} for vehicle ${record.vehicle}`);
                     }
                 } catch (error) {
                     console.error(`Error sending message to user ${record.userToken}:`, error);
